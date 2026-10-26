@@ -45,6 +45,7 @@ class AuditAction(models.TextChoices):
     STAFF_PERMISSIONS_CHANGED = "staff_permissions_changed"
     FEATURE_FLAG_CHANGED = "feature_flag_changed"
     LOGIN_CODE_VIEWED = "login_code_viewed"
+    STAFF_2FA_CHANGED = "staff_2fa_changed"
 
 
 class AuditEvent(models.Model):
