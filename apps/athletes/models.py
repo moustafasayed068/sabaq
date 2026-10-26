@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_stubs_ext import StrOrPromise
 
 from apps.core.crypto import EncryptedJSONField
 from apps.core.models import BaseModel
 from apps.races.models import Race
+
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
 
 
 class Sex(models.TextChoices):
