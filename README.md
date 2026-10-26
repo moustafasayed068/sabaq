@@ -35,6 +35,7 @@ uv run pre-commit install        # ruff, format and gitleaks on every commit
 uv run python manage.py migrate  # SQLite locally unless POSTGRES_HOST is set
 uv run python manage.py runserver
 uv run pytest                    # all tests with coverage
+uv run pytest engine             # engine only (golden + JS differential; needs node)
 ```
 
 Everything (web, worker, PostgreSQL, Redis, Caddy with HTTPS):
@@ -51,7 +52,7 @@ Quality gates (the same ones CI runs on every PR):
 uv run pre-commit run --all-files
 uv run mypy .
 uv run pytest
-uv run bandit -c pyproject.toml -r apps sabaq
+uv run bandit -c pyproject.toml -r apps engine sabaq
 uv run pip-audit --strict
 DJANGO_SETTINGS_MODULE=sabaq.settings.prod uv run python manage.py check --deploy --fail-level WARNING
 uv run python manage.py makemigrations --check --dry-run

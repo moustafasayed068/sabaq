@@ -71,8 +71,11 @@ jobs:
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
       - run: uv sync --group dev
-      - run: uv run pytest
+      - run: uv run pytest  # includes the golden and JS-vs-Python differential tests
 
   security:
     name: security (bandit, pip-audit)
@@ -83,7 +86,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: uv sync --group dev
-      - run: uv run bandit -c pyproject.toml -r apps sabaq
+      - run: uv run bandit -c pyproject.toml -r apps engine sabaq
       - run: uv run pip-audit --strict
 
   django:
@@ -115,6 +118,16 @@ jobs:
         run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" >> "$GITHUB_ENV"
       - run: uv run python manage.py check --deploy --fail-level WARNING
       - run: uv run python manage.py makemigrations --check --dry-run
+
+  js-reference:
+    name: js-reference (node test.js)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+      - run: node reference/engine-js/test.js
 
   docker:
     name: docker (image builds)
