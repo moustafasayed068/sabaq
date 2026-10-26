@@ -115,6 +115,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+# Where one-time login codes go: console (dev only), outbox (staff send by hand), disabled.
+LOGIN_CODE_SENDER = env_str("LOGIN_CODE_SENDER", "disabled")
+LOGIN_URL = "accounts:login"
 # The admin lives at a non-default path (docs/security.md).
 ADMIN_URL = env_str("DJANGO_ADMIN_URL", "staff-7f3c/")
 

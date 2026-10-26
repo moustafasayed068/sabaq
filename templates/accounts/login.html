@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "سجّل دخولك" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{% translate "سجّل برقم موبايلك" %}</h1>
+  <p>{% translate "هنبعتلك كود من 6 أرقام. مش محتاج باسورد." %}</p>
+</section>
+<form class="card stack" method="post" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {{ form.phone.as_field_group }}
+  {% translate "ابعتلي الكود" as label %}{% include "components/button.html" with label=label block=True %}
+</form>
+{% endblock %}

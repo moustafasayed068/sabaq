@@ -44,6 +44,7 @@ class AuditAction(models.TextChoices):
     ACCOUNT_DELETED = "account_deleted"
     STAFF_PERMISSIONS_CHANGED = "staff_permissions_changed"
     FEATURE_FLAG_CHANGED = "feature_flag_changed"
+    LOGIN_CODE_VIEWED = "login_code_viewed"
 
 
 class AuditEvent(models.Model):

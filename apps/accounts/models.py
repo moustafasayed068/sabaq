@@ -11,6 +11,8 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from apps.core.crypto import EncryptedJSONField
+
 # E.164: "+" then country code and number, 8 to 15 digits in total.
 phone_validator = RegexValidator(
     regex=r"^\+[1-9]\d{7,14}$",
@@ -73,3 +75,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return mask_phone(self.phone)
+
+
+class LoginCode(models.Model):
+    """A one-time login code: short-lived, single use, hashed at rest, attempts counted."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    phone = models.CharField(max_length=16, db_index=True)
+    code_hash = models.CharField(max_length=64)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)
+    used_at = models.DateTimeField(null=True, blank=True)
+    # Only for the "outbox" sender: staff read it in the admin and send it by hand.
+    # Encrypted, and wiped as soon as the code is used.
+    outbox = EncryptedJSONField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering: ClassVar[list[str]] = ["-created_at"]
+        permissions = (("send_login_codes", "Can read pending login codes to send them by hand"),)
+
+    def __str__(self) -> str:
+        return f"Login code for {mask_phone(self.phone)}"

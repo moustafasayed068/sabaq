@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 from functools import cache
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 from django.conf import settings
@@ -49,7 +49,13 @@ def rotate(token: str) -> str:
     return _fernet().rotate(token.encode()).decode()
 
 
-class EncryptedJSONField(models.TextField):  # type: ignore[type-arg]
+if TYPE_CHECKING:
+    _TextField = models.TextField[Any, Any]
+else:
+    _TextField = models.TextField
+
+
+class EncryptedJSONField(_TextField):
     """JSON value stored encrypted. It can never be filtered or ordered on."""
 
     description = "Encrypted JSON"

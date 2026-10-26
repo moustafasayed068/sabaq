@@ -8,6 +8,7 @@ os.environ.setdefault(
     "FIELD_ENCRYPTION_KEYS",
     base64.urlsafe_b64encode(b"dev-only-insecure-field-key-0123456789"[:32]).decode(),
 )
+os.environ.setdefault("LOGIN_CODE_SENDER", "console")
 os.environ.setdefault("DJANGO_SECRET_KEY", "dev-only-insecure-key-do-not-use-in-production")
 
 from sabaq.settings.base import *  # noqa: F403
