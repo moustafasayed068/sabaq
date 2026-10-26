@@ -25,6 +25,9 @@ class Ctx:
     predicted: float | None = None
     race_pace: float | None = None
     run_walk: bool = False
+    # Warm-up and cool-down km of quality sessions; smaller in small weeks.
+    wu: float = 2
+    cd: float = 1.5
 
 
 def has(env: Env, kit: str) -> bool:
@@ -252,26 +255,26 @@ def long_run(ctx: Ctx, km: float, *, race_pace_km: float = 0) -> Workout:
 def tempo(ctx: Ctx, mins: int) -> Workout:
     tp = pace_for(ctx, "tempo") or rough_pace(ctx, "tempo")
     km = round1((mins * 60) / tp)
-    return day("quality", "تيمبو", 3, round1(km + 3.5), [
-        f"إحماء: {seg(ctx, 2, 'easy')}",
+    return day("quality", "تيمبو", 3, round1(km + (ctx.wu + ctx.cd)), [
+        f"إحماء: {seg(ctx, ctx.wu, 'easy')}",
         f"{mins} دقيقة تيمبو: {seg(ctx, km, 'tempo')}",
-        f"تهدئة: {seg(ctx, 1.5, 'easy')}",
+        f"تهدئة: {seg(ctx, ctx.cd, 'easy')}",
     ])  # fmt: skip
 
 
 def cruise(ctx: Ctx, reps: int, km: float) -> Workout:
-    return day("quality", "تيمبو متقطع", 3, round1(reps * km + 3.5), [
-        f"إحماء: {seg(ctx, 2, 'easy')}",
+    return day("quality", "تيمبو متقطع", 3, round1(reps * km + (ctx.wu + ctx.cd)), [
+        f"إحماء: {seg(ctx, ctx.wu, 'easy')}",
         f"{reps} × ({seg(ctx, km, 'tempo')})، وراحة دقيقة جري خفيف",
-        f"تهدئة: {seg(ctx, 1.5, 'easy')}",
+        f"تهدئة: {seg(ctx, ctx.cd, 'easy')}",
     ])  # fmt: skip
 
 
 def intervals(ctx: Ctx, reps: int, km: float, rest_min: float) -> Workout:
-    return day("quality", "إنترفال", 4, round1(reps * km + 3.5), [
-        f"إحماء: {seg(ctx, 2, 'easy')} + 4 تسارعات قصيرة",
+    return day("quality", "إنترفال", 4, round1(reps * km + (ctx.wu + ctx.cd)), [
+        f"إحماء: {seg(ctx, ctx.wu, 'easy')} + 4 تسارعات قصيرة",
         f"{reps} × ({seg(ctx, km, 'interval')})، وراحة {fmt_num(rest_min)} دقيقة جري خفيف أو مشي",
-        f"تهدئة: {seg(ctx, 1.5, 'easy')}",
+        f"تهدئة: {seg(ctx, ctx.cd, 'easy')}",
     ])  # fmt: skip
 
 
@@ -280,10 +283,10 @@ def hills(ctx: Ctx, reps: int) -> Workout:
         work = f"{reps} × 60 ثانية جري على ميل 5% بمجهود صعب، ونزّل الميل وامشي 90 ثانية بينهم"
     else:
         work = f"{reps} × 60 ثانية طلوع على طلعة أو كوبري بمجهود صعب، وانزل ماشي"
-    return day("quality", "طلعات", 3, round1(3.5 + reps * 0.25), [
-        f"إحماء: {seg(ctx, 2, 'easy')}",
+    return day("quality", "طلعات", 3, round1((ctx.wu + ctx.cd) + reps * 0.25), [
+        f"إحماء: {seg(ctx, ctx.wu, 'easy')}",
         work,
-        f"تهدئة: {seg(ctx, 1.5, 'easy')}",
+        f"تهدئة: {seg(ctx, ctx.cd, 'easy')}",
     ])  # fmt: skip
 
 
