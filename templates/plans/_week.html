@@ -1,0 +1,10 @@
+{% load i18n sabaq %}
+<article class="card week" id="week-{{ week.number }}">
+  <header class="week-head">
+    <h3>{% blocktranslate with n=week.number|num %}الأسبوع {{ n }}{% endblocktranslate %} <span class="tag">{{ week.phase_name }}</span></h3>
+    {% if week.km %}<p class="caption">{% blocktranslate with k=week.km|km %}{{ k }} جري{% endblocktranslate %}</p>{% endif %}
+  </header>
+  <ul class="days">
+    {% for day in week.days %}{% include "plans/_day.html" with open=open_days %}{% endfor %}
+  </ul>
+</article>

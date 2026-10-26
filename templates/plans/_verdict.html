@@ -1,0 +1,7 @@
+{% load i18n %}
+<section class="verdict verdict-{{ status }} stack">
+  <p class="label">{% if status == "ok" %}{% translate "الخطة" %}{% elif status == "risky" %}{% translate "تنبيه" %}{% else %}{% translate "وقفة" %}{% endif %}</p>
+  <h1>{% if status == "ok" %}{% translate "خطتك جاهزة" %}{% elif status == "risky" %}{% translate "ينفع، بس بحذر" %}{% elif block_kind == "health" or block_kind == "pain" %}{% translate "اكشف الأول" %}{% else %}{% translate "مش هنعمل الخطة دي" %}{% endif %}</h1>
+  {% if goal_verdict %}<p>{{ goal_verdict.text }}</p>{% endif %}
+  {% for m in messages %}<p>{{ m }}</p>{% endfor %}
+</section>
