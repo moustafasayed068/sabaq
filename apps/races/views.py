@@ -6,12 +6,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET
 
 from apps.core.formatting import days_until
+from apps.payments import services as payments
 from apps.races.models import Race
 from apps.races.selectors import upcoming_races
-
-# Test prices from docs/product.md (EGP). Payments (M2) will own the real price list.
-PRICE_SHORT_EGP = 349
-PRICE_LONG_EGP = 799
 
 
 @dataclass(frozen=True)
@@ -27,5 +24,9 @@ def landing(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "races/landing.html",
-        {"cards": cards, "price_short": PRICE_SHORT_EGP, "price_long": PRICE_LONG_EGP},
+        {
+            "cards": cards,
+            "price_short": payments.prices()["short"].amount,
+            "price_long": payments.prices()["long"].amount,
+        },
     )

@@ -19,9 +19,10 @@ pytestmark = pytest.mark.django_db
 
 # route name -> how it is protected
 PUBLIC = {"healthz", "landing", "login", "verify", "logout", "start"}
+SIGNED = {"callback"}  # Paymob server-to-server: authenticated by HMAC (apps/payments/tests)
 STAFF = {"styleguide"}
 SESSION_OR_OWNER = {"step", "review", "result"}  # anonymous answers: this session or their owner
-OWNER = {"mine", "save", "day"}  # signed-in athlete's own data only
+OWNER = {"mine", "save", "day", "checkout", "done"}  # signed-in athlete's own data only
 
 
 def _route_names() -> set[str]:
@@ -41,7 +42,7 @@ def _route_names() -> set[str]:
 
 
 def test_every_endpoint_is_classified():
-    classified = PUBLIC | STAFF | SESSION_OR_OWNER | OWNER
+    classified = PUBLIC | SIGNED | STAFF | SESSION_OR_OWNER | OWNER
     assert _route_names() == classified, "classify the new URL in sabaq/tests/test_ownership.py"
 
 

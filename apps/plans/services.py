@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, Any
+from uuid import UUID
 
 from django.db import transaction
 
@@ -19,7 +20,15 @@ from engine.types import Plan as EnginePlan
 if TYPE_CHECKING:
     from apps.accounts.models import User
 
-__all__ = ["CannotSavePlanError", "active_plan", "create_plan", "preview"]
+__all__ = [
+    "CannotSavePlanError",
+    "active_plan",
+    "create_plan",
+    "mark_paid",
+    "mark_unpaid",
+    "preview",
+    "week_count",
+]
 
 
 class CannotSavePlanError(Exception):
@@ -54,8 +63,13 @@ def create_plan(user: User, q: Questionnaire) -> Plan:
     result = generate(inp)
     if result.status == "blocked":
         raise CannotSavePlanError(result.block_kind)
+    previous = Plan.objects.filter(user=user, is_active=True).first()
+    # A paid plan stays paid when the athlete redoes the questions for the same race
+    # (docs/product.md: one payment per race).
+    paid_at = previous.paid_at if previous and previous.race_id == q.race_id else None
     Plan.objects.filter(user=user, is_active=True).update(is_active=False)
     plan = Plan.objects.create(
+        paid_at=paid_at,
         user=user,
         questionnaire=q,
         race=q.race,
@@ -102,6 +116,23 @@ def create_plan(user: User, q: Questionnaire) -> Plan:
             )
     PlanDay.objects.bulk_create(days)
     return plan
+
+
+# ---------------------------------------------------------------- payment state
+# Only apps.payments calls these, and only after a verified Paymob callback or a refund.
+
+
+def week_count(plan: Plan) -> int:
+    return plan.weeks.count()
+
+
+def mark_paid(plan_id: UUID | str, when: datetime) -> None:
+    Plan.objects.filter(pk=plan_id, paid_at__isnull=True).update(paid_at=when)
+
+
+def mark_unpaid(user_id: UUID | str, race_id: UUID | str) -> None:
+    """After a refund: every plan of this athlete for this race goes back to week 1 only."""
+    Plan.objects.filter(user_id=user_id, race_id=race_id).update(paid_at=None)
 
 
 # ---------------------------------------------------------------- display

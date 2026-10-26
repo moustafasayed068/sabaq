@@ -5,7 +5,7 @@
     {% if week.km %}<p class="caption">{% blocktranslate with k=week.km|km %}{{ k }} جري{% endblocktranslate %}</p>{% endif %}
   </header>
   {% if week.locked %}
-    <p class="caption">{% if week.start %}{% blocktranslate with d=week.start|ar_date_short %}بيبدأ {{ d }}.{% endblocktranslate %} {% endif %}{% translate "بيتفتح بعد ما تفتح باقي الخطة." %}</p>
+    <p class="caption">{% if week.start %}{% blocktranslate with d=week.start|ar_date_short %}بيبدأ {{ d }}.{% endblocktranslate %} {% endif %}{% translate "بيتفتح بعد ما تفتح باقي الخطة." %} <a href="{% url 'payments:checkout' %}">{% translate "افتحها" %}</a></p>
   {% else %}
   <ul class="days">
     {% for day in week.days %}{% include "plans/_day.html" with open=open_days linkable=linkable %}{% endfor %}

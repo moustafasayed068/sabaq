@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "افتح باقي الخطة" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{% translate "افتح باقي الخطة" %}</h1>
+  <p>{% blocktranslate with race=plan.race.name %}خطتك لـ{{ race }} كلها، لحد يوم السباق.{% endblocktranslate %}</p>
+</section>
+
+<section class="card stack">
+  <p class="label">{% translate "السعر" %}</p>
+  <p class="title">{{ price.amount|num }} {% translate "جنيه" %}</p>
+  <ul class="notes">
+    <li>{% translate "مرة واحدة. مفيش اشتراك." %}</li>
+    <li>{% translate "الخطة بتتظبط كل أسبوع على حسب اللي سجّلته." %}</li>
+    <li>{% translate "لو السباق اتأجل، بننقل خطتك من غير ما تدفع تاني." %}</li>
+    <li>{% translate "عايز فلوسك؟ بنرجّعها كاملة قبل الأسبوع التاني." %}</li>
+  </ul>
+</section>
+
+{% if error %}
+  {% translate "الدفع مبدأش. جرّب تاني كمان شوية." as error_text %}
+  {% include "components/notice.html" with kind="stop" text=error_text %}
+{% endif %}
+
+{% if is_open %}
+  <form method="post" action="{% url 'payments:start' %}" class="stack">{% csrf_token %}
+    <button class="btn btn-race btn-block" type="submit">{% blocktranslate with p=price.amount|num %}ادفع {{ p }} جنيه{% endblocktranslate %}</button>
+    <p class="caption">{% translate "هتدفع على صفحة Paymob: كارت، ميزة، أو فوري. احنا مش بنشوف بيانات الكارت." %}</p>
+  </form>
+{% else %}
+  {% translate "الدفع هيتفتح قريب. كمّل أول أسبوع لحد ما نفتحه." as closed_text %}
+  {% include "components/notice.html" with kind="warn" text=closed_text %}
+{% endif %}
+<p><a href="{% url 'plans:mine' %}">{% translate "ارجع لخطتي" %}</a></p>
+{% endblock %}
