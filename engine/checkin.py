@@ -83,9 +83,7 @@ def check_in(
     if fb.feel == "hard":
         no_increase = True
         messages.append("الأسبوع كان تقيل عليك، فهنثبّت الحجم أسبوع.")
-    # Reference quirk kept on purpose: `!fb.pain` is false for pain "none", so this
-    # message only shows when pain was not answered at all.
-    if fb.feel == "easy" and ratio == 1 and not fb.pain:
+    if fb.feel == "easy" and ratio == 1 and (not fb.pain or fb.pain == "none"):
         messages.append("أسبوع حلو. كمّل بنفس الخطة.")
     if (
         action == "continue"

@@ -39,7 +39,9 @@
   },
   "checkIn": {
     "action": "continue",
-    "messages": [],
+    "messages": [
+      "أسبوع حلو. كمّل بنفس الخطة."
+    ],
     "input": {
       "startDate": "2026-11-01",
       "age": 28,

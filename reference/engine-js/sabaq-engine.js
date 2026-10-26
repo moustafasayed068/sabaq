@@ -362,9 +362,9 @@
     const D = input.distanceKm, T = TARGET[D];
     const lvl = ctx.level;
     ctx.runWalk = lvl === 'beginner' && (input.weeklyKm < 10 || input.longestKm < 4);
-    const taper = D === 42.2 ? (N >= 8 ? 2 : 1) : D === 21.1 && N >= 6 ? 1 : 0;
-    const raceWeek = N - 1;
-    const buildWeeks = Math.max(1, N - 1 - taper);
+    // the last week is always race week: very short plans drop the taper first, then the build weeks
+    const taper = Math.max(0, Math.min(D === 42.2 ? (N >= 8 ? 2 : 1) : D === 21.1 && N >= 6 ? 1 : 0, N - 2));
+    const buildWeeks = N - 1 - taper;
     const p = progressionRate(input);
     const longStep = lvl === 'beginner' ? 1.5 : 2;
     const daysCount = input.days.length;
@@ -388,6 +388,10 @@
       const lg = cutback ? long * 0.8 : Math.min(long, Math.max(wk * longShare, input.longestKm));
       plan.push({ phase: cutback ? 'cutback' : i === buildWeeks - 1 ? 'peak' : 'build', weekly: wk, long: lg });
       if (!cutback) { peakWeekly = Math.max(peakWeekly, wk); peakLong = Math.max(peakLong, lg); }
+    }
+    if (buildWeeks === 0) { // race this week: judge it on current fitness
+      peakWeekly = weekly;
+      peakLong = Math.min(long, Math.max(weekly * longShare, input.longestKm));
     }
     // taper weeks
     for (let t = 0; t < taper; t++) {
@@ -523,7 +527,7 @@
       if (x.role === 'rest' || x.role === 'rest-sick') return;
       const before = raceIdx - idx;
       if (before === 1) { x.role = 'rest'; x.workout = day('rest', 'راحة', 0, 0, ['راحة كاملة. كُل أكل فيه نشويات كويس، ونام بدري.']); return; }
-      x.role = before >= 3 && before <= 4 && !days.some((y) => y.workout && y.workout.title === 'تنشيط قبل السباق') ? 'q1' : 'easy';
+      x.role = before >= 3 && before <= 4 && !days.some((y) => y.workout && (y.workout.title === 'تنشيط قبل السباق' || y.workout.title === 'محاكاة السباق')) ? 'q1' : 'easy';
       if (input.raceType === 'hyrox') {
         x.workout = x.role === 'q1' ? W.compromised(ctx, 3, true) : W.easy(ctx, 3, { strides: before === 2 });
       } else x.workout = x.role === 'q1' ? W.sharpener(ctx) : before === 2 ? W.shakeout(ctx) : W.easy(ctx, roundHalf(Math.max(3, spec.weekly / 4)));
@@ -562,7 +566,7 @@
     if (miss.length) out.warnings.push(`مش عندك: ${miss.join('، ')}. حطينا تمارين بديلة، وحاول تتمرن على الأجهزة الحقيقية مرتين على الأقل قبل السباق.`);
     const daysCount = input.days.length;
     const plan = [];
-    for (let i = 0; i < N - 1; i++) plan.push({ phase: N >= 7 && i > 0 && (i + 1) % 4 === 0 ? 'cutback' : i === N - 2 ? 'peak' : 'build' });
+    for (let i = 0; i < N - 1; i++) plan.push({ phase: N >= 7 && i > 0 && i < N - 2 && (i + 1) % 4 === 0 ? 'cutback' : i === N - 2 ? 'peak' : 'build' });
     plan.push({ phase: 'race' });
     for (let i = 0; i < N; i++) {
       ctx.weekIdx = i;
@@ -654,7 +658,7 @@
       messages.push('فوّت أكتر من نص التمارين: الأسبوع الجاي هيبقى بنفس الحجم، مش أكتر.');
     } else if (ratio < 1) messages.push('فوّت تمرين أو اتنين: مفيش مشكلة، كمّل عادي.');
     if (fb.feel === 'hard') { next.flags.noIncreaseFirstWeek = true; messages.push('الأسبوع كان تقيل عليك، فهنثبّت الحجم أسبوع.'); }
-    if (fb.feel === 'easy' && ratio === 1 && !fb.pain) messages.push('أسبوع حلو. كمّل بنفس الخطة.');
+    if (fb.feel === 'easy' && ratio === 1 && (!fb.pain || fb.pain === 'none')) messages.push('أسبوع حلو. كمّل بنفس الخطة.');
     if (action === 'continue' && ratio >= 0.75 && fb.feel !== 'hard' && (!fb.pain || fb.pain === 'none')) next.flags.progressNow = true;
     if (fb.newTime) { next.recentKm = 5; next.recentTime = fb.newTime; messages.push('حدّثنا سرعاتك على وقت الـ 5 كم الجديد.'); }
     return { action, messages, input: next };

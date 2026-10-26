@@ -40,7 +40,7 @@ def diff(expected: Any, actual: Any, path: str = "$") -> list[str]:
 
 
 def test_there_are_golden_files():
-    assert len(GOLDEN_FILES) == 21
+    assert len(GOLDEN_FILES) == 25
 
 
 @pytest.mark.parametrize("path", GOLDEN_FILES, ids=lambda p: p.stem)

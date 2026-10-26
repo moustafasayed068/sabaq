@@ -21,6 +21,10 @@ const cases = {
   'health-cleared': { ...base, health: { chestActive: true }, doctorCleared: true, ...race('pyramids', 10) },
   'pain-now-blocked': { ...base, pain: 'now', ...race('pyramids', 10) },
   'under-18-blocked': { ...base, age: 16, ...race('pyramids', 10) },
+  'race-in-5-days': { ...base, startDate: '2026-12-07', ...race('pyramids', 10) },
+  'marathon-in-10-days': { ...base, weeklyKm: 60, longestKm: 28, runsPerWeek: 5, startDate: '2026-12-29', ...race('luxor', 42.2) },
+  'hyrox-9-weeks': { ...base, startDate: '2026-09-30', ...race('hyrox-dubai') },
+  'hyrox-race-week-two-near-days': { ...base, days: [2, 3, 5], ...race('hyrox-cairo') },
 };
 const checkins = {
   'checkin-chest-cold': ['half-intermediate', { done: 2, feel: 'hard', pain: 'none', sick: 'chest', sickDays: 3, longDone: false }],
