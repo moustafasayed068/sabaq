@@ -155,7 +155,8 @@ def save_step(q: Questionnaire, step: str, form: forms.Form) -> None:
     elif step == "health":
         if not has_health_consent(q):
             raise PermissionError("health answers need consent first")
-        assert isinstance(form, HealthStepForm)  # noqa: S101 - narrows the type
+        if not isinstance(form, HealthStepForm):
+            raise TypeError("the health step needs HealthStepForm")
         HealthScreen.objects.update_or_create(
             questionnaire=q, defaults={"data": form.health_data()}
         )
