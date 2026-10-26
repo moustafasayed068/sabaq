@@ -29,6 +29,7 @@ def athlete(client, monkeypatch):
         plan=plan, week=week, flagged=True, **{"data": {"feedback": {"pain": "mild"}}}
     )
     day = PlanDay.objects.filter(plan=plan).exclude(kind="").first()
+    assert day is not None
     DayLog.objects.create(plan=plan, day=day, **{"data": {"status": "done"}})
     Order.objects.create(
         user=plan.user,
