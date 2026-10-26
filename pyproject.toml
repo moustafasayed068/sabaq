@@ -1,0 +1,91 @@
+[project]
+name = "sabaq"
+version = "0.1.0"
+description = "Arabic race training plans for runners in Egypt and the Gulf."
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+    "django==5.2.18",
+    "psycopg[binary]==3.3.6",
+    "redis==8.1.0",
+    "celery==5.6.3",
+    "gunicorn==26.2.0",
+    "argon2-cffi==25.1.0",
+    "django-csp==4.0",
+    "whitenoise==6.12.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff==0.17.2",
+    "mypy==1.19.1",
+    "django-stubs[compatible-mypy]==5.2.9",
+    "celery-types==0.26.0",
+    "pytest==9.1.1",
+    "pytest-django==4.14.0",
+    "pytest-cov==7.1.0",
+    "bandit[toml]==1.9.4",
+    "pip-audit==2.10.1",
+    "pre-commit==4.7.0",
+    "django-debug-toolbar==8.0.0",
+]
+
+[tool.uv]
+package = false
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["reference", "*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "S", "DJ", "SIM", "C4", "PT", "RUF", "N", "DTZ", "PL", "ANN"]
+ignore = [
+    "RUF001", "RUF002", "RUF003", # Arabic text is intentional
+    "PLR2004",                    # engine thresholds are documented constants
+    "PLR0911", "PLR0912", "PLR0913", "PLR0915", # engine mirrors the JS reference structure
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "ANN", "PLR2004", "S105", "S106"]
+"conftest.py" = ["ANN"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "engine", "sabaq"]
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["mypy_django_plugin.main"]
+exclude = ["^reference/", "/migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["*.tests.*", "conftest"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+
+[tool.django-stubs]
+django_settings_module = "sabaq.settings.test"
+
+# ---------------------------------------------------------------- pytest / coverage
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "sabaq.settings.test"
+addopts = "--strict-markers --cov --cov-report=term-missing:skip-covered"
+testpaths = ["apps", "sabaq"]
+python_files = ["test_*.py"]
+
+[tool.coverage.run]
+source = ["apps", "sabaq"]
+branch = true
+omit = ["*/migrations/*", "*/tests/*", "sabaq/asgi.py", "sabaq/wsgi.py", "sabaq/settings/dev.py"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError"]
+
+# ---------------------------------------------------------------- bandit
+[tool.bandit]
+exclude_dirs = ["tests", "reference", ".venv"]

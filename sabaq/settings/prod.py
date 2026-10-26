@@ -1,0 +1,24 @@
+"""Production and staging. Strict: every secret comes from the environment."""
+
+from sabaq.env import env_bool, env_int, env_list, env_str
+from sabaq.settings.base import *  # noqa: F403
+
+DEBUG = False
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS")
+CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+
+# Production always uses PostgreSQL and Redis; fail fast when they are not configured.
+env_str("POSTGRES_HOST")
+env_str("REDIS_URL")
+
+# TLS ends at Caddy, which sets X-Forwarded-Proto.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
+SECURE_REDIRECT_EXEMPT = [r"^healthz$"]
+SECURE_HSTS_SECONDS = env_int("DJANGO_HSTS_SECONDS", 60 * 60 * 24 * 365)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# The header allows preloading; submitting the domain to hstspreload.org is a separate,
+# manual step done only once HTTPS is stable on every subdomain.
+SECURE_HSTS_PRELOAD = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
