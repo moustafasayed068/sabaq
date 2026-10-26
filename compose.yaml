@@ -35,6 +35,16 @@ services:
     <<: *app
     command: ["celery", "-A", "sabaq", "worker", "--loglevel", "INFO", "--concurrency", "2"]
 
+  # Daily encrypted pg_dump into the backups volume (docs/runbook.md). Copy it off the server.
+  backup:
+    <<: *app
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: backup
+    volumes:
+      - backups:/backups
+
   postgres:
     image: postgres:18.4-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
     env_file: .env
@@ -72,6 +82,7 @@ services:
     restart: unless-stopped
 
 volumes:
+  backups:
   postgres-data:
   redis-data:
   caddy-data:

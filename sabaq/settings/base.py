@@ -157,6 +157,12 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 
+# ---------------------------------------------------------------- backups (docs/runbook.md)
+# Fernet keys, newest first, separate from FIELD_ENCRYPTION_KEYS. Keep a copy off the server.
+BACKUP_ENCRYPTION_KEYS: list[str] = env_list("BACKUP_ENCRYPTION_KEYS")
+BACKUP_DIR = env_str("BACKUP_DIR", "/backups")
+BACKUP_KEEP_DAYS = env_int("BACKUP_KEEP_DAYS", 14)
+
 # ---------------------------------------------------------------- payments (Paymob)
 # Keys come only from the environment. With any of them missing, checkout stays closed
 # and the plan page says payment opens soon. UAE: https://uae.paymob.com, KSA: https://ksa.paymob.com

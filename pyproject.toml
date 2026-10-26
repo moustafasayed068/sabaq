@@ -14,6 +14,7 @@ dependencies = [
     "django-csp==4.0",
     "whitenoise==6.12.0",
     "cryptography==50.0.2",
+    "sentry-sdk==2.72.0",
 ]
 
 [dependency-groups]
