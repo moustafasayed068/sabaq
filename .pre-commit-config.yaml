@@ -1,6 +1,6 @@
 # pre-commit install   (once)    |   pre-commit run --all-files   (CI runs this too)
-# reference/ and brand/ are byte-exact sources (golden files, fonts): never rewrite them.
-exclude: ^(reference|brand)/
+# reference/, brand/ and static/vendor/ are byte-exact sources (golden files, fonts, vendored JS).
+exclude: ^(reference|brand|static/vendor)/
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

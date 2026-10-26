@@ -1,0 +1,2 @@
+{# include "components/button.html" with label="..." kind="primary|race|ghost" href="..." type="submit" block=True #}
+{% if href %}<a class="btn btn-{{ kind|default:'primary' }}{% if block %} btn-block{% endif %}" href="{{ href }}">{{ label }}</a>{% else %}<button class="btn btn-{{ kind|default:'primary' }}{% if block %} btn-block{% endif %}" type="{{ type|default:'submit' }}"{% if name %} name="{{ name }}" value="{{ value }}"{% endif %}>{{ label }}</button>{% endif %}

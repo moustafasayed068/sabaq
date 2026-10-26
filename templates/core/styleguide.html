@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "المكوّنات" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <p class="display"><span class="num">4</span> {% translate "أسابيع على السباق" %}</p>
+  <h1>{% translate "نص ماراثون الأهرامات" %}</h1>
+  <h2>{% translate "الأسبوع التاني: بناء المسافة" %}</h2>
+  <p>{% translate "النهارده جري سهل 6 كم. لازم تقدر تتكلم وانت بتجري." %}</p>
+  <p class="pace"><span class="num">5:30</span> /كم · <span class="num">1:52:40</span></p>
+  <p class="caption">{% translate "آخر تحديث للخطة: الجمعة" %}</p>
+</section>
+<section class="row">
+  {% include "components/button.html" with label=_("ابدأ الأسبوع") kind="primary" type="button" %}
+  {% include "components/button.html" with label=_("اختار سباقك") kind="race" type="button" %}
+  {% include "components/button.html" with label=_("رجوع") kind="ghost" type="button" %}
+</section>
+<section class="stack">
+  {% include "components/notice.html" with title=_("معلومة") text=_("بعد أول أسبوع اجري 5 كم بأحسن مجهود وسجّل الوقت.") %}
+  {% include "components/notice.html" with kind="warn" title=_("ينفع بحذر") text=_("خلي هدفك إنك تخلّص، ومتجريش بسرعة.") %}
+  {% include "components/notice.html" with kind="stop" title=_("اكشف الأول") text=_("الخطة مش هتبدأ غير لما الدكتور يوافق.") %}
+</section>
+<section class="card stack">
+  <h2>{% translate "كارت" %}</h2>
+  <form class="stack" method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}{{ field.as_field_group }}{% endfor %}
+    {% include "components/button.html" with label=_("سجّل") block=True %}
+  </form>
+</section>
+<section class="band"><p class="heading">{% translate "خطتك لحد خط النهاية" %} <span class="dot"></span></p></section>
+{% endblock %}
