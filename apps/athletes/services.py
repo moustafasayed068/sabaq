@@ -31,6 +31,7 @@ __all__ = [
     "STEPS",
     "Step",
     "build_form",
+    "claim_questionnaire",
     "has_health_consent",
     "next_step",
     "plan_input",
@@ -40,6 +41,8 @@ __all__ = [
 
 if TYPE_CHECKING:
     from django_stubs_ext import StrOrPromise
+
+    from apps.accounts.models import User
 
 
 @dataclass(frozen=True)
@@ -70,6 +73,16 @@ _FORMS: dict[str, type[forms.Form]] = {
 }
 # Form field name -> model field name where they differ.
 _FIELD_MAP = {"recent_time": "recent_time_s", "goal_time": "goal_time_s"}
+
+
+def claim_questionnaire(questionnaire_id: str | None, session_key: str | None, user: User) -> None:
+    """Attach the anonymous questionnaire of this session to the user who just signed in."""
+    q = questionnaire_for(questionnaire_id, session_key=session_key)
+    if q is None or q.user_id is not None:
+        return
+    q.user = user
+    q.save(update_fields=["user", "updated_at"])
+    q.consents.filter(user__isnull=True).update(user=user)
 
 
 def start_questionnaire(session_key: str, race: Race) -> Questionnaire:

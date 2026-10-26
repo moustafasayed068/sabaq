@@ -12,6 +12,8 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 # Production always uses PostgreSQL and Redis; fail fast when they are not configured.
 env_str("POSTGRES_HOST")
 env_str("REDIS_URL")
+if LOGIN_CODE_SENDER == "console":  # noqa: F405
+    raise ImproperlyConfigured("LOGIN_CODE_SENDER=console writes codes to the log: dev only.")
 if not FIELD_ENCRYPTION_KEYS:  # noqa: F405 - health data must never be stored unencrypted
     raise ImproperlyConfigured("Set the FIELD_ENCRYPTION_KEYS environment variable.")
 

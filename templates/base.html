@@ -24,7 +24,13 @@
           <img class="logo" src="{% static 'brand/logos/sabaq-wordmark.svg' %}" alt="{% translate 'سبق' %}" width="120" height="40">
         </picture>
       </a>
-      {% block header_actions %}{% endblock %}
+      {% block header_actions %}
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">{% translate "خروج" %}</button></form>
+        {% else %}
+          <a class="btn btn-ghost" href="{% url 'accounts:login' %}">{% translate "دخول" %}</a>
+        {% endif %}
+      {% endblock %}
     </header>
     <main id="main" class="stack-lg">
       {% block content %}{% endblock %}

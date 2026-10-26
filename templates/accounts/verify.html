@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "اكتب الكود" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{% translate "اكتب الكود" %}</h1>
+  <p>{% blocktranslate trimmed with phone=masked_phone|num %}بعتنا كود من 6 أرقام لـ {{ phone }}. الكود شغال 10 دقايق.{% endblocktranslate %}</p>
+  {% if outbox %}{% translate "هيوصلك الكود على واتساب من فريق سبق خلال دقايق." as outbox_text %}{% include "components/notice.html" with text=outbox_text %}{% endif %}
+</section>
+<form class="card stack" method="post" novalidate>
+  {% csrf_token %}
+  {{ form.code.as_field_group }}
+  {% translate "ادخل" as label %}{% include "components/button.html" with label=label block=True %}
+  <a href="{% url 'accounts:login' %}">{% translate "غيّر الرقم أو اطلب كود جديد" %}</a>
+</form>
+{% endblock %}

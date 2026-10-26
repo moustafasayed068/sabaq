@@ -6,6 +6,7 @@ urlpatterns: list[URLPattern | URLResolver] = [
     path("", include("apps.core.urls")),
     path("", include("apps.races.urls")),
     path("", include("apps.athletes.urls")),
+    path("", include("apps.accounts.urls")),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

@@ -12,6 +12,7 @@ PROD_ENV = {
     "POSTGRES_HOST": "db",
     "POSTGRES_PASSWORD": "pw",
     "REDIS_URL": "redis://redis:6379/0",
+    "LOGIN_CODE_SENDER": "outbox",
     "FIELD_ENCRYPTION_KEYS": base64.urlsafe_b64encode(bytes(32)).decode(),
 }
 
@@ -66,3 +67,16 @@ def test_prod_settings_refuse_to_start_without_secrets(missing):
     )
     assert result.returncode != 0
     assert missing in result.stderr
+
+
+def test_prod_refuses_the_console_code_sender():
+    env = {"PATH": "/usr/bin:/bin", **PROD_ENV, "LOGIN_CODE_SENDER": "console"}
+    result = subprocess.run(
+        [sys.executable, "-c", "import sabaq.settings.prod"],
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "LOGIN_CODE_SENDER" in result.stderr
