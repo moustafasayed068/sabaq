@@ -148,6 +148,7 @@ p { margin: 0 0 var(--space-4); }
 .verdict { border-radius: var(--radius-md); padding: var(--space-6); background: var(--faience-soft); }
 .verdict-risky { background: var(--warn-soft); }
 .verdict-blocked { background: var(--stop-soft); }
+.paused { background: var(--stop-soft); }
 .verdict p:last-child { margin-bottom: 0; }
 .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
 .fact { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); }

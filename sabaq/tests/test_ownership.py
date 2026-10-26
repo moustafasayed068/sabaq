@@ -22,7 +22,15 @@ PUBLIC = {"healthz", "landing", "login", "verify", "logout", "start"}
 SIGNED = {"callback"}  # Paymob server-to-server: authenticated by HMAC (apps/payments/tests)
 STAFF = {"styleguide"}
 SESSION_OR_OWNER = {"step", "review", "result"}  # anonymous answers: this session or their owner
-OWNER = {"mine", "save", "day", "checkout", "done"}  # signed-in athlete's own data only
+OWNER = {
+    "mine",
+    "save",
+    "day",
+    "check_in",
+    "resume",
+    "checkout",
+    "done",
+}  # signed-in athlete's own data only
 
 
 def _route_names() -> set[str]:
@@ -157,3 +165,21 @@ def test_owner_pages_need_login(url):
 
 def test_anonymous_save_needs_login():
     assert Client().post("/plan/save/")["Location"].startswith("/login/")
+
+
+def test_check_in_and_resume_touch_only_my_own_plan(alice, bob, monkeypatch):
+    _, alice_user, _ = alice
+    b_client, bob_user, _ = bob
+    a_plan = Plan.objects.get(user=alice_user, is_active=True)
+    a_weeks = list(a_plan.weeks.values_list("pk", flat=True))
+    monkeypatch.setattr(timezone, "localdate", lambda: date(2026, 10, 31))
+    b_client.post(
+        "/plan/check-in/",
+        {"done": "0", "long_done": "no", "feel": "hard", "pain": "sharp", "sick": "none"},
+    )
+    b_client.post("/plan/resume/", {"cleared": "on"})
+    a_plan.refresh_from_db()
+    assert a_plan.paused_at is None
+    assert list(a_plan.weeks.values_list("pk", flat=True)) == a_weeks
+    assert not a_plan.check_ins.exists()
+    assert Plan.objects.get(user=bob_user, is_active=True).check_ins.count() <= 1

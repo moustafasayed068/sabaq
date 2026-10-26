@@ -4,7 +4,7 @@ A port of reference/engine-js/sabaq-engine.js. The golden tests in engine/tests 
 the output is identical to the JavaScript reference.
 """
 
-from engine.checkin import check_in
+from engine.checkin import check_in, resume_after_clearance
 from engine.data import DIST_NAME, HEALTH_QUESTIONS, RACES, race_by_id
 from engine.generate import generate, level_of
 from engine.health import screen
@@ -36,6 +36,7 @@ __all__ = [
     "parse_duration",
     "predict_time",
     "race_by_id",
+    "resume_after_clearance",
     "screen",
     "vdot_from",
 ]

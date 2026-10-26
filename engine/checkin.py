@@ -2,6 +2,7 @@
 A port of `checkIn` in reference/engine-js/sabaq-engine.js."""
 
 from dataclasses import replace
+from datetime import date
 from typing import Literal
 
 from engine.dates import add_days
@@ -113,3 +114,23 @@ def check_in(
         ),
     )
     return CheckInResult(action, messages, nxt)
+
+
+def resume_after_clearance(paused_input: PlanInput, start_date: date) -> PlanInput:
+    """The athlete says a doctor cleared them after a sharp-pain pause. A port of the "resume"
+    button in reference/plan-lab.html: no pain, doctor cleared, the first week easy only and
+    with no increase. `start_date` is the day training starts again (never before the pause
+    would have restarted)."""
+    start = max(start_date, paused_input.start_date)
+    return replace(
+        paused_input,
+        start_date=start,
+        pain="none",
+        doctor_cleared=True,
+        flags=replace(
+            paused_input.flags,
+            continuing=True,
+            easy_only_until=add_days(start, 6),
+            no_increase_first_week=True,
+        ),
+    )

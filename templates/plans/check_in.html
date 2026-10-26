@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "سجّل أسبوعك" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <p class="caption">{{ plan.race.name }} · {% blocktranslate with n=week.index|add:1|num %}الأسبوع {{ n }}{% endblocktranslate %}</p>
+  <h1>{% translate "سجّل أسبوعك" %}</h1>
+  <p>{% translate "قولنا الأسبوع عدّى إزاي، وهنظبط الأسابيع الجاية على حسبه." %}</p>
+</section>
+<form class="card stack" method="post" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+  {% for field in form %}{{ field.as_field_group }}{% endfor %}
+  <div class="row step-actions">
+    {% translate "سجّل" as save_label %}
+    {% include "components/button.html" with label=save_label %}
+    <a class="btn btn-ghost" href="{% url 'plans:mine' %}">{% translate "رجوع" %}</a>
+  </div>
+</form>
+{% endblock %}

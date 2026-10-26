@@ -8,6 +8,33 @@
   <p>{% translate "يوم السباق" %}: {{ plan.race_date|ar_date }}</p>
 </section>
 
+{% if plan.paused_at %}
+<section class="card stack paused" role="alert">
+  <span class="tag">{% translate "الخطة واقفة" %}</span>
+  <h2>{% translate "اكشف الأول" %}</h2>
+  {% for m in check_in_messages %}<p>{{ m }}</p>{% endfor %}
+  {% for m in resume_error %}{% include "components/notice.html" with kind="stop" text=m %}{% endfor %}
+  <form method="post" action="{% url 'plans:resume' %}" class="stack">{% csrf_token %}
+    {{ resume_form.cleared.as_field_group }}
+    {% translate "الدكتور سمحلي أرجع" as resume_label %}
+    {% include "components/button.html" with label=resume_label block=True %}
+  </form>
+</section>
+{% else %}
+  {% if check_in_messages %}
+  <section class="card stack" aria-live="polite">
+    <p class="label">{% translate "ظبطنا خطتك" %}</p>
+    {% for m in check_in_messages %}<p>{{ m }}</p>{% endfor %}
+  </section>
+  {% endif %}
+  {% if check_in_week %}
+  <section class="card stack">
+    <p>{% blocktranslate with n=check_in_week.index|add:1|num %}الأسبوع {{ n }} خلص تقريبًا. سجّل عملت إيه عشان نظبط اللي جاي.{% endblocktranslate %}</p>
+    <a class="btn btn-primary btn-block" href="{% url 'plans:check_in' %}">{% translate "سجّل أسبوعك" %}</a>
+  </section>
+  {% endif %}
+{% endif %}
+
 {% if today_day %}
 <section class="card stack today">
   <p class="label">{% if today_day.date == today %}{% translate "النهارده" %}{% else %}{% blocktranslate with d=today_day.date|ar_date_short %}التمرين الجاي: {{ today_day.day_name }} {{ d }}{% endblocktranslate %}{% endif %}</p>
@@ -27,6 +54,6 @@
 {% endif %}
 
 <section class="stack">
-  {% for week in weeks %}{% include "plans/_week.html" with open_days=forloop.first linkable=True %}{% endfor %}
+  {% for week in weeks %}{% if plan.paused_at %}{% include "plans/_week.html" with open_days=False linkable=False %}{% else %}{% include "plans/_week.html" with open_days=forloop.first linkable=True %}{% endif %}{% endfor %}
 </section>
 {% endblock %}

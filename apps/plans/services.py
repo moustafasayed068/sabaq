@@ -16,6 +16,7 @@ from apps.plans.models import Plan, PlanDay, PlanStatus, PlanWeek
 from apps.plans.selectors import active_plan
 from engine import ENGINE_VERSION, generate
 from engine.types import Plan as EnginePlan
+from engine.types import Week as EngineWeek
 
 if TYPE_CHECKING:
     from apps.accounts.models import User
@@ -40,7 +41,7 @@ def preview(q: Questionnaire) -> EnginePlan:
     return generate(plan_input(q))
 
 
-def _summary(result: EnginePlan) -> dict[str, Any]:
+def summary_of(result: EnginePlan) -> dict[str, Any]:
     data = result.to_dict()
     keys = (
         "paces",
@@ -82,13 +83,20 @@ def create_plan(user: User, q: Questionnaire) -> Plan:
         level=result.level or "",
         messages=result.messages,
         warnings=result.warnings,
-        summary=_summary(result),
+        summary=summary_of(result),
     )
+    store_weeks(plan, result.weeks, first_start=result.weeks[0].start)
+    return plan
+
+
+def store_weeks(plan: Plan, weeks: list[EngineWeek], *, first_start: date) -> None:
+    """Store engine weeks and their days. Week numbers count calendar weeks from the plan's
+    first week, so a regenerated or resumed plan keeps its numbering."""
     days: list[PlanDay] = []
-    for wk in result.weeks:
+    for wk in weeks:
         week = PlanWeek.objects.create(
             plan=plan,
-            index=wk.index,
+            index=(wk.start - first_start).days // 7,
             start=wk.start,
             phase=wk.phase,
             phase_name=wk.phase_name,
@@ -115,7 +123,6 @@ def create_plan(user: User, q: Questionnaire) -> Plan:
                 )
             )
     PlanDay.objects.bulk_create(days)
-    return plan
 
 
 # ---------------------------------------------------------------- payment state

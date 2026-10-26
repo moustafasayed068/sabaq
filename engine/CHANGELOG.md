@@ -3,6 +3,11 @@
 Every change that can alter a generated plan bumps `ENGINE_VERSION` (engine/__init__.py).
 Plans already stored keep the version they were made with.
 
+## Unreleased
+
+- `resume_after_clearance()`: the plan-lab "doctor cleared me" button, ported as is (pain none,
+  doctor cleared, first week easy only with no increase). No change to generated plans.
+
 ## 1.2.0 (2026-10-26)
 
 Owner-approved: keep the planned week close to its target for low-volume runners.
