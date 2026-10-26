@@ -1,0 +1,14 @@
+{% load i18n sabaq %}
+<article class="card race-card">
+  <div class="race-card-head">
+    <h3>{{ card.race.name }}</h3>
+    <p class="caption">{{ card.race.date|ar_date }}{% if card.race.city %} · {{ card.race.city }}{% endif %}</p>
+  </div>
+  <p class="race-countdown"><span class="dot" aria-hidden="true"></span> {{ card.days_left|days_left }}</p>
+  {% if card.race.kind == "hyrox" %}
+    <ul class="chips"><li class="tag">HYROX</li></ul>
+  {% else %}
+    <ul class="chips">{% for d in card.race.distances.all %}<li class="tag">{{ d.distance_km|km }}</li>{% endfor %}</ul>
+  {% endif %}
+  {% if card.race.note %}<p class="caption">{{ card.race.note }}</p>{% endif %}
+</article>
