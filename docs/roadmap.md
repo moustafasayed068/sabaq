@@ -15,14 +15,14 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 
 ## M0: Foundation (27 Oct – 1 Nov)
 
-- [ ] Repo, `.gitignore`, `.env.example`, README with run instructions.
-- [ ] Django project with `settings/{base,dev,test,prod}.py`, PostgreSQL, Redis, custom User model in the first migration.
-- [ ] Docker Compose: web (gunicorn), worker, postgres, redis, reverse proxy with HTTPS for staging.
-- [ ] Tooling: uv or pip-tools with pinned hashes, ruff, mypy, pytest, pytest-django, coverage, bandit, pip-audit, pre-commit (incl. gitleaks).
-- [ ] GitHub Actions CI running every gate in `docs/security.md`; branch protection on `main`.
-- [ ] `apps/core`: base model (UUID, timestamps), audit log, feature flags, structured logging with request id, `/healthz`.
-- [ ] ADR 0001 modular monolith, ADR 0002 engine as pure Python ported from the JS reference.
-- [ ] **Port the engine** to `engine/` (pure Python, typed). All JS tests ported; golden tests pass against `reference/engine-js/golden/`.
+- [x] Repo, `.gitignore`, `.env.example`, README with run instructions.
+- [x] Django project with `settings/{base,dev,test,prod}.py`, PostgreSQL, Redis, custom User model in the first migration.
+- [x] Docker Compose: web (gunicorn), worker, postgres, redis, reverse proxy with HTTPS for staging.
+- [x] Tooling: uv or pip-tools with pinned hashes, ruff, mypy, pytest, pytest-django, coverage, bandit, pip-audit, pre-commit (incl. gitleaks).
+- [ ] GitHub Actions CI running every gate in `docs/security.md`; branch protection on `main`. (CI done; branch protection is an owner action in GitHub settings.)
+- [x] `apps/core`: base model (UUID, timestamps), audit log, feature flags, structured logging with request id, `/healthz`.
+- [x] ADR 0001 modular monolith, ADR 0002 engine as pure Python ported from the JS reference.
+- [x] **Port the engine** to `engine/` (pure Python, typed). All JS tests ported; golden tests pass against `reference/engine-js/golden/`.
 
 ## M1: Plan without payment (2 – 8 Nov)
 
