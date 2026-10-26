@@ -44,11 +44,12 @@ select = ["E", "W", "F", "I", "B", "UP", "S", "DJ", "SIM", "C4", "PT", "RUF", "N
 ignore = [
     "RUF001", "RUF002", "RUF003", # Arabic text is intentional
     "PLR2004",                    # engine thresholds are documented constants
-    "PLR0911", "PLR0912", "PLR0913", "PLR0915", # engine mirrors the JS reference structure
+    "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR0917", # engine mirrors the JS reference
+    "E501",                       # the formatter owns line length; long Arabic strings stay whole
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["S101", "ANN", "PLR2004", "S105", "S106"]
+"**/tests/**" = ["S101", "ANN", "PLR2004", "S105", "S106", "S311"]
 "conftest.py" = ["ANN"]
 
 [tool.ruff.lint.isort]
@@ -74,11 +75,11 @@ django_settings_module = "sabaq.settings.test"
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sabaq.settings.test"
 addopts = "--strict-markers --cov --cov-report=term-missing:skip-covered"
-testpaths = ["apps", "sabaq"]
+testpaths = ["apps", "engine", "sabaq"]
 python_files = ["test_*.py"]
 
 [tool.coverage.run]
-source = ["apps", "sabaq"]
+source = ["apps", "engine", "sabaq"]
 branch = true
 omit = ["*/migrations/*", "*/tests/*", "sabaq/asgi.py", "sabaq/wsgi.py", "sabaq/settings/dev.py"]
 
