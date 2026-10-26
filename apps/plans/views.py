@@ -1,5 +1,7 @@
 """Result page (anonymous preview), saving the plan, and the athlete's plan page."""
 
+from datetime import date
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
@@ -53,8 +55,29 @@ def mine(request: HttpRequest) -> HttpResponse:
     plan = active_plan(request.user)  # type: ignore[arg-type]
     if plan is None:
         return redirect("races:landing")
+    today = timezone.localdate()
+    weeks = services.weeks_from_plan(plan)
     return render(
         request,
         "plans/mine.html",
-        {"plan": plan, "weeks": services.weeks_from_plan(plan), "today": timezone.localdate()},
+        {
+            "plan": plan,
+            "weeks": weeks,
+            "today": today,
+            "today_day": services.today_view(weeks, today),
+        },
+    )
+
+
+@require_GET
+@login_required
+def day(request: HttpRequest, day: date) -> HttpResponse:
+    plan = active_plan(request.user)  # type: ignore[arg-type]
+    if plan is None:
+        return redirect("races:landing")
+    page = services.day_page(plan, day)
+    if page is None:
+        return redirect("plans:mine")
+    return render(
+        request, "plans/day.html", {"plan": plan, "page": page, "today": timezone.localdate()}
     )

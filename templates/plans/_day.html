@@ -9,6 +9,7 @@
     </summary>
     <div class="day-steps">
       {% for step in day.steps %}<p>{{ step }}</p>{% endfor %}
+      {% if linkable %}<p><a href="{% url 'plans:day' day.date %}">{% translate "افتح التمرين" %}</a></p>{% endif %}
       {% if day.extra %}<div class="day-extra"><p class="label">{{ day.extra.title }}</p>{% for step in day.extra.steps %}<p>{{ step }}</p>{% endfor %}</div>{% endif %}
     </div>
   </details>

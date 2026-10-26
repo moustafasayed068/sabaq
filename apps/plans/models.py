@@ -38,6 +38,8 @@ class Plan(BaseModel):
     # Paces, peak long run, goal verdict, time read, race-day tips: shown, never queried.
     summary = models.JSONField(default=dict)
     is_active = models.BooleanField(default=True)
+    # Set only by a verified payment webhook (M2). Until then only week 1 is open.
+    paid_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering: ClassVar[list[str]] = ["-created_at"]

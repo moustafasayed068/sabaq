@@ -125,6 +125,15 @@ class WeekView:
     phase_name: str
     km: float
     days: list[DayView]
+    locked: bool = False
+    start: date | None = None
+
+
+FREE_WEEKS = 1  # week 1 is free; the rest opens after payment (docs/product.md)
+
+
+def week_is_open(plan: Plan, index: int) -> bool:
+    return index < FREE_WEEKS or plan.paid_at is not None
 
 
 def weeks_from_engine(result: EnginePlan) -> list[WeekView]:
@@ -152,17 +161,53 @@ def weeks_from_engine(result: EnginePlan) -> list[WeekView]:
     ]
 
 
+def _day_view(d: PlanDay) -> DayView:
+    return DayView(d.date, d.day_name, d.role, d.kind, d.title, float(d.km), d.steps, d.extra)
+
+
 def weeks_from_plan(plan: Plan) -> list[WeekView]:
-    """Uses the prefetched weeks and days (selectors.active_plan)."""
-    return [
-        WeekView(
-            number=wk.index + 1,
-            phase_name=wk.phase_name,
-            km=float(wk.km),
-            days=[
-                DayView(d.date, d.day_name, d.role, d.kind, d.title, float(d.km), d.steps, d.extra)
-                for d in wk.days.all()
-            ],
+    """Uses the prefetched weeks and days (selectors.active_plan). Locked weeks carry no days,
+    so their workouts never reach the page."""
+    views = []
+    for wk in plan.weeks.all():
+        is_open = week_is_open(plan, wk.index)
+        views.append(
+            WeekView(
+                number=wk.index + 1,
+                phase_name=wk.phase_name,
+                km=float(wk.km),
+                days=[_day_view(d) for d in wk.days.all()] if is_open else [],
+                locked=not is_open,
+                start=wk.start,
+            )
         )
-        for wk in plan.weeks.all()
-    ]
+    return views
+
+
+def today_view(weeks: list[WeekView], today: date) -> DayView | None:
+    """Today's workout, or on a rest day the next open workout."""
+    for week in weeks:
+        for day in week.days:
+            if day.date >= today and day.kind:
+                return day
+    return None
+
+
+@dataclass(frozen=True)
+class DayPage:
+    day: DayView
+    week_number: int
+    previous: date | None
+    next: date | None
+
+
+def day_page(plan: Plan, day: date) -> DayPage | None:
+    """The day with its neighbours, or None when it is not in the plan or its week is locked."""
+    weeks = weeks_from_plan(plan)
+    days = [(w.number, d) for w in weeks for d in w.days]
+    for i, (number, d) in enumerate(days):
+        if d.date == day:
+            prev_day = days[i - 1][1].date if i else None
+            next_day = days[i + 1][1].date if i + 1 < len(days) else None
+            return DayPage(d, number, prev_day, next_day)
+    return None

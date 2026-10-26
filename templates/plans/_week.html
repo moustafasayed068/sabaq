@@ -1,10 +1,14 @@
 {% load i18n sabaq %}
-<article class="card week" id="week-{{ week.number }}">
+<article class="card week{% if week.locked %} week-locked{% endif %}" id="week-{{ week.number }}">
   <header class="week-head">
     <h3>{% blocktranslate with n=week.number|num %}الأسبوع {{ n }}{% endblocktranslate %} <span class="tag">{{ week.phase_name }}</span></h3>
     {% if week.km %}<p class="caption">{% blocktranslate with k=week.km|km %}{{ k }} جري{% endblocktranslate %}</p>{% endif %}
   </header>
+  {% if week.locked %}
+    <p class="caption">{% if week.start %}{% blocktranslate with d=week.start|ar_date_short %}بيبدأ {{ d }}.{% endblocktranslate %} {% endif %}{% translate "بيتفتح بعد ما تفتح باقي الخطة." %}</p>
+  {% else %}
   <ul class="days">
-    {% for day in week.days %}{% include "plans/_day.html" with open=open_days %}{% endfor %}
+    {% for day in week.days %}{% include "plans/_day.html" with open=open_days linkable=linkable %}{% endfor %}
   </ul>
+  {% endif %}
 </article>

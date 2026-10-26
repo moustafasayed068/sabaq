@@ -7,8 +7,24 @@
   <p class="display">{{ plan.race_date|days_until_from:today|days_left }}</p>
   <p>{% translate "يوم السباق" %}: {{ plan.race_date|ar_date }}</p>
 </section>
+
+{% if today_day %}
+<section class="card stack today">
+  <p class="label">{% if today_day.date == today %}{% translate "النهارده" %}{% else %}{% blocktranslate with d=today_day.date|ar_date_short %}التمرين الجاي: {{ today_day.day_name }} {{ d }}{% endblocktranslate %}{% endif %}</p>
+  <h2>{{ today_day.title }}</h2>
+  {% if today_day.steps %}<p>{{ today_day.steps.0 }}</p>{% endif %}
+  <a class="btn btn-primary" href="{% url 'plans:day' today_day.date %}">{% translate "افتح التمرين" %}</a>
+</section>
+{% endif %}
+
 {% for m in plan.messages %}{% include "components/notice.html" with text=m %}{% endfor %}
+
+{% if not plan.paid_at %}
+  {% translate "أول أسبوع ببلاش. باقي الخطة بيتفتح بالدفع، وده جاي قريب." as unlock_text %}
+  {% include "components/notice.html" with kind="warn" text=unlock_text %}
+{% endif %}
+
 <section class="stack">
-  {% for week in weeks %}{% include "plans/_week.html" with open_days=forloop.first %}{% endfor %}
+  {% for week in weeks %}{% include "plans/_week.html" with open_days=forloop.first linkable=True %}{% endfor %}
 </section>
 {% endblock %}
