@@ -16,6 +16,7 @@ dependencies = [
     "cryptography==50.0.2",
     "django-otp==1.7.4",
     "qrcode==8.2",
+    "sentry-sdk==2.72.0",
 ]
 
 [dependency-groups]
