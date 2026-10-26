@@ -1,0 +1,9 @@
+# SITE_ADDRESS is the domain in staging/production (Caddy gets the certificate),
+# or "localhost" locally (Caddy uses its own local certificate).
+{$SITE_ADDRESS:localhost} {
+	encode zstd gzip
+	reverse_proxy web:8000 {
+		header_up X-Forwarded-Proto {scheme}
+	}
+	header -Server
+}
