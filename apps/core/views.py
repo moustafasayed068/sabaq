@@ -4,12 +4,13 @@ from django import forms
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.db import connection
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods
 
+from apps.core import flags
 from apps.core.forms import ChipSelect, ChipSelectMultiple, HMSField
 
 logger = logging.getLogger(__name__)
@@ -64,3 +65,24 @@ def styleguide(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form.is_valid()
     return render(request, "core/styleguide.html", {"form": form})
+
+
+LEGAL_FLAG = "legal_pages"
+
+
+def _legal(request: HttpRequest, template: str) -> HttpResponse:
+    """Draft until the owner's lawyer approves; then the owner turns on the flag."""
+    live = flags.is_enabled(LEGAL_FLAG)
+    if not live and not (request.user.is_authenticated and request.user.is_staff):
+        raise Http404
+    return render(request, template, {"draft": not live})
+
+
+@require_GET
+def privacy(request: HttpRequest) -> HttpResponse:
+    return _legal(request, "core/privacy.html")
+
+
+@require_GET
+def terms(request: HttpRequest) -> HttpResponse:
+    return _legal(request, "core/terms.html")

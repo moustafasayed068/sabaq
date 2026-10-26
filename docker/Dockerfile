@@ -40,7 +40,8 @@ RUN apt-get update \
  && apt-get purge -y curl gnupg && apt-get autoremove -y && rm -rf /var/lib/apt/lists/* \
  && install -d -o sabaq -g sabaq -m 700 /backups
 USER sabaq
-CMD ["sh", "-c", "while true; do python manage.py backup_db || echo 'backup failed'; sleep 86400; done"]
+# Daily: encrypted backup, then the data retention job (docs/security.md).
+CMD ["sh", "-c", "while true; do python manage.py backup_db || echo 'backup failed'; python manage.py apply_retention || echo 'retention failed'; sleep 86400; done"]
 
 # The default image (web and worker).
 FROM app-base AS app

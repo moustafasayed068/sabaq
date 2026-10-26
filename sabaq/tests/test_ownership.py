@@ -18,7 +18,7 @@ from apps.plans.models import Plan, PlanDay
 pytestmark = pytest.mark.django_db
 
 # route name -> how it is protected
-PUBLIC = {"healthz", "landing", "login", "verify", "logout", "start"}
+PUBLIC = {"healthz", "landing", "login", "verify", "logout", "start", "privacy", "terms"}
 SIGNED = {"callback"}  # Paymob server-to-server: authenticated by HMAC (apps/payments/tests)
 STAFF = {"styleguide"}
 SESSION_OR_OWNER = {"step", "review", "result"}  # anonymous answers: this session or their owner

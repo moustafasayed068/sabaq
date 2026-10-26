@@ -38,6 +38,7 @@
     </main>
     <footer class="site-footer caption">
       {% block footer %}<p>{% translate "خطتك لحد خط النهاية." %}</p>{% endblock %}
+      {% if legal_pages_live %}<p><a href="{% url 'core:privacy' %}">{% translate "الخصوصية" %}</a> · <a href="{% url 'core:terms' %}">{% translate "الشروط" %}</a></p>{% endif %}
     </footer>
   </div>
 </body>

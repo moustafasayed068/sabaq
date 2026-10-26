@@ -32,7 +32,9 @@ Short steps for running Sabaq on one VPS with `docker compose`. Keep this page c
 ## Backups
 
 - The `backup` service makes one encrypted dump a day into the `backups` volume and keeps
-  `BACKUP_KEEP_DAYS` days (never deleting the newest).
+  `BACKUP_KEEP_DAYS` days (never deleting the newest). Right after, it runs `apply_retention`:
+  health data 12 months after an athlete's last plan, and answers from people who never
+  signed up after 30 days, are deleted (docs/security.md).
 - Run one now: `docker compose run --rm backup python manage.py backup_db`.
 - List them: `docker compose run --rm backup ls -l /backups`.
 - **Off the server**: a backup on the same disk does not survive losing the VPS. Copy the
@@ -77,3 +79,9 @@ write the date and the counts in the ops log.
 | Data breach | Stop the leak, keep logs, tell the owner the same day. Egypt's PDPL (Law 151 of 2020) needs notifying the regulator; ask the lawyer for the deadline. |
 
 Security contact: the owner. Put the contact email on the site before launch.
+
+## Going live with the privacy and terms pages
+
+`/privacy/` and `/terms/` are drafts: staff can read them, everyone else gets 404, and the
+footer has no links. After the lawyer approves (and the texts are updated), add a feature flag
+named `legal_pages` in the admin and turn it on.

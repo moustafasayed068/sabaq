@@ -1,0 +1,1 @@
+{% load i18n %}{% if draft %}{% translate "مسودة: المحامي لسه بيراجعها. الصفحة دي مش ظاهرة للناس لحد ما المالك يوافق." as draft_text %}{% include "components/notice.html" with kind="warn" text=draft_text %}{% endif %}
