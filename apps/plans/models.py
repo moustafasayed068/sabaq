@@ -121,3 +121,26 @@ class CheckIn(BaseModel):
 
     def __str__(self) -> str:
         return f"Check-in {self.pk}"
+
+
+class DayStatus(models.TextChoices):
+    DONE = "done", "خلّصته"
+    MISSED = "missed", "فوّته"
+    FEEL = "feel", "حاسس بحاجة"
+
+
+class DayLog(BaseModel):
+    """What the athlete marked on a day. "حاسس بحاجة" is health data, so the status is
+    encrypted like check-ins; `flagged` is the only plain signal."""
+
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name="day_logs")
+    day = models.OneToOneField(PlanDay, on_delete=models.CASCADE, related_name="log")
+    data = EncryptedJSONField()  # {"status": DayStatus}
+    flagged = models.BooleanField(default=False, db_index=True)
+
+    def __str__(self) -> str:
+        return f"Day log {self.pk}"
+
+    @property
+    def status(self) -> str:
+        return str(self.data.get("status", "")) if isinstance(self.data, dict) else ""

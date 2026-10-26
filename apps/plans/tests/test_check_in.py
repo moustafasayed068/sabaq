@@ -26,6 +26,10 @@ def on(monkeypatch, day: date) -> None:
 
 @pytest.fixture
 def plan(client, monkeypatch) -> Plan:
+    return make_plan(client, monkeypatch)
+
+
+def make_plan(client, monkeypatch) -> Plan:
     on(monkeypatch, date(2026, 10, 27))
     q = finished(client)
     sign_in(client, q)
