@@ -27,7 +27,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 ## M1: Plan without payment (2 – 8 Nov)
 
 - [ ] `races`: Race and distances, seeded with the races in `reference/engine-js/sabaq-engine.js`; admin to add more.
-- [ ] Brand base: tokens as CSS variables (light/dark), fonts self-hosted from `brand/fonts/`, base layout RTL, components (button, chip, card, field, time input with 3 boxes, notice).
+- [x] Brand base: tokens as CSS variables (light/dark), fonts self-hosted from `brand/fonts/`, base layout RTL, components (button, chip, card, field, time input with 3 boxes, notice).
 - [ ] Landing page with "اختار سباقك".
 - [ ] Questionnaire as short steps (no JS required, HTMX enhanced), server-side validation.
 - [ ] Consent screen + health screen; health fields encrypted at the field level; staff access audited.

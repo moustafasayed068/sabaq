@@ -1,0 +1,70 @@
+/* Generated from brand/tokens.json by `manage.py build_tokens`. Do not edit. */
+:root {
+  --surface: #f4f6f5;
+  --surface-raised: #ffffff;
+  --line: #d5dedb;
+  --ink: #0f1c1b;
+  --ink-muted: #4b5f5c;
+  --faience: #0d7472;
+  --faience-soft: #d7eeec;
+  --on-faience: #ffffff;
+  --faience-deep: #0a3f3e;
+  --on-deep: #ffffff;
+  --coral: #f0532b;
+  --on-coral: #0f1c1b;
+  --sand: #e2a93b;
+  --on-sand: #0f1c1b;
+  --warn-soft: #fbe9d0;
+  --stop-soft: #fadcd3;
+  --font-display: "Alexandria", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-10: 40px;
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0c1514;
+    --surface-raised: #142120;
+    --line: #24332f;
+    --ink: #ecf2f0;
+    --ink-muted: #9db1ad;
+    --faience: #3fc2ba;
+    --faience-soft: #123b39;
+    --on-faience: #0b1514;
+    --faience-deep: #0e5653;
+    --on-deep: #ecf2f0;
+    --coral: #ff6f4a;
+    --on-coral: #0f1c1b;
+    --sand: #e9b856;
+    --on-sand: #0f1c1b;
+    --warn-soft: #3a2c12;
+    --stop-soft: #3d1c14;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0c1514;
+  --surface-raised: #142120;
+  --line: #24332f;
+  --ink: #ecf2f0;
+  --ink-muted: #9db1ad;
+  --faience: #3fc2ba;
+  --faience-soft: #123b39;
+  --on-faience: #0b1514;
+  --faience-deep: #0e5653;
+  --on-deep: #ecf2f0;
+  --coral: #ff6f4a;
+  --on-coral: #0f1c1b;
+  --sand: #e9b856;
+  --on-sand: #0f1c1b;
+  --warn-soft: #3a2c12;
+  --stop-soft: #3d1c14;
+  color-scheme: dark;
+}

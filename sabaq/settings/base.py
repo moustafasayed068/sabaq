@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.forms",
     "csp",
     "apps.core",
     "apps.accounts",
@@ -39,6 +40,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "sabaq.urls"
+# Form fields render with templates/django/forms/*.html (RTL, brand components).
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 WSGI_APPLICATION = "sabaq.wsgi.application"
 
 TEMPLATES = [
@@ -51,6 +54,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.static",
             ],
         },
     },
@@ -123,7 +127,8 @@ USE_TZ = True
 # ---------------------------------------------------------------- static files
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+# brand/ holds the self-hosted fonts and logos; served under /static/brand/.
+STATICFILES_DIRS = [BASE_DIR / "static", ("brand", BASE_DIR / "brand")]
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},

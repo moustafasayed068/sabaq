@@ -1,0 +1,112 @@
+/* Sabaq base styles: fonts, layout, components. Colours only through tokens.css variables. */
+
+@font-face { font-family: "Alexandria"; font-weight: 600; font-display: swap; src: url("../brand/fonts/Alexandria-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "Alexandria"; font-weight: 800; font-display: swap; src: url("../brand/fonts/Alexandria-ExtraBold.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans Arabic"; font-weight: 400; font-display: swap; src: url("../brand/fonts/IBMPlexSansArabic-Regular.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Sans Arabic"; font-weight: 600; font-display: swap; src: url("../brand/fonts/IBMPlexSansArabic-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../brand/fonts/IBMPlexMono-Medium.woff2") format("woff2"); }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--surface); color: var(--ink);
+  font-family: var(--font-sans); font-size: 16px; line-height: 28px;
+}
+img, svg { max-width: 100%; }
+a { color: var(--faience); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--faience); outline-offset: 2px; }
+
+/* type scale (docs/brand.md) */
+h1, h2, h3, .display, .title, .heading { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+.display { font-size: 48px; line-height: 60px; font-weight: 800; }
+h1, .title { font-size: 28px; line-height: 40px; font-weight: 800; }
+h2, .heading { font-size: 20px; line-height: 30px; font-weight: 600; }
+h3 { font-size: 16px; line-height: 28px; font-weight: 600; }
+p { margin: 0 0 var(--space-4); }
+.label { font-size: 14px; line-height: 22px; font-weight: 600; }
+.caption, small { font-size: 13px; line-height: 22px; color: var(--ink-muted); }
+/* Times, paces and distances: Western digits, left-to-right, tabular. */
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+.pace { font-family: var(--font-mono); font-size: 22px; line-height: 28px; font-weight: 500; }
+
+/* layout */
+.skip { position: absolute; inset-inline-start: var(--space-4); top: -100px; background: var(--faience); color: var(--on-faience); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); }
+.skip:focus { top: var(--space-2); }
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding-inline: max(var(--space-4), env(safe-area-inset-left, 0px));
+  padding-block: var(--space-6) var(--space-10);
+}
+.site-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-4); }
+.site-header .logo { display: block; height: 40px; width: auto; }
+.site-footer { border-top: 1px solid var(--line); margin-top: var(--space-10); padding-block: var(--space-6); }
+.stack { display: grid; gap: var(--space-4); }
+.stack-lg { display: grid; gap: var(--space-10); }
+.row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+
+/* card */
+.card { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-4); }
+@media (min-width: 600px) { .card { padding: var(--space-6); } }
+.band { background: var(--faience-deep); color: var(--on-deep); border-radius: var(--radius-md); padding: var(--space-6); }
+
+/* buttons: the stadium shape of a running track */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 44px; padding: 8px 22px; border-radius: var(--radius-pill); border: 1px solid transparent;
+  font: inherit; font-size: 15px; font-weight: 600; line-height: 22px; text-decoration: none; cursor: pointer;
+}
+.btn-primary { background: var(--faience); color: var(--on-faience); }
+.btn-race { background: var(--coral); color: var(--on-coral); }
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--ink-muted); }
+.btn-block { width: 100%; }
+.btn[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* chips (radio / checkbox) */
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.chip { position: relative; }
+.chip input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+.chip span {
+  display: inline-block; min-height: 40px; padding: 8px 16px; border-radius: var(--radius-pill);
+  border: 1px solid var(--ink-muted); background: var(--surface-raised); color: var(--ink);
+  font-size: 14px; line-height: 22px; font-weight: 600;
+}
+.chip input:checked + span { background: var(--faience); border-color: var(--faience); color: var(--on-faience); }
+.chip input:focus-visible + span { outline: 2px solid var(--faience); outline-offset: 2px; }
+
+/* fields */
+.field { display: grid; gap: 6px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.field > label, .field > legend { font-size: 14px; line-height: 22px; font-weight: 600; padding: 0; }
+.field .help { font-size: 13px; line-height: 22px; color: var(--ink-muted); margin: 0; }
+.field .errors { list-style: none; margin: 0; padding: 0; font-size: 13px; line-height: 22px; font-weight: 600; color: var(--ink); }
+.field .errors li { background: var(--stop-soft); border-radius: var(--radius-sm); padding: 4px var(--space-2); }
+.input, .field input[type=text], .field input[type=tel], .field input[type=number], .field input[type=date], .field input[type=email], .field select, .field textarea {
+  width: 100%; min-width: 0; min-height: 44px; padding: 8px 12px;
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--surface-raised);
+  border: 1px solid var(--ink-muted); border-radius: var(--radius-sm);
+}
+.field [aria-invalid="true"] { border-width: 2px; }
+.checkbox { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2); align-items: start; }
+.checkbox input { width: 20px; height: 20px; margin-top: 4px; accent-color: var(--faience); }
+
+/* time: three numeric boxes, hours : minutes : seconds (the iPhone number pad has no colon) */
+.hms { display: inline-flex; align-items: flex-start; gap: 6px; direction: ltr; }
+.hms label { display: grid; gap: 2px; justify-items: center; }
+.hms input {
+  width: 64px; min-height: 44px; text-align: center; font-family: var(--font-mono); font-size: 18px;
+  color: var(--ink); background: var(--surface-raised); border: 1px solid var(--ink-muted); border-radius: var(--radius-sm);
+}
+.hms label span { font-size: 12px; line-height: 16px; color: var(--ink-muted); }
+.hms .sep { padding-top: 10px; color: var(--ink-muted); font-family: var(--font-mono); }
+
+/* notices */
+.notice { border-radius: var(--radius-md); padding: var(--space-4); background: var(--faience-soft); color: var(--ink); }
+.notice-warn { background: var(--warn-soft); }
+.notice-stop { background: var(--stop-soft); }
+.notice-title { font-weight: 600; margin: 0 0 4px; }
+.notice p:last-child { margin-bottom: 0; }
+
+/* the runner's dot */
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--coral); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
