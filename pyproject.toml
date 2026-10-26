@@ -65,6 +65,7 @@ exclude = ["^reference/", "/migrations/"]
 module = ["*.tests.*", "conftest"]
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
+disallow_untyped_calls = false
 
 [tool.django-stubs]
 django_settings_module = "sabaq.settings.test"
