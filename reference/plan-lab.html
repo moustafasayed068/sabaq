@@ -1,0 +1,1244 @@
+<title>معمل خطط سبق</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* layout: a questionnaire rail beside a training log that reads like a race countdown, RTL */
+:root {
+  --surface: #f4f6f5; --surface-raised: #ffffff; --line: #d5dedb; --ink: #0f1c1b; --ink-muted: #4b5f5c;
+  --faience: #0d7472; --faience-soft: #d7eeec; --on-faience: #ffffff; --faience-deep: #0a3f3e; --on-deep: #ffffff;
+  --coral: #f0532b; --on-coral: #0f1c1b; --sand: #e2a93b; --on-sand: #0f1c1b;
+  --warn-soft: #fbe9d0; --stop-soft: #fadcd3;
+  --font-display: "Alexandria", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-mono: "IBM Plex Mono", "IBM Plex Sans Arabic", ui-monospace, monospace;
+  --space-2: 8px; --space-4: 16px; --space-6: 24px; --space-10: 40px;
+  --radius-sm: 6px; --radius-md: 12px; --radius-pill: 999px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #0c1514; --surface-raised: #142120; --line: #24332f; --ink: #ecf2f0; --ink-muted: #9db1ad;
+    --faience: #3fc2ba; --faience-soft: #123b39; --on-faience: #0b1514; --faience-deep: #0e5653; --on-deep: #ecf2f0;
+    --coral: #ff6f4a; --on-coral: #0f1c1b; --sand: #e9b856; --on-sand: #0f1c1b;
+    --warn-soft: #3a2c12; --stop-soft: #3d1c14; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0c1514; --surface-raised: #142120; --line: #24332f; --ink: #ecf2f0; --ink-muted: #9db1ad;
+  --faience: #3fc2ba; --faience-soft: #123b39; --on-faience: #0b1514; --faience-deep: #0e5653; --on-deep: #ecf2f0;
+  --coral: #ff6f4a; --on-coral: #0f1c1b; --sand: #e9b856; --on-sand: #0f1c1b;
+  --warn-soft: #3a2c12; --stop-soft: #3d1c14; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { direction: rtl; background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; line-height: 1.75; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: var(--space-6) var(--space-10); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+.num, .pace { font-family: var(--font-mono); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+
+/* header */
+header.top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-6); }
+.brand { display: flex; align-items: center; gap: var(--space-4); }
+.brand svg { height: 44px; width: auto; color: var(--ink); }
+.brand svg .dot { fill: var(--coral); }
+.brand h1 { font-size: 20px; line-height: 30px; font-weight: 600; color: var(--ink-muted); border-inline-start: 1px solid var(--line); padding-inline-start: var(--space-4); }
+.intro { color: var(--ink-muted); max-width: 62ch; margin: 0; font-size: 14px; line-height: 22px; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+@media (max-width: 920px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* questionnaire */
+form.q { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-4); display: grid; gap: var(--space-4); }
+@media (min-width: 921px) { form.q { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow: auto; } }
+fieldset { border: 0; margin: 0; padding: 0 0 var(--space-4); border-bottom: 1px solid var(--line); display: grid; gap: var(--space-2); min-width: 0; }
+fieldset:last-of-type { border-bottom: 0; }
+legend { font-family: var(--font-display); font-weight: 600; font-size: 15px; padding: 0; margin-bottom: var(--space-2); }
+.example { font-size: 13px; line-height: 20px; color: var(--ink-muted); background: var(--faience-soft); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); margin: 0; }
+label.f { display: grid; gap: 4px; font-size: 14px; line-height: 22px; font-weight: 600; }
+label.f small, .hint { font-weight: 400; color: var(--ink-muted); font-size: 13px; line-height: 20px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+input[type=text], input[type=number], input[type=date], select {
+  font: inherit; font-size: 15px; font-weight: 400; color: var(--ink); background: var(--surface); border: 1px solid var(--ink-muted);
+  border-radius: var(--radius-sm); padding: 6px 10px; width: 100%; min-width: 0;
+}
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible, .chip input:focus-visible + span { outline: 2px solid var(--faience); outline-offset: 2px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-block; border: 1px solid var(--ink-muted); border-radius: var(--radius-pill); padding: 2px 12px; font-size: 14px; line-height: 24px; font-weight: 600; color: var(--ink); background: var(--surface); }
+.chip input:checked + span { background: var(--faience); border-color: var(--faience); color: var(--on-faience); }
+.checks { display: grid; gap: 6px; }
+.check { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2); align-items: start; font-size: 14px; line-height: 22px; }
+.check input { margin-top: 4px; accent-color: var(--faience); width: 16px; height: 16px; }
+.btn { font: inherit; font-weight: 600; font-size: 15px; border-radius: var(--radius-pill); padding: 8px 20px; border: 1px solid transparent; cursor: pointer; }
+.btn.primary { background: var(--faience); color: var(--on-faience); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--ink-muted); }
+.btn.race { background: var(--coral); color: var(--on-coral); }
+.hms { display: inline-flex; align-items: flex-start; gap: 4px; direction: ltr; }
+.hms label { display: grid; gap: 2px; justify-items: center; }
+.hms input { width: 60px; text-align: center; font-family: var(--font-mono); }
+.hms label span { font-size: 12px; line-height: 16px; color: var(--ink-muted); font-weight: 400; }
+.hms b { padding-top: 6px; color: var(--ink-muted); }
+.f-group { display: grid; gap: 4px; font-size: 14px; line-height: 22px; font-weight: 600; min-width: 0; }
+.actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+/* result */
+.result { display: grid; gap: var(--space-6); min-width: 0; }
+.verdict { border-radius: var(--radius-md); padding: var(--space-4) var(--space-6); display: grid; gap: var(--space-2); }
+.verdict.ok { background: var(--faience-soft); }
+.verdict.risky { background: var(--warn-soft); }
+.verdict.blocked { background: var(--stop-soft); }
+.verdict .tag { font-size: 13px; font-weight: 600; letter-spacing: .02em; }
+.verdict h2 { font-size: 28px; line-height: 40px; font-weight: 800; }
+.verdict p { margin: 0; max-width: 68ch; }
+.verdict ul { margin: 0; padding-inline-start: 20px; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-2); }
+.fact { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); }
+.fact b { display: block; font-size: 13px; line-height: 20px; color: var(--ink-muted); font-weight: 400; }
+.fact span { font-size: 20px; line-height: 30px; font-weight: 600; font-family: var(--font-display); }
+.fact span.num { font-family: var(--font-mono); font-size: 20px; }
+.fact.wide { grid-column: span 2; }
+.fact.wide span { font-size: 16px; line-height: 26px; }
+@media (max-width: 560px) { .fact.wide { grid-column: 1 / -1; } }
+
+/* countdown strip: weeks as a track, the coral runner at race day */
+.strip { display: flex; align-items: center; gap: 4px; direction: rtl; }
+.strip i { flex: 1; height: 8px; border-radius: var(--radius-pill); background: var(--line); }
+.strip i.done { background: var(--faience); }
+.strip i.now { background: var(--faience); opacity: .45; }
+.strip .runner { width: 16px; height: 16px; border-radius: 50%; background: var(--coral); flex: none; }
+.strip-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-muted); }
+
+.paces { width: 100%; border-collapse: collapse; font-size: 14px; }
+.paces th, .paces td { text-align: start; padding: 6px 10px; border-bottom: 1px solid var(--line); }
+.paces th { font-weight: 600; color: var(--ink-muted); font-size: 13px; }
+.tablebox { overflow-x: auto; background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); }
+
+.notes { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 14px; line-height: 22px; color: var(--ink-muted); }
+.notes li::before { content: "• "; color: var(--faience); }
+
+.week { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden; }
+.week.frozen { opacity: .75; }
+.week > header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; padding: var(--space-4) var(--space-4) var(--space-2); }
+.week h3 { font-size: 20px; line-height: 30px; font-weight: 600; }
+.week .meta { font-size: 13px; color: var(--ink-muted); }
+.phase { display: inline-block; font-size: 13px; font-weight: 600; line-height: 22px; padding: 0 10px; border-radius: var(--radius-pill); background: var(--faience-soft); color: var(--ink); margin-inline-start: var(--space-2); vertical-align: middle; font-family: var(--font-sans); }
+.days { list-style: none; margin: 0; padding: 0; }
+.days > li { border-top: 1px solid var(--line); }
+.days details > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: var(--space-2); align-items: center; padding: 10px var(--space-4); }
+.days details > summary::-webkit-details-marker { display: none; }
+.d-when { font-size: 13px; line-height: 18px; color: var(--ink-muted); }
+.d-when b { display: block; color: var(--ink); font-size: 14px; }
+.d-title { font-weight: 600; min-width: 0; }
+.d-km { font-size: 14px; color: var(--ink-muted); white-space: nowrap; }
+.d-km .num { font-size: 14px; }
+.kind { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 8px; vertical-align: middle; border: 2px solid var(--ink-muted); }
+.kind.easy { border-color: var(--faience); }
+.kind.long { background: var(--faience); border-color: var(--faience); }
+.kind.quality { background: var(--ink); border-color: var(--ink); }
+.kind.strength { border-color: var(--ink); border-radius: 2px; }
+.kind.race { background: var(--coral); border-color: var(--coral); width: 12px; height: 12px; }
+.kind.rest { border-style: dashed; }
+.steps { margin: 0; padding: 0 var(--space-4) var(--space-4); padding-inline-start: calc(var(--space-4) + 100px); display: grid; gap: 4px; font-size: 14px; line-height: 24px; }
+@media (max-width: 560px) { .steps { padding-inline-start: var(--space-4); } .days details > summary { grid-template-columns: 76px minmax(0, 1fr) auto; } }
+.steps p { margin: 0; }
+.steps .extra { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--line); }
+.steps .extra b { font-size: 13px; }
+.rest-row { display: grid; grid-template-columns: 92px 1fr; gap: var(--space-2); padding: 8px var(--space-4); color: var(--ink-muted); font-size: 14px; }
+@media (max-width: 560px) { .rest-row { grid-template-columns: 76px 1fr; } }
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: 13px; color: var(--ink-muted); }
+
+/* check-in */
+.checkin { border-top: 1px solid var(--line); background: var(--surface); padding: var(--space-4); display: grid; gap: var(--space-4); }
+.checkin h4 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+.checkin .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4); }
+.feedback { font-size: 14px; line-height: 22px; background: var(--faience-soft); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); margin: 0 var(--space-4) var(--space-4); }
+.feedback p { margin: 0; }
+.paused { background: var(--stop-soft); border-radius: var(--radius-md); padding: var(--space-4) var(--space-6); display: grid; gap: var(--space-2); }
+
+/* rules */
+.rules { background: var(--surface-raised); border: 1px solid var(--line); border-radius: var(--radius-md); }
+.rules > summary { cursor: pointer; padding: var(--space-4); font-family: var(--font-display); font-weight: 600; font-size: 18px; }
+.rules .body { padding: 0 var(--space-4) var(--space-4); display: grid; gap: var(--space-4); font-size: 14px; line-height: 24px; }
+.rules h4 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 15px; }
+.rules ul { margin: 0; padding-inline-start: 20px; }
+@media (prefers-reduced-motion: no-preference) { .week { transition: opacity .2s; } }
+</style>
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header class="top">
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 283 137" role="img" aria-label="سبق"><path fill="currentColor" d="M91.4 90.9V70.7H119.2V90.9ZM119.2 90.9V70.7Q120.10000000000001 70.7 120.65 73.45Q121.2 76.2 121.2 80.7Q121.2 85.30000000000001 120.65 88.10000000000001Q120.10000000000001 90.9 119.2 90.9ZM62.800000000000004 125.20000000000002Q52.300000000000004 125.20000000000002 44.0 121.45000000000002Q35.7 117.7 29.900000000000002 111.1Q24.1 104.5 21.05 95.75Q18.0 87.0 18.0 76.9Q18.0 71.60000000000001 18.9 66.2Q19.8 60.800000000000004 21.3 56.00000000000001L37.5 59.10000000000001Q36.400000000000006 63.900000000000006 35.900000000000006 68.10000000000001Q35.400000000000006 72.30000000000001 35.400000000000006 75.80000000000001Q35.400000000000006 85.4 38.800000000000004 91.9Q42.2 98.4 48.300000000000004 101.7Q54.400000000000006 105.0 62.6 105.0Q71.0 105.0 77.2 101.65Q83.4 98.30000000000001 86.85 92.0Q90.3 85.7 90.3 76.80000000000001V39.0L107.60000000000001 41.6V76.80000000000001Q107.60000000000001 86.9 104.55000000000001 95.7Q101.5 104.5 95.7 111.1Q89.9 117.7 81.55000000000001 121.45000000000002Q73.2 125.20000000000002 62.800000000000004 125.20000000000002ZM85.7 90.9Q76.80000000000001 90.9 70.15 87.2Q63.5 83.5 59.85 77.35Q56.2 71.2 56.2 63.800000000000004Q56.2 57.800000000000004 58.45 52.800000000000004Q60.7 47.800000000000004 64.80000000000001 44.050000000000004Q68.9 40.300000000000004 74.25 38.2Q79.60000000000001 36.1 85.8 36.1Q91.80000000000001 36.1 97.5 37.85Q103.2 39.6 107.60000000000001 41.6L100.60000000000001 59.5Q91.9 55.400000000000006 85.8 55.400000000000006Q82.0 55.400000000000006 79.3 56.550000000000004Q76.6 57.7 75.1 59.550000000000004Q73.6 61.400000000000006 73.6 63.400000000000006Q73.6 65.2 74.95 66.85Q76.30000000000001 68.5 79.0 69.6Q81.7 70.7 85.7 70.7H102.10000000000001V90.9ZM94.5 27.200000000000003Q91.2 27.200000000000003 89.05000000000001 25.1Q86.9 23.0 86.9 19.700000000000003Q86.9 16.299999999999997 89.05000000000001 14.149999999999999Q91.2 12.0 94.5 12.0Q97.9 12.0 100.0 14.149999999999999Q102.1 16.299999999999997 102.1 19.700000000000003Q102.1 23.0 100.0 25.1Q97.9 27.200000000000003 94.5 27.200000000000003ZM77.1 27.200000000000003Q73.8 27.200000000000003 71.65 25.1Q69.5 23.0 69.5 19.700000000000003Q69.5 16.299999999999997 71.65 14.149999999999999Q73.8 12.0 77.1 12.0Q80.5 12.0 82.65 14.149999999999999Q84.8 16.299999999999997 84.8 19.700000000000003Q84.8 23.0 82.65 25.1Q80.5 27.200000000000003 77.1 27.200000000000003ZM119.2 90.9V70.7H124.9Q128.7 70.7 130.7 69.95Q132.7 69.2 133.5 67.4Q134.3 65.60000000000001 134.3 62.300000000000004V38.400000000000006H151.7V62.300000000000004Q151.7 71.2 148.45 77.6Q145.2 84.0 139.25 87.4Q133.3 90.80000000000001 124.9 90.9ZM161.10000000000002 90.9Q152.7 90.9 146.7 87.5Q140.7 84.10000000000001 137.5 77.65Q134.3 71.2 134.3 62.300000000000004H151.7Q151.7 65.60000000000001 152.45 67.4Q153.2 69.2 155.25 69.95Q157.3 70.7 161.10000000000002 70.7H164.5V90.9ZM164.5 90.9V70.7Q165.4 70.7 165.95 73.45Q166.5 76.2 166.5 80.7Q166.5 85.30000000000001 165.95 88.10000000000001Q165.4 90.9 164.5 90.9ZM119.2 90.9Q118.3 90.9 117.75 88.10000000000001Q117.2 85.30000000000001 117.2 80.7Q117.2 76.2 117.75 73.45Q118.3 70.7 119.2 70.7ZM241.60000000000002 90.9Q236.3 90.9 231.45 88.45Q226.6 86.0 223.39999999999998 80.80000000000001Q220.2 75.60000000000001 219.9 67.60000000000001L229.60000000000002 63.0Q229.7 67.10000000000001 232.3 69.25Q234.9 71.4 237.9 71.4Q241.10000000000002 71.4 243.65 69.15Q246.2 66.9 246.2 62.300000000000004V38.400000000000006H263.6V65.9Q263.6 74.5 260.4 80.05000000000001Q257.2 85.60000000000001 252.2 88.25Q247.2 90.9 241.60000000000002 90.9ZM164.5 90.9V70.7H170.1Q174.0 70.7 176.0 69.95Q178.0 69.2 178.8 67.4Q179.6 65.60000000000001 179.6 62.300000000000004V48.2H196.9V62.300000000000004Q196.9 71.2 193.7 77.65Q190.5 84.10000000000001 184.55 87.5Q178.6 90.9 170.1 90.9ZM208.4 90.9Q203.1 90.9 198.25 88.45Q193.4 86.0 190.15 80.80000000000001Q186.9 75.60000000000001 186.6 67.60000000000001L196.3 63.0Q196.5 67.10000000000001 199.1 69.25Q201.7 71.4 204.7 71.4Q207.9 71.4 210.45 69.15Q213.0 66.9 213.0 62.300000000000004V43.300000000000004H230.4V65.9Q230.4 74.5 227.2 80.05000000000001Q224.0 85.60000000000001 219.0 88.25Q214.0 90.9 208.4 90.9ZM164.5 90.9Q163.6 90.9 163.05 88.10000000000001Q162.5 85.30000000000001 162.5 80.7Q162.5 76.2 163.05 73.45Q163.6 70.7 164.5 70.7Z"/><circle class="dot" cx="141.7" cy="111.5" r="10.4"/></svg>
+      <h1>معمل الخطط</h1>
+    </div>
+    <p class="intro">جرّب محرّك الخطط بأرقام حقيقية: جاوب الأسئلة، وشوف الخطة كاملة لحد يوم السباق، وسجّل أسبوع عشان تشوف الخطة بتتظبط إزاي لو حد تعب أو فوّت تمارين.</p>
+  </header>
+
+  <div class="grid">
+    <form class="q" id="q" novalidate>
+      <p class="example">الأرقام اللي متعبّية مثال لمتسابق متوسط. غيّرها لأرقامك.</p>
+
+      <fieldset>
+        <legend>السباق</legend>
+        <label class="f">أنهي سباق؟
+          <select id="race"></select>
+        </label>
+        <div id="customRace" class="row2" hidden>
+          <label class="f">اسم السباق<input type="text" id="cName" value="سباقي"></label>
+          <label class="f">التاريخ<input type="date" id="cDate"></label>
+          <label class="f">النوع
+            <select id="cType"><option value="run">جري</option><option value="hyrox">HYROX</option></select>
+          </label>
+        </div>
+        <label class="f" id="distWrap">المسافة
+          <select id="dist"></select>
+        </label>
+        <label class="f">هتبدأ الخطة إمتى؟<input type="date" id="start"></label>
+        <p class="hint" id="raceNote" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>انت</legend>
+        <div class="row2">
+          <label class="f">السن<input type="number" id="age" min="10" max="90" value="28" inputmode="numeric"></label>
+          <label class="f">النوع
+            <select id="sex"><option value="m">راجل</option><option value="f">ست</option></select>
+          </label>
+        </div>
+        <label class="f">الوزن بالكيلو <small>اختياري: بنحسب بيه أكل يوم السباق بس. الطول مش محتاجينه.</small><input type="number" id="weight" min="30" max="200" value="72" inputmode="numeric"></label>
+      </fieldset>
+
+      <fieldset>
+        <legend>جريك دلوقتي</legend>
+        <div class="row2">
+          <label class="f">بتجري كام مرة في الأسبوع؟<input type="number" id="runs" min="0" max="14" value="3" inputmode="numeric"></label>
+          <label class="f">كام كيلو في الأسبوع؟<input type="number" id="weekly" min="0" max="200" value="20" inputmode="decimal"></label>
+        </div>
+        <label class="f">أطول جري جريته الشهر ده (كم)<input type="number" id="longest" min="0" max="60" value="10" inputmode="decimal"></label>
+        <label class="f">آخر سباق أو تجربة
+          <select id="rKm"><option value="5">5 كم</option><option value="10">10 كم</option><option value="21.1">نص ماراثون</option></select>
+        </label>
+        <div class="f-group">وقتك فيها <small class="hint">لو مش فاكره سيبه فاضي</small><div class="hms" id="rTime" data-hours="1"></div></div>
+        <label class="f">إصابات قبل كده
+          <select id="injury"><option value="none">مفيش</option><option value="knee">ركبة</option><option value="shin">قصبة الرجل</option><option value="foot">كاحل أو قدم</option><option value="back">ضهر</option><option value="other">حاجة تانية</option></select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>هدفك</legend>
+        <div class="chips" role="radiogroup" aria-label="الهدف">
+          <label class="chip"><input type="radio" name="goal" value="finish" checked><span>أخلّص وبس</span></label>
+          <label class="chip"><input type="radio" name="goal" value="time"><span>وقت معيّن</span></label>
+        </div>
+        <div class="f-group" id="goalWrap" hidden>الوقت اللي عايزه<div class="hms" id="goalTime" data-hours="1"></div></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>أيامك</legend>
+        <p class="hint">اختار الأيام اللي تقدر تتمرن فيها (3 لـ 6). الجري الطويل بيروح الجمعة لو اخترتها.</p>
+        <div class="chips" id="days"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>إمكانياتك</legend>
+        <label class="f">بتجري فين؟
+          <select id="where">
+            <option value="outdoor">في الشارع أو النادي</option>
+            <option value="treadmill">على المشاية بس</option>
+            <option value="track">على تراك</option>
+            <option value="mixed">الاتنين: برة وعلى المشاية</option>
+          </select>
+        </label>
+        <label class="f" id="gpsWrap">بتقيس المسافة بإيه؟
+          <select id="gps"><option value="1">ساعة أو موبايل بيقيس المسافة</option><option value="0">مفيش: بقيس بالوقت بس</option></select>
+        </label>
+        <div>
+          <p class="hint" style="margin:0 0 6px">عندك إيه من الأدوات؟</p>
+          <div class="chips" id="kit"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>صحتك</legend>
+        <p class="hint">علّم أي حاجة تنطبق عليك.</p>
+        <div class="checks" id="health"></div>
+        <label class="check"><input type="checkbox" id="painNow"><span>عندي وجع دلوقتي بيزيد مع الجري</span></label>
+        <label class="check" id="clearedWrap" hidden><input type="checkbox" id="cleared"><span><b>كشفت والدكتور وافق إني أتمرن</b></span></label>
+      </fieldset>
+
+      <div class="actions">
+        <button class="btn primary" type="submit">اعمل الخطة</button>
+        <button class="btn ghost" type="button" id="reset">رجّع المثال</button>
+      </div>
+    </form>
+
+    <section class="result" id="result" aria-live="polite"></section>
+  </div>
+</div>
+
+<script>
+/*
+ * Sabaq plan engine (محرّك خطط سبق)
+ * Builds a full race plan from a small workout library + safety rules.
+ * Pure functions, no DOM. Works in the browser (window.SabaqEngine) and Node (module.exports).
+ *
+ * Main entry points:
+ *   screen(healthAnswers)            -> { ok, reasons[] }
+ *   generate(input)                  -> plan  (status: 'ok' | 'risky' | 'blocked')
+ *   checkIn(input, plan, weekIndex, feedback) -> { action, messages[], input }  (feed result.input back into generate)
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.SabaqEngine = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- dates (UTC, 'YYYY-MM-DD')
+  const DAY = 86400000;
+  const toDate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); };
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const addDays = (s, n) => iso(new Date(toDate(s).getTime() + n * DAY));
+  const diffDays = (a, b) => Math.round((toDate(b) - toDate(a)) / DAY);
+  const weekday = (s) => toDate(s).getUTCDay(); // 0 = Sunday
+  // Egyptian week runs Saturday -> Friday. Position 0..6 in that week.
+  const egPos = (wd) => (wd + 1) % 7;
+  const DAY_NAMES = ['الأحد', 'الاتنين', 'التلات', 'الأربع', 'الخميس', 'الجمعة', 'السبت'];
+
+  // ---------------------------------------------------------------- races
+  const RACES = [
+    { id: 'hyrox-cairo', name: 'HYROX Cairo', type: 'hyrox', date: '2026-11-14', note: 'السباق يومين 14 و15 نوفمبر: اختار يوم موجتك.' },
+    { id: 'gouna', name: 'نص ماراثون الجونة', type: 'run', date: '2026-11-21', distances: [5, 10, 21.1] },
+    { id: 'hyrox-dubai', name: 'HYROX Dubai', type: 'hyrox', date: '2026-11-27' },
+    { id: 'sharm', name: 'ماراثون شرم الشيخ', type: 'run', date: '2026-11-28', distances: [5, 10, 21.1, 42.2] },
+    { id: 'pyramids', name: 'نص ماراثون الأهرامات', type: 'run', date: '2026-12-12', distances: [5, 10, 21.1], dateByDistance: { 5: '2026-12-11' } },
+    { id: 'luxor', name: 'ماراثون الأقصر', type: 'run', date: '2027-01-08', distances: [5, 10, 21.1, 42.2] },
+  ];
+  const DIST_NAME = { 5: '5 كم', 10: '10 كم', 21.1: 'نص ماراثون (21.1 كم)', 42.2: 'ماراثون (42.2 كم)' };
+
+  // ---------------------------------------------------------------- health screen (PAR-Q style)
+  const HEALTH_QUESTIONS = [
+    { id: 'heart', text: 'دكتور قالك قبل كده إن عندك مشكلة في القلب، أو إنك تتمرن تحت إشراف طبي بس؟' },
+    { id: 'chestActive', text: 'بتحس بوجع في صدرك وانت بتتمرن أو بتعمل مجهود؟' },
+    { id: 'chestRest', text: 'حسيت بوجع في صدرك وانت مرتاح في آخر شهر؟' },
+    { id: 'dizzy', text: 'بتدوخ لدرجة إنك تفقد توازنك، أو أغمى عليك قبل كده؟' },
+    { id: 'joint', text: 'عندك وجع دلوقتي في عضمة أو مفصل بيزيد مع الحركة؟' },
+    { id: 'meds', text: 'بتاخد دوا للضغط أو للقلب؟' },
+    { id: 'pregnant', text: 'حامل أو ولدتي في آخر 6 شهور؟' },
+    { id: 'other', text: 'في أي سبب تاني تعرفه يخليك متتمرنش؟' },
+  ];
+  function screen(answers) {
+    const reasons = HEALTH_QUESTIONS.filter((q) => answers && answers[q.id]).map((q) => q.id);
+    return { ok: reasons.length === 0, reasons };
+  }
+
+  // ---------------------------------------------------------------- paces (Daniels & Gilbert VDOT formulas)
+  const vo2At = (v) => -4.6 + 0.182258 * v + 0.000104 * v * v; // v in m/min
+  const pctMax = (t) => 0.8 + 0.1894393 * Math.exp(-0.012778 * t) + 0.2989558 * Math.exp(-0.1932605 * t); // t in min
+  const vdotFrom = (km, sec) => { const t = sec / 60; return vo2At((km * 1000) / t) / pctMax(t); };
+  const speedForVo2 = (vo2) => { const a = 0.000104, b = 0.182258, c = -(4.6 + vo2); return (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a); };
+  const paceAt = (vdot, frac) => 60000 / speedForVo2(vdot * frac); // sec per km
+  function predictTime(vdot, km) { // seconds
+    let lo = 5, hi = 900;
+    for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (vdotFrom(km, mid * 60) > vdot) lo = mid; else hi = mid; }
+    return ((lo + hi) / 2) * 60;
+  }
+  function paceTable(vdot) {
+    return {
+      easySlow: paceAt(vdot, 0.62), easy: paceAt(vdot, 0.70), easyFast: paceAt(vdot, 0.74),
+      marathon: paceAt(vdot, 0.80), tempo: paceAt(vdot, 0.88), interval: paceAt(vdot, 0.975), rep: paceAt(vdot, 1.04),
+    };
+  }
+  const fmtPace = (s) => { s = Math.round(s); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+  const fmtTime = (s) => { s = Math.round(s); const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60; return h ? `${h}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}` : `${m}:${String(x).padStart(2, '0')}`; };
+  const parseTime = (str) => { if (!str) return null; const p = String(str).trim().split(':').map(Number); if (p.some(isNaN)) return null; return p.reduce((a, b) => a * 60 + b, 0) || null; };
+  // "28" = 28 minutes, "28:00" = mm:ss, "1:55" for a half = h:mm, Arabic digits and "." or "," accepted.
+  // A reading counts only if its pace is between 2:30 and 15:00 per km.
+  const MIN_PACE = 150, MAX_PACE = 900;
+  function parseDuration(str, km) {
+    if (str === null || str === undefined || String(str).trim() === '' || !km) return null;
+    const norm = String(str).trim().replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[.,،:؛]+/g, ':');
+    const p = norm.split(':').filter((x) => x !== '').map(Number);
+    if (!p.length || p.length > 3 || p.some((x) => !isFinite(x) || x < 0)) return null;
+    const cands = p.length === 1 ? [p[0] * 60, p[0] * 3600] : p.length === 2 ? [p[0] * 60 + p[1], p[0] * 3600 + p[1] * 60] : [p[0] * 3600 + p[1] * 60 + p[2]];
+    return cands.find((sec) => sec / km >= MIN_PACE && sec / km <= MAX_PACE) || null;
+  }
+
+  // ---------------------------------------------------------------- targets per distance and level
+  const TARGET = {
+    5: { peakLong: { beginner: 5, intermediate: 7, advanced: 10 }, minLong: 4, peakWeekly: { beginner: 15, intermediate: 25, advanced: 40 } },
+    10: { peakLong: { beginner: 8, intermediate: 11, advanced: 14 }, minLong: 7, peakWeekly: { beginner: 20, intermediate: 32, advanced: 50 } },
+    21.1: { peakLong: { beginner: 15, intermediate: 18, advanced: 20 }, minLong: 13, peakWeekly: { beginner: 28, intermediate: 40, advanced: 60 } },
+    42.2: { peakLong: { beginner: 28, intermediate: 30, advanced: 32 }, minLong: 24, peakWeekly: { beginner: 45, intermediate: 55, advanced: 75 } },
+  };
+  const LEVEL_NAME = { beginner: 'مبتدئ', intermediate: 'متوسط', advanced: 'متقدم' };
+  function levelOf(inp) {
+    const w = +inp.weeklyKm || 0, L = +inp.longestKm || 0, r = +inp.runsPerWeek || 0;
+    if (r < 2 || w < 10 || L < 5) return 'beginner';
+    if (w < 30 || L < 12) return 'intermediate';
+    return 'advanced';
+  }
+
+  // ---------------------------------------------------------------- equipment
+  // input.env = { where: 'outdoor'|'treadmill'|'track'|'mixed', gps: bool, kit: ['dumbbells','gym','rower','skierg','sled','wallball','sandbag'] }
+  const has = (env, k) => !!(env && env.kit && env.kit.includes(k)) || (k === 'treadmill' && env && (env.where === 'treadmill' || env.where === 'mixed')) || (k === 'dumbbells' && env && env.kit && env.kit.includes('gym'));
+  const EFFORT = {
+    easy: 'سهل: تقدر تتكلم جمل كاملة', long: 'سهل: تقدر تتكلم جمل كاملة', marathon: 'ثابت ومريح: تقدر تتكلم جمل قصيرة',
+    tempo: 'صعب بس متحكم فيه: تقدر تقول كلمتين', interval: 'صعب: الكلام صعب', race: 'سرعة السباق', rep: 'سريع ومرتاح، مش سباق',
+  };
+  // fallback paces (sec/km) when we have no race time: used only to turn km into minutes
+  const DEFAULT_EASY = { beginner: 465, intermediate: 405, advanced: 345 };
+  const REL = { easy: 1, long: 1.02, marathon: 0.9, tempo: 0.85, interval: 0.79, rep: 0.75, race: 0.88 };
+
+  function paceFor(ctx, key) {
+    if (ctx.paces) return key === 'race' ? ctx.racePace : key === 'long' ? ctx.paces.easy * 1.02 : ctx.paces[key];
+    return null;
+  }
+  function roughPace(ctx, key) { return paceFor(ctx, key) || DEFAULT_EASY[ctx.level] * (REL[key] || 1); }
+
+  // one run segment, written for where and how the athlete runs
+  function seg(ctx, km, key) {
+    const env = ctx.env, p = paceFor(ctx, key);
+    const kmTxt = km >= 1 ? `${round1(km)} كم` : `${Math.round(km * 1000)} م`;
+    if (env.where === 'treadmill') {
+      return p ? `${kmTxt} على المشاية بسرعة ${round1(3600 / p)} كم/س، ميل 1%` : `${kmTxt} على المشاية، ${EFFORT[key]}، ميل 1%`;
+    }
+    if (env.where === 'track' && km < 2) {
+      const laps = (km * 1000) / 400;
+      const lapTxt = laps === 1 ? 'لفة' : `${round1(laps)} لفة`;
+      return p ? `${lapTxt} (${Math.round(km * 1000)} م) في ${fmtPace(p * km)}` : `${lapTxt} (${Math.round(km * 1000)} م)، ${EFFORT[key]}`;
+    }
+    if (!env.gps && env.where === 'outdoor') {
+      const mins = Math.max(1, Math.round((roughPace(ctx, key) * km) / 60));
+      return p ? `${mins} دقيقة بسرعة ${fmtPace(p)} /كم تقريبًا` : `${mins} دقيقة، ${EFFORT[key]}`;
+    }
+    return p ? `${kmTxt} بسرعة ${fmtPace(p)} /كم` : `${kmTxt}، ${EFFORT[key]}`;
+  }
+  const round1 = (x) => Math.round(x * 10) / 10;
+  const roundHalf = (x) => Math.round(x * 2) / 2;
+
+  // ---------------------------------------------------------------- strength library
+  function strengthSession(ctx, light) {
+    const sets = light ? 2 : 3;
+    let moves;
+    if (has(ctx.env, 'gym')) moves = [`سكوات بالبار أو ليج بريس ${sets} × 8`, `رفعة رومانية ${sets} × 8`, `ستيب أب ${sets} × 8 لكل رجل`, `رفع سمانة على الجهاز ${sets} × 15`, `بلانك ${sets} × 45 ثانية`];
+    else if (has(ctx.env, 'dumbbells')) moves = [`جوبلت سكوات بدمبل ${sets} × 10`, `رفعة رومانية بالدمبل ${sets} × 10`, `ستيب أب على كرسي بدمبل ${sets} × 8 لكل رجل`, `رفع سمانة بدمبل ${sets} × 15`, `بلانك جانبي ${sets} × 30 ثانية لكل ناحية`];
+    else moves = [`سكوات ${sets} × 15`, `لانجز ${sets} × 10 لكل رجل`, `رفع سمانة على رجل واحدة ${sets} × 15`, `جسر (Glute bridge) ${sets} × 15`, `بلانك ${sets} × 40 ثانية`];
+    if (ctx.injury === 'knee') moves = moves.map((m) => m.replace(/لانجز[^]*/, `جسر على رجل واحدة ${sets} × 10 لكل رجل`));
+    return moves;
+  }
+
+  // ---------------------------------------------------------------- HYROX stations, with substitutes
+  const STATIONS = [
+    { id: 'ski', name: 'SkiErg', race: '1000 م', kit: 'skierg', work: (r) => `SkiErg ${r * 250} م`, subs: [{ kit: 'rower', text: (r) => `تجديف ${r * 250} م (بدل SkiErg)` }, { kit: null, text: () => 'أستك أو حبل: سحب لتحت بدراع مفرود 4 × 40 ثانية (بدل SkiErg)' }] },
+    { id: 'push', name: 'Sled Push', race: '50 م', kit: 'sled', work: (r) => `Sled Push ${r} × 12.5 م تقيل`, subs: [{ kit: 'treadmill', text: () => 'زق المشاية وهي مقفولة 4 × 20 ثانية (بدل Sled Push)' }, { kit: null, text: () => 'زق الحيطة بكل قوتك 4 × 20 ثانية + لانجز ماشي 4 × 10 م (بدل Sled Push)' }] },
+    { id: 'pull', name: 'Sled Pull', race: '50 م', kit: 'sled', work: (r) => `Sled Pull ${r} × 12.5 م`, subs: [{ kit: 'dumbbells', text: () => 'تجديف بدمبل تقيل 4 × 10 لكل إيد + مشي لورا 4 × 20 م (بدل Sled Pull)' }, { kit: null, text: () => 'حبل أو أستك مربوط: سحب وانت ماشي لورا 4 × 20 م (بدل Sled Pull)' }] },
+    { id: 'bbj', name: 'Burpee Broad Jumps', race: '80 م', kit: null, work: (r) => `Burpee Broad Jumps ${r * 20} م` },
+    { id: 'row', name: 'Rowing', race: '1000 م', kit: 'rower', work: (r) => `تجديف ${r * 250} م`, subs: [{ kit: 'skierg', text: (r) => `SkiErg ${r * 250} م (بدل التجديف)` }, { kit: 'dumbbells', text: () => 'سوينج بالكيتل أو الدمبل 4 × 20 (بدل التجديف)' }, { kit: null, text: () => 'بيربي 4 × 10 + سكوات 4 × 20 (بدل التجديف)' }] },
+    { id: 'farm', name: 'Farmers Carry', race: '200 م', kit: 'dumbbells', work: (r, sex) => `Farmers Carry ${r * 50} م بـ ${sex === 'f' ? '2 × 16' : '2 × 24'} كجم`, subs: [{ kit: null, text: (r) => `شيل شنطتين مليانين أزايز مية وامشي ${r * 50} م (بدل Farmers Carry)` }] },
+    { id: 'lunge', name: 'Sandbag Lunges', race: '100 م', kit: 'sandbag', work: (r, sex) => `Sandbag Lunges ${r * 25} م بـ ${sex === 'f' ? '10' : '20'} كجم`, subs: [{ kit: null, text: (r) => `لانجز ماشي بشنطة ضهر فيها كتب أو أزايز ${r * 25} م (بدل Sandbag Lunges)` }] },
+    { id: 'wb', name: 'Wall Balls', race: '100 رمية', kit: 'wallball', work: (r, sex) => `Wall Balls ${r * 25} رمية بكورة ${sex === 'f' ? '4' : '6'} كجم`, subs: [{ kit: 'dumbbells', text: (r) => `Thrusters بالدمبل ${r * 15} عدة (بدل Wall Balls)` }, { kit: null, text: (r) => `سكوات + رمي شنطة رمل لفوق ${r * 20} عدة (بدل Wall Balls)` }] },
+  ];
+  function stationText(ctx, st, r) {
+    if (!st.kit || has(ctx.env, st.kit)) return st.work(r, ctx.sex);
+    const sub = st.subs.find((s) => s.kit === null || has(ctx.env, s.kit));
+    return sub.text(r);
+  }
+  const missingStations = (ctx) => STATIONS.filter((s) => s.kit && !has(ctx.env, s.kit)).map((s) => s.name);
+
+  // ---------------------------------------------------------------- workouts (each returns a day entry)
+  const W = {
+    easy(ctx, km, opts = {}) {
+      if (ctx.runWalk) {
+        const run = Math.min(2 + ctx.weekIdx, 6), sets = Math.max(4, Math.round((roughPace(ctx, 'easy') * km) / 60 / (run + 1)));
+        return day('easy', 'جري ومشي', 1, km, [`إحماء: مشي سريع 5 دقايق`, `جري ${run} دقايق + مشي دقيقة، كرر ${sets} مرات`, 'جري الجزء ده سهل جدًا، المهم تكمّل.'], opts);
+      }
+      const steps = [seg(ctx, km, 'easy')];
+      if (opts.strides) steps.push('في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم');
+      return day('easy', opts.strides ? 'جري سهل + تسارعات' : 'جري سهل', 1, km, steps, opts);
+    },
+    long(ctx, km, opts = {}) {
+      const steps = [];
+      if (ctx.runWalk) {
+        const run = Math.min(3 + ctx.weekIdx, 8), sets = Math.max(4, Math.round((roughPace(ctx, 'long') * km) / 60 / (run + 1)));
+        steps.push(`جري ${run} دقايق + مشي دقيقة، كرر ${sets} مرات`);
+      } else if (opts.racePaceKm) {
+        steps.push(seg(ctx, km - opts.racePaceKm, 'long'), `آخر ${opts.racePaceKm} كم بسرعة السباق: ${seg(ctx, opts.racePaceKm, 'race')}`);
+      } else steps.push(seg(ctx, km, 'long'));
+      if (km >= 14) steps.push('خد مية معاك، ولو الجري أكتر من ساعة جرّب جل أو تمر كل 40 دقيقة زي يوم السباق.');
+      return day('long', 'الجري الطويل', 2, km, steps, opts);
+    },
+    strides(ctx, km) {
+      return W.easy(ctx, km, { strides: true });
+    },
+    tempo(ctx, mins) {
+      const tp = paceFor(ctx, 'tempo') || roughPace(ctx, 'tempo');
+      const km = round1((mins * 60) / tp);
+      return day('quality', 'تيمبو', 3, round1(km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')}`, `${mins} دقيقة تيمبو: ${seg(ctx, km, 'tempo')}`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+    },
+    cruise(ctx, reps, km) {
+      return day('quality', 'تيمبو متقطع', 3, round1(reps * km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')}`, `${reps} × (${seg(ctx, km, 'tempo')})، وراحة دقيقة جري خفيف`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+    },
+    intervals(ctx, reps, km, restMin) {
+      return day('quality', 'إنترفال', 4, round1(reps * km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')} + 4 تسارعات قصيرة`, `${reps} × (${seg(ctx, km, 'interval')})، وراحة ${restMin} دقيقة جري خفيف أو مشي`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+    },
+    hills(ctx, reps) {
+      const work = ctx.env.where === 'treadmill' ? `${reps} × 60 ثانية جري على ميل 5% بمجهود صعب، ونزّل الميل وامشي 90 ثانية بينهم` : `${reps} × 60 ثانية طلوع على طلعة أو كوبري بمجهود صعب، وانزل ماشي`;
+      return day('quality', 'طلعات', 3, round1(3.5 + reps * 0.25), [`إحماء: ${seg(ctx, 2, 'easy')}`, work, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+    },
+    sharpener(ctx) {
+      if (ctx.runWalk || ctx.level === 'beginner') return W.easy(ctx, 3, { strides: true });
+      return day('quality', 'تنشيط قبل السباق', 2, 6, [`إحماء: ${seg(ctx, 2, 'easy')}`, `3 × (${seg(ctx, 1, 'race')})، وراحة دقيقتين`, `تهدئة: ${seg(ctx, 1, 'easy')}`, 'خفيف ومريح. الهدف إن رجلك تفتكر سرعة السباق، مش إنك تتعب.']);
+    },
+    shakeout(ctx) {
+      return day('easy', 'جري خفيف جدًا', 1, 2.5, [seg(ctx, 2.5, 'easy'), 'جهّز لبسك ورقمك والأكل اللي هتاكله الصبح من النهارده.']);
+    },
+    // HYROX
+    compromised(ctx, rounds, raceEffort) {
+      const order = STATIONS.slice(0, rounds);
+      const steps = [`إحماء: ${seg(ctx, 1.5, 'easy')}`];
+      order.forEach((st, i) => steps.push(`${i + 1}. ${seg(ctx, 1, raceEffort ? 'race' : 'tempo')} ← ثم ${stationText(ctx, st, raceEffort ? 2 : 3)}`));
+      steps.push('بعد كل محطة اطلع تجري على طول، ده أهم جزء في التمرين.');
+      return day('quality', raceEffort ? 'محاكاة السباق' : 'جري + محطات', 4, rounds + 1.5, steps);
+    },
+    stations(ctx, sets) {
+      const picks = ctx.weekIdx % 2 === 0 ? ['push', 'pull', 'farm', 'wb'] : ['ski', 'row', 'lunge', 'bbj'];
+      const steps = picks.map((id) => `${stationText(ctx, STATIONS.find((s) => s.id === id), sets)}`);
+      steps.unshift(`${sets} جولات، راحة دقيقتين بين كل جولة:`);
+      steps.push(...strengthSession(ctx, sets < 3).slice(0, 2).map((m) => `قوة: ${m}`));
+      return day('strength', 'محطات وقوة', 3, 0, steps);
+    },
+    hyroxIntervals(ctx, reps) {
+      return day('quality', 'إنترفال كيلومترات', 4, reps + 3.5, [`إحماء: ${seg(ctx, 2, 'easy')}`, `${reps} × (${seg(ctx, 1, 'tempo')})، وراحة 90 ثانية`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`, 'دي نفس سرعة الكيلوهات اللي هتجريها في السباق.']);
+    },
+  };
+  function day(kind, title, intensity, km, steps, opts = {}) {
+    return { kind, title, intensity, km: round1(km), steps, extra: opts.extra || null };
+  }
+
+  // ---------------------------------------------------------------- weekly layout
+  // returns role per Egyptian-week position for the chosen days
+  function layout(daysPos, nQuality) {
+    const pos = [...daysPos].sort((a, b) => a - b);
+    const roles = {};
+    const dist = (a, b) => Math.min(Math.abs(a - b), 7 - Math.abs(a - b));
+    let long = pos.includes(6) ? 6 : pos.includes(0) ? 0 : pos[pos.length - 1];
+    roles[long] = 'long';
+    const picked = [long];
+    for (let q = 0; q < nQuality; q++) {
+      const cand = pos.filter((p) => !picked.includes(p)).map((p) => ({ p, d: Math.min(...picked.map((x) => dist(p, x))) })).sort((a, b) => b.d - a.d || a.p - b.p);
+      if (!cand.length) break;
+      if (q > 0 && cand[0].d < 2) break; // second hard day only with a gap
+      roles[cand[0].p] = q === 0 ? 'q1' : 'q2';
+      picked.push(cand[0].p);
+    }
+    pos.forEach((p) => { if (!roles[p]) roles[p] = 'easy'; });
+    return roles;
+  }
+
+  // ---------------------------------------------------------------- main generator
+  function generate(raw) {
+    const input = normalise(raw);
+    const out = { input, status: 'ok', messages: [], warnings: [], weeks: [], alternatives: [] };
+
+    const scr = screen(input.health);
+    if (!scr.ok && !input.doctorCleared) {
+      out.status = 'blocked';
+      out.blockKind = 'health';
+      out.messages.push('قبل ما نبدأ، لازم تكشف وتاخد موافقة دكتور على التمرين. لما الدكتور يوافق، علّم «الدكتور وافق» وهنعملك الخطة.');
+      return out;
+    }
+    if (input.pain === 'now') {
+      out.status = 'blocked';
+      out.blockKind = 'pain';
+      out.messages.push('عندك وجع دلوقتي. الخطة مش هتبدأ غير لما تكشف ويقولك تقدر تجري.');
+      return out;
+    }
+    if (input.age < 18) {
+      out.status = 'blocked';
+      out.blockKind = 'age';
+      out.messages.push('سبق دلوقتي للي سنهم 18 سنة وأكبر.');
+      return out;
+    }
+
+    const level = levelOf(input);
+    const ctx = { env: input.env, level, sex: input.sex, injury: input.injury, weekIdx: 0 };
+    out.level = level;
+    out.levelName = LEVEL_NAME[level];
+
+    // paces
+    const rt = parseDuration(input.recentTime, +input.recentKm);
+    if (input.recentTime && String(input.recentTime).trim() && !rt) out.warnings.push(`الوقت «${input.recentTime}» مش منطقي لـ ${input.recentKm} كم، فمشيناها بالإحساس. اكتبه دقايق:ثواني، زي 28:00.`);
+    if (rt && input.recentKm) {
+      out.timeRead = `فهمنا آخر وقت ليك: ${fmtTime(rt)} في ${input.recentKm} كم (${fmtPace(rt / input.recentKm)} /كم).`;
+      const vdot = vdotFrom(+input.recentKm, rt);
+      ctx.vdot = vdot;
+      ctx.paces = paceTable(vdot);
+      const raceKm = input.raceType === 'hyrox' ? 1 : input.distanceKm;
+      ctx.predicted = input.raceType === 'hyrox' ? null : predictTime(vdot, raceKm);
+      ctx.racePace = input.raceType === 'hyrox' ? ctx.paces.tempo * 1.03 : ctx.predicted / raceKm;
+      const goal = parseDuration(input.goalTime, raceKm);
+      if (input.goal === 'time' && input.goalTime && !goal && input.raceType !== 'hyrox') out.warnings.push(`الهدف «${input.goalTime}» مش منطقي لـ ${raceKm} كم، فالخطة معمولة على سرعتك المتوقعة. اكتبه ساعات:دقايق:ثواني، زي 2:05:00.`);
+      if (input.goal === 'time' && goal && input.raceType !== 'hyrox') {
+        const weeksLeft = Math.ceil(diffDays(input.startDate, input.raceDate) / 7);
+        const allowed = Math.min(0.01 * weeksLeft, 0.05);
+        const vGoal = vdotFrom(raceKm, goal);
+        if (vGoal <= vdot * (1 + allowed)) {
+          ctx.racePace = goal / raceKm;
+          out.goalVerdict = { ok: true, text: `هدفك ${fmtTime(goal)} واقعي.` };
+        } else {
+          const realistic = predictTime(vdot * (1 + allowed), raceKm);
+          ctx.racePace = realistic / raceKm;
+          out.goalVerdict = { ok: false, text: `هدفك ${fmtTime(goal)} صعب في الوقت ده. الأقرب للواقع حوالي ${fmtTime(realistic)}، فالخطة معمولة عليه.` };
+        }
+      }
+      out.paces = {
+        easy: `${fmtPace(ctx.paces.easyFast)}–${fmtPace(ctx.paces.easySlow)}`, tempo: fmtPace(ctx.paces.tempo), interval: fmtPace(ctx.paces.interval), race: fmtPace(ctx.racePace),
+        predicted: ctx.predicted ? fmtTime(ctx.predicted) : null,
+      };
+    } else {
+      out.warnings.push('معندناش وقت حديث ليك، فالسرعات مكتوبة بالإحساس. بعد أول أسبوع اجري 5 كم بأحسن مجهود وسجّل الوقت، والخطة هتتظبط بالأرقام.');
+    }
+
+    // dates and weeks
+    const totalDays = diffDays(input.startDate, input.raceDate);
+    if (totalDays < 3) { out.status = 'blocked'; out.blockKind = 'date'; out.messages.push('السباق قريب جدًا على خطة. ارتاح، ونام كويس، واجري على راحتك.'); return out; }
+    let start = input.startDate;
+    // weeks are aligned to race day: the last week is the 7 days that end on race day
+    let N = Math.ceil((totalDays + 1) / 7);
+    if (N > 16) {
+      N = 16;
+      start = addDays(input.raceDate, -16 * 7 + 1);
+      out.messages.push(`السباق لسه بعيد. الخطة هتبدأ يوم ${start}، ولحد ساعتها كمّل جري سهل 3 مرات في الأسبوع.`);
+    }
+    const weekStart = (i) => addDays(input.raceDate, -6 - 7 * (N - 1 - i));
+
+    if (input.raceType === 'hyrox') return buildHyrox(input, ctx, out, N, weekStart, start);
+    return buildRun(input, ctx, out, N, weekStart, start);
+  }
+
+  function normalise(raw) {
+    const r = Object.assign({}, raw);
+    r.age = +r.age || 30;
+    r.weeklyKm = Math.max(0, +r.weeklyKm || 0);
+    r.longestKm = Math.max(0, +r.longestKm || 0);
+    r.runsPerWeek = Math.max(0, +r.runsPerWeek || 0);
+    r.distanceKm = +r.distanceKm || 21.1;
+    r.days = (r.days || [6, 1, 3, 5]).map(Number);
+    r.env = Object.assign({ where: 'outdoor', gps: true, kit: [] }, r.env || {});
+    r.weightKg = +r.weightKg || null;
+    r.flags = Object.assign({}, r.flags || {});
+    return r;
+  }
+
+  function progressionRate(input) {
+    let p = 1.1;
+    if (input.age >= 50 || (input.injury && input.injury !== 'none')) p = 1.07;
+    return p;
+  }
+
+  // ---------------------------------------------------------------- running plans
+  function buildRun(input, ctx, out, N, weekStart, start) {
+    const D = input.distanceKm, T = TARGET[D];
+    const lvl = ctx.level;
+    ctx.runWalk = lvl === 'beginner' && (input.weeklyKm < 10 || input.longestKm < 4);
+    const taper = D === 42.2 ? (N >= 8 ? 2 : 1) : D === 21.1 && N >= 6 ? 1 : 0;
+    const raceWeek = N - 1;
+    const buildWeeks = Math.max(1, N - 1 - taper);
+    const p = progressionRate(input);
+    const longStep = lvl === 'beginner' ? 1.5 : 2;
+    const daysCount = input.days.length;
+    const longShare = daysCount <= 3 ? 0.5 : daysCount >= 5 ? 0.38 : 0.45;
+    const nQuality = ctx.runWalk ? 0 : lvl === 'advanced' && daysCount >= 5 && !(input.age >= 50) ? 2 : 1;
+
+    // simulate weekly volume and long run
+    const floor = { beginner: 8, intermediate: 15, advanced: 25 }[lvl];
+    let weekly = Math.max(input.weeklyKm, Math.min(floor, input.weeklyKm * 1.1 + 4));
+    let long = Math.max(ctx.runWalk ? 3 : 4, input.longestKm);
+    const plan = [];
+    let peakWeekly = 0, peakLong = 0;
+    for (let i = 0; i < buildWeeks; i++) {
+      const cutback = N >= 7 && i > 0 && i < buildWeeks - 1 && (i + 1) % 4 === 0;
+      if (i > 0 && !cutback && !(i === 1 && input.flags.noIncreaseFirstWeek)) {
+        weekly = Math.min(weekly * p, T.peakWeekly[lvl]);
+        long = Math.min(long + longStep, T.peakLong[lvl], D === 42.2 ? 32 : D);
+      }
+      if (i === 0 && input.flags.progressNow) { weekly = Math.min(weekly * p, T.peakWeekly[lvl]); long = Math.min(long + longStep, T.peakLong[lvl], D === 42.2 ? 32 : D); }
+      const wk = cutback ? weekly * 0.8 : weekly;
+      const lg = cutback ? long * 0.8 : Math.min(long, Math.max(wk * longShare, input.longestKm));
+      plan.push({ phase: cutback ? 'cutback' : i === buildWeeks - 1 ? 'peak' : 'build', weekly: wk, long: lg });
+      if (!cutback) { peakWeekly = Math.max(peakWeekly, wk); peakLong = Math.max(peakLong, lg); }
+    }
+    // taper weeks
+    for (let t = 0; t < taper; t++) {
+      const f = taper === 2 ? [0.8, 0.6][t] : 0.8;
+      plan.push({ phase: 'taper', weekly: peakWeekly * f, long: peakLong * (taper === 2 ? [0.75, 0.55][t] : 0.7) });
+    }
+    plan.push({ phase: 'race', weekly: peakWeekly * (D >= 21.1 ? 0.45 : 0.6), long: 0 });
+
+    // feasibility
+    const minLong = T.minLong;
+    out.peakLong = round1(peakLong);
+    out.peakWeekly = Math.round(peakWeekly);
+    if (D === 42.2 && N < 8 && input.longestKm < 24) out.status = 'blocked';
+    else if (lvl === 'beginner' && D >= 21.1 && N < 8) out.status = 'blocked';
+    else if (peakLong >= minLong) out.status = 'ok';
+    else if (peakLong >= minLong * 0.8) out.status = 'risky';
+    else out.status = 'blocked';
+
+    if (out.status !== 'ok') {
+      // alternatives: shorter distances that fit, or weeks needed
+      [5, 10, 21.1].filter((d) => d < D).forEach((d) => { if (peakLong >= TARGET[d].minLong) out.alternatives.push({ kind: 'distance', distanceKm: d, text: `ادخل ${DIST_NAME[d]} في نفس السباق` }); });
+      const weeksNeeded = Math.ceil(Math.max(0, minLong - Math.max(4, input.longestKm)) / longStep) + 2 + taper;
+      out.alternatives.push({ kind: 'later', weeks: weeksNeeded, text: `أو اختار سباق ${DIST_NAME[D]} بعد ${weeksNeeded} أسبوع على الأقل` });
+    }
+    if (out.status === 'blocked' && input.flags.continuing) {
+      out.status = 'risky';
+      out.messages.push(`بعد الأسبوع اللي فات، أطول جري هتوصله حوالي ${round1(peakLong)} كم قبل السباق. خلي هدفك إنك تخلّص وبس، أو انقل لمسافة أقصر.`);
+    }
+    if (out.status === 'blocked') {
+      out.blockKind = 'feasibility';
+      out.messages.push(`مش هننصحك تجري ${DIST_NAME[D]} في ${N} أسابيع من مستواك الحالي. أطول جري هتوصله حوالي ${round1(peakLong)} كم، والأمان إنك توصل ${minLong} كم على الأقل قبل السباق.`);
+      return out;
+    }
+    if (out.status === 'risky' && out.goalVerdict && out.goalVerdict.ok) out.goalVerdict.text = `سرعتك تسمح بهدف ${out.goalVerdict.text.match(/[0-9:]+/)[0]}، بس المسافة هي المشكلة مش السرعة. خلي الوقت هدف إضافي، والأهم إنك تخلّص سليم.`;
+    if (out.status === 'risky' && !input.flags.continuing) out.messages.push(`ينفع، بس هيبقى صعب: أطول جري هيوصل حوالي ${round1(peakLong)} كم. خلي هدفك إنك تخلّص، ومتجريش بسرعة.`);
+    if (ctx.runWalk) out.messages.push('هنبدأ بجري ومشي بالتبادل. ده مش ضعف: ده أأمن طريقة توصل بيها خط النهاية من غير إصابة.');
+
+    // weeks
+    for (let i = 0; i < N; i++) {
+      ctx.weekIdx = i;
+      const spec = plan[i];
+      const ws = weekStart(i);
+      const days = [];
+      const roles = layout(input.days.map(Number).map(egPos), spec.phase === 'race' ? 0 : nQuality);
+      for (let d = 0; d < 7; d++) {
+        const date = addDays(ws, d);
+        days.push({ date, dayName: DAY_NAMES[weekday(date)], role: roles[egPos(weekday(date))] || 'rest', workout: null });
+      }
+      // drop days outside the plan window
+      days.forEach((x) => { if (x.date < start || x.date > input.raceDate) x.role = 'off'; });
+      if (input.flags.restUntil) days.forEach((x) => { if (x.date <= input.flags.restUntil && x.role !== 'off') x.role = 'rest-sick'; });
+
+      if (spec.phase === 'race') fillRaceWeek(input, ctx, days, spec);
+      else fillRunWeek(input, ctx, days, spec, i, N, D, nQuality);
+      const km = days.reduce((a, x) => a + (x.workout && x.workout.kind !== 'race' ? x.workout.km : 0), 0);
+      out.weeks.push({ index: i, start: ws, phase: spec.phase, phaseName: PHASE_NAME[spec.phase], targetKm: Math.round(spec.weekly), km: round1(km), days });
+    }
+    out.raceDayTips = raceDayTips(input, ctx);
+    return out;
+  }
+
+  const PHASE_NAME = { build: 'بناء', peak: 'أعلى أسبوع', cutback: 'أسبوع أخف', taper: 'تخفيف قبل السباق', race: 'أسبوع السباق' };
+
+  function fillRunWeek(input, ctx, days, spec, i, N, D, nQuality) {
+    const active = days.filter((x) => ['long', 'q1', 'q2', 'easy'].includes(x.role));
+    if (!active.length) return;
+    const lvl = ctx.level;
+    const easyOnly = input.flags.easyOnlyUntil;
+    // a partial first week (or sick days) gets a share of the volume
+    const weekly = spec.weekly * Math.min(1, active.length / Math.max(1, input.days.length));
+    // the hard part of a quality session is about 18% of the week
+    const budget = Math.max(2.5, weekly * (nQuality === 2 ? 0.15 : 0.18));
+    const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+    const tempoMins = () => clamp(Math.round((budget * (paceFor(ctx, 'tempo') || roughPace(ctx, 'tempo'))) / 60 / 5) * 5, 10, 40);
+    let qualityKm = 0;
+    const quality = (role) => {
+      if (spec.phase === 'cutback' || spec.phase === 'taper') {
+        if (role === 'q2') return null;
+        return D >= 21.1 ? W.tempo(ctx, Math.max(10, tempoMins() - 5)) : W.intervals(ctx, 4, D === 5 ? 0.4 : 0.8, 2);
+      }
+      if (input.injury === 'knee' && role === 'q1' && i % 3 === 0) return W.tempo(ctx, tempoMins());
+      if (role === 'q2') return W.intervals(ctx, clamp(Math.round(weekly * 0.1), 3, 6), 1, 2);
+      if (D <= 10) {
+        const rot = i % 3;
+        if (rot === 0 && lvl !== 'advanced') return W.hills(ctx, clamp(6 + i, 6, 10));
+        const rk = D === 5 ? 0.4 : 0.8;
+        if (rot === 1 || rot === 0) return W.intervals(ctx, clamp(Math.round(budget / rk), 4, 10), rk, D === 5 ? 1.5 : 2);
+        return W.tempo(ctx, tempoMins());
+      }
+      if (i % 2 === 0) return W.tempo(ctx, tempoMins());
+      return W.cruise(ctx, clamp(Math.round(budget / 1.6), 2, 6), 1.6);
+    };
+    // quality days first
+    active.forEach((x) => {
+      if (x.role === 'q1' || x.role === 'q2') {
+        const w = easyOnly && x.date <= easyOnly ? null : quality(x.role);
+        if (w) { x.workout = w; qualityKm += w.km; } else x.role = 'easy';
+      }
+    });
+    const longDay = active.find((x) => x.role === 'long');
+    let longKm = roundHalf(spec.long);
+    if (longDay && easyOnly && longDay.date <= easyOnly) longKm = roundHalf(longKm * 0.7);
+    if (longDay) {
+      const rp = !ctx.runWalk && lvl !== 'beginner' && spec.phase === 'build' && i > 0 && i % 2 === 1 && D >= 10 && !(easyOnly && longDay.date <= easyOnly) ? Math.min(Math.round(longKm * 0.25), 5) : 0;
+      longDay.workout = W.long(ctx, longKm, { racePaceKm: rp });
+    } else longKm = 0;
+    const easyDays = active.filter((x) => x.role === 'easy');
+    const minEasy = ctx.runWalk ? 2.5 : 3;
+    const share = easyDays.length ? Math.max(minEasy, Math.min(12, (weekly - longKm - qualityKm) / easyDays.length)) : 0;
+    // strength: on up to 2 easy days that are not the day before the long run
+    const longIdx = longDay ? days.indexOf(longDay) : -1;
+    let strengthLeft = spec.phase === 'taper' || spec.phase === 'cutback' ? 1 : 2;
+    easyDays.forEach((x, k) => {
+      const strides = !ctx.runWalk && k === 0 && spec.phase !== 'cutback';
+      x.workout = W.easy(ctx, roundHalf(share), { strides });
+      const idx = days.indexOf(x);
+      if (strengthLeft > 0 && idx !== longIdx - 1) { x.workout.extra = { title: 'قوة 20 دقيقة بعد الجري', steps: strengthSession(ctx, spec.phase !== 'build' && spec.phase !== 'peak') }; strengthLeft--; }
+    });
+    days.forEach((x) => {
+      if (x.role === 'rest-sick') x.workout = day('rest', 'راحة لحد ما تخف', 0, 0, ['متجريش. نام كويس واشرب مية كتير.']);
+    });
+  }
+
+  function fillRaceWeek(input, ctx, days, spec) {
+    const raceIdx = days.findIndex((x) => x.date === input.raceDate);
+    days.forEach((x, idx) => {
+      if (idx > raceIdx || x.role === 'off') { x.role = 'off'; return; }
+      if (idx === raceIdx) {
+        x.role = 'race';
+        x.workout = day('race', input.raceType === 'hyrox' ? input.raceName : `${input.raceName}: ${DIST_NAME[input.distanceKm]}`, 5, input.raceType === 'hyrox' ? 8 : input.distanceKm, []);
+        return;
+      }
+      if (x.role === 'rest' || x.role === 'rest-sick') return;
+      const before = raceIdx - idx;
+      if (before === 1) { x.role = 'rest'; x.workout = day('rest', 'راحة', 0, 0, ['راحة كاملة. كُل أكل فيه نشويات كويس، ونام بدري.']); return; }
+      x.role = before >= 3 && before <= 4 && !days.some((y) => y.workout && y.workout.title === 'تنشيط قبل السباق') ? 'q1' : 'easy';
+      if (input.raceType === 'hyrox') {
+        x.workout = x.role === 'q1' ? W.compromised(ctx, 3, true) : W.easy(ctx, 3, { strides: before === 2 });
+      } else x.workout = x.role === 'q1' ? W.sharpener(ctx) : before === 2 ? W.shakeout(ctx) : W.easy(ctx, roundHalf(Math.max(3, spec.weekly / 4)));
+    });
+    // race day itself is always on the plan
+    if (raceIdx < 0) return;
+    days[raceIdx].workout.steps = raceDayTips(input, ctx).steps;
+  }
+
+  function raceDayTips(input, ctx) {
+    const steps = [];
+    if (input.raceType === 'hyrox') {
+      steps.push(ctx.paces ? `اجري الكيلوهات بسرعة حوالي ${fmtPace(ctx.racePace)} /كم، وأول كيلو أبطأ شوية.` : 'أول كيلو أبطأ من إحساسك. السباق طويل.');
+      steps.push('في المحطات: نفس ثابت، ومتقفش غير لو لازم.');
+      steps.push('أوزان فئة Open: كورة 6 كجم للرجالة و4 للستات، Farmers 2 × 24 و2 × 16، الشنطة 20 و10. اتأكد من القواعد الرسمية للسباق.');
+    } else {
+      steps.push(ctx.racePace ? `سرعتك في السباق: ${fmtPace(ctx.racePace)} /كم. أول 2 كم أبطأ 10 ثواني في الكيلو.` : 'ابدأ أبطأ من إحساسك في أول 2 كم، وبعدين ثبّت.');
+      if (input.distanceKm >= 21.1) steps.push('اشرب مية في كل محطة، ولو هتجري أكتر من ساعة خد جل أو تمر كل 40 دقيقة.');
+    }
+    if (input.weightKg) steps.push(`فطار قبل السباق بـ 2–3 ساعات: حوالي ${Math.round(input.weightKg)}–${Math.round(input.weightKg * 2)} جرام نشويات (عيش، شوفان، موز)، وأكل اتعودت عليه.`);
+    else steps.push('فطار خفيف اتعودت عليه قبل السباق بـ 2–3 ساعات: عيش أو شوفان وموز.');
+    steps.push('متجربش أي حاجة جديدة يوم السباق: لا جزمة، ولا لبس، ولا أكل.');
+    return { steps };
+  }
+
+  // ---------------------------------------------------------------- HYROX plans
+  function buildHyrox(input, ctx, out, N, weekStart, start) {
+    ctx.runWalk = false;
+    const lvl = ctx.level;
+    out.peakLong = null;
+    if (input.longestKm < 5) {
+      out.status = 'risky';
+      out.messages.push('السباق فيه 8 كم جري بين المحطات. لو مش بتقدر تجري 5 كم ورا بعض، ادخل Doubles أو Relay، أو امشي جزء من الكيلوهات.');
+    }
+    const miss = missingStations(ctx);
+    if (miss.length) out.warnings.push(`مش عندك: ${miss.join('، ')}. حطينا تمارين بديلة، وحاول تتمرن على الأجهزة الحقيقية مرتين على الأقل قبل السباق.`);
+    const daysCount = input.days.length;
+    const plan = [];
+    for (let i = 0; i < N - 1; i++) plan.push({ phase: N >= 7 && i > 0 && (i + 1) % 4 === 0 ? 'cutback' : i === N - 2 ? 'peak' : 'build' });
+    plan.push({ phase: 'race' });
+    for (let i = 0; i < N; i++) {
+      ctx.weekIdx = i;
+      const spec = plan[i];
+      const ws = weekStart(i);
+      const days = [];
+      const pos = input.days.map(Number).map(egPos).sort((a, b) => a - b);
+      // HYROX roles: compromised on the long-run day, stations far from it, intervals in between
+      const r = layout(pos, Math.min(2, daysCount - 1));
+      const roleMap = { long: 'comp', q1: 'stations', q2: 'hint', easy: 'easy' };
+      if (daysCount >= 3 && !pos.some((x) => r[x] === 'q2')) { const e = pos.find((x) => r[x] === 'easy'); if (e !== undefined) r[e] = 'q2'; }
+      for (let d = 0; d < 7; d++) { const date = addDays(ws, d); const ep = egPos(weekday(date)); days.push({ date, dayName: DAY_NAMES[weekday(date)], role: r[ep] ? roleMap[r[ep]] : 'rest', workout: null }); }
+      days.forEach((x) => { if (x.date < start || x.date > input.raceDate) x.role = 'off'; });
+      if (input.flags.restUntil) days.forEach((x) => { if (x.date <= input.flags.restUntil && x.role !== 'off') x.role = 'rest-sick'; });
+
+      if (spec.phase === 'race') {
+        fillRaceWeek(input, ctx, days, { weekly: 12 });
+      } else {
+        const light = spec.phase === 'cutback';
+        const rounds = light ? 3 : Math.min(3 + i, lvl === 'beginner' ? 5 : 7, 8);
+        const easyOnly = input.flags.easyOnlyUntil;
+        days.forEach((x) => {
+          const blocked = easyOnly && x.date <= easyOnly;
+          if (x.role === 'comp') x.workout = blocked ? W.easy(ctx, 4) : W.compromised(ctx, rounds, false);
+          else if (x.role === 'stations') x.workout = blocked ? W.easy(ctx, 4) : W.stations(ctx, light ? 2 : lvl === 'beginner' ? 3 : 4);
+          else if (x.role === 'hint') x.workout = blocked ? W.easy(ctx, 4) : W.hyroxIntervals(ctx, light ? 4 : Math.min(4 + i, 8));
+          else if (x.role === 'easy') x.workout = W.easy(ctx, roundHalf(lvl === 'beginner' ? 4 : 6), { strides: true });
+          else if (x.role === 'rest-sick') x.workout = day('rest', 'راحة لحد ما تخف', 0, 0, ['متتمرنش. نام كويس واشرب مية كتير.']);
+        });
+      }
+      const km = days.reduce((a, x) => a + (x.workout && x.workout.kind !== 'race' ? x.workout.km : 0), 0);
+      out.weeks.push({ index: i, start: ws, phase: spec.phase, phaseName: PHASE_NAME[spec.phase], targetKm: null, km: round1(km), days });
+    }
+    out.raceDayTips = raceDayTips(input, ctx);
+    return out;
+  }
+
+  // ---------------------------------------------------------------- weekly check-in -> next input
+  // feedback = { done: n, planned: n, feel: 'easy'|'ok'|'hard', pain: 'none'|'mild'|'sharp', sick: 'none'|'head'|'chest', sickDays: n, newTime: 'mm:ss' }
+  function checkIn(rawInput, plan, weekIndex, fb) {
+    const input = normalise(rawInput);
+    const wk = plan.weeks[weekIndex];
+    const next = Object.assign({}, input, { flags: { continuing: true } });
+    const messages = [];
+    const nextStart = addDays(wk.start, 7);
+    next.startDate = nextStart > input.startDate ? nextStart : input.startDate;
+    const planned = wk.days.filter((d) => d.workout && d.workout.kind !== 'rest').length || 1;
+    const ratio = Math.max(0, Math.min(1, (fb.done || 0) / planned));
+    const kmDone = wk.km * ratio;
+    const longPlanned = Math.max(0, ...wk.days.filter((d) => d.workout && d.workout.kind === 'long').map((d) => d.workout.km));
+    const longDone = fb.longDone ? longPlanned : 0;
+    let action = 'continue';
+
+    if (fb.pain === 'sharp') {
+      action = 'paused';
+      messages.push('الوجع اللي بيزيد مع الجري أو بيغيّر طريقة جريك ممكن يبقى إصابة. وقّف الجري واكشف عند دكتور أو أخصائي علاج طبيعي.');
+      messages.push('الخطة واقفة لحد ما تقول إن الدكتور سمحلك. لما ترجع، هنبدأ أخف من الأول.');
+      next.pain = 'now';
+      next.injury = next.injury && next.injury !== 'none' ? next.injury : 'other';
+      next.weeklyKm = Math.round(kmDone * 0.7);
+      return { action, messages, input: next };
+    }
+
+    // fitness does not vanish in one week: base the next week on at least 75% of what was planned
+    next.weeklyKm = Math.round(wk.km * Math.max(ratio, 0.75));
+    next.longestKm = longDone || Math.round(input.longestKm * (ratio < 0.5 ? 0.9 : 1) * 10) / 10;
+    next.runsPerWeek = input.runsPerWeek; // one missed week does not change the athlete's level
+
+    if (fb.sick === 'chest') {
+      const restDays = (fb.sickDays || 3) + 2;
+      next.flags.restUntil = addDays(next.startDate, restDays - 1);
+      next.flags.easyOnlyUntil = addDays(next.startDate, restDays + 6);
+      next.weeklyKm = Math.round(next.weeklyKm * (restDays > 7 ? 0.7 : 0.85));
+      messages.push(`عندك حرارة أو كحة من الصدر أو تكسير: متجريش خالص. ريّح ${restDays} أيام (لحد ما تخف + يومين)، وبعدها أسبوع جري سهل بس قبل أي تمرين صعب.`);
+      messages.push('لو الحرارة مكملة أكتر من 3 أيام، أو حسيت بوجع في صدرك أو ضيق نفس، اكشف.');
+      action = 'sick';
+    } else if (fb.sick === 'head') {
+      next.flags.easyOnlyUntil = addDays(next.startDate, 2);
+      next.flags.noIncreaseFirstWeek = true;
+      messages.push('برد خفيف (رشح أو زور بس): ينفع تجري سهل لو حاسس إنك كويس، ولو تعبان ريّح. أول 3 أيام جري سهل بس.');
+      action = 'sick';
+    }
+    if (fb.pain === 'mild') {
+      next.flags.noIncreaseFirstWeek = true;
+      messages.push('وجع خفيف بيروح بعد الإحماء: مش هنزوّد المسافة الأسبوع ده. لو زاد أو بقى بيوجعك وانت ماشي، علّم «وجع بيزيد» في التسجيل الجاي.');
+    }
+    if (ratio < 0.5) {
+      next.flags.noIncreaseFirstWeek = true;
+      messages.push('فوّت أكتر من نص التمارين: الأسبوع الجاي هيبقى بنفس الحجم، مش أكتر.');
+    } else if (ratio < 1) messages.push('فوّت تمرين أو اتنين: مفيش مشكلة، كمّل عادي.');
+    if (fb.feel === 'hard') { next.flags.noIncreaseFirstWeek = true; messages.push('الأسبوع كان تقيل عليك، فهنثبّت الحجم أسبوع.'); }
+    if (fb.feel === 'easy' && ratio === 1 && !fb.pain) messages.push('أسبوع حلو. كمّل بنفس الخطة.');
+    if (action === 'continue' && ratio >= 0.75 && fb.feel !== 'hard' && (!fb.pain || fb.pain === 'none')) next.flags.progressNow = true;
+    if (fb.newTime) { next.recentKm = 5; next.recentTime = fb.newTime; messages.push('حدّثنا سرعاتك على وقت الـ 5 كم الجديد.'); }
+    return { action, messages, input: next };
+  }
+
+  return { parseDuration, RACES, DIST_NAME, HEALTH_QUESTIONS, STATIONS, LEVEL_NAME, generate, checkIn, screen, levelOf, vdotFrom, predictTime, paceTable, fmtPace, fmtTime, addDays, diffDays };
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const E = window.SabaqEngine;
+  const $ = (id) => document.getElementById(id);
+  const MONTHS = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+  const nice = (s) => { const [y, m, d] = s.split('-').map(Number); return `${d} ${MONTHS[m - 1]}`; };
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function hmsHTML(id, withHours) {
+    const box = (part, label, max) => `<label><input type="number" id="${id}-${part}" min="0" max="${max}" step="1" inputmode="numeric" pattern="[0-9]*" aria-label="${label}"><span>${label}</span></label>`;
+    return `<div class="hms" id="${id}">${withHours ? box('h', 'ساعة', 9) + '<b>:</b>' : ''}${box('m', 'دقيقة', 59)}<b>:</b>${box('s', 'ثانية', 59)}</div>`;
+  }
+  function readHMS(id) {
+    const v = (k) => { const el = document.getElementById(`${id}-${k}`); return el && el.value !== '' ? Math.max(0, Math.floor(+el.value)) : null; };
+    const h = v('h'), m = v('m'), sec = v('s');
+    if (h === null && m === null && sec === null) return '';
+    return `${h || 0}:${String(m || 0).padStart(2, '0')}:${String(sec || 0).padStart(2, '0')}`;
+  }
+  function setHMS(id, h, m, sec) {
+    const set = (k, x) => { const el = document.getElementById(`${id}-${k}`); if (el) el.value = x; };
+    set('h', h); set('m', m); set('s', sec);
+  }
+  const today = () => { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`; };
+
+  // ---- build the form controls
+  const raceSel = $('race');
+  E.RACES.forEach((r) => raceSel.insertAdjacentHTML('beforeend', `<option value="${r.id}">${esc(r.name)} · ${nice(r.date)}</option>`));
+  raceSel.insertAdjacentHTML('beforeend', '<option value="custom">سباق تاني مش في القايمة</option>');
+  const WEEK = [[6, 'السبت'], [0, 'الأحد'], [1, 'الاتنين'], [2, 'التلات'], [3, 'الأربع'], [4, 'الخميس'], [5, 'الجمعة']];
+  WEEK.forEach(([v, n]) => $('days').insertAdjacentHTML('beforeend', `<label class="chip"><input type="checkbox" name="day" value="${v}" id="day${v}"><span>${n}</span></label>`));
+  const KIT = [['dumbbells', 'دمبل أو كيتل'], ['gym', 'جيم كامل'], ['rower', 'جهاز تجديف'], ['skierg', 'SkiErg'], ['sled', 'Sled'], ['wallball', 'كورة Wall Ball'], ['sandbag', 'Sandbag']];
+  KIT.forEach(([v, n]) => $('kit').insertAdjacentHTML('beforeend', `<label class="chip"><input type="checkbox" name="kit" value="${v}" id="kit-${v}"><span>${n}</span></label>`));
+  E.HEALTH_QUESTIONS.forEach((q) => $('health').insertAdjacentHTML('beforeend', `<label class="check"><input type="checkbox" name="health" value="${q.id}" id="h-${q.id}"><span>${esc(q.text)}</span></label>`));
+
+  document.querySelectorAll('.hms[data-hours]').forEach((el) => { el.outerHTML = hmsHTML(el.id, true); });
+
+  function currentRace() {
+    const id = raceSel.value;
+    if (id === 'custom') return { id, name: $('cName').value || 'سباقي', type: $('cType').value, date: $('cDate').value, distances: [5, 10, 21.1, 42.2] };
+    return E.RACES.find((r) => r.id === id);
+  }
+  function syncRaceUI() {
+    const r = currentRace();
+    $('customRace').hidden = r.id !== 'custom';
+    const isRun = r.type === 'run';
+    $('distWrap').hidden = !isRun;
+    if (isRun) {
+      const keep = $('dist').value;
+      $('dist').innerHTML = (r.distances || [5, 10, 21.1, 42.2]).map((d) => `<option value="${d}">${E.DIST_NAME[d]}</option>`).join('');
+      if ([...$('dist').options].some((o) => o.value === keep)) $('dist').value = keep;
+    }
+    $('raceNote').hidden = !r.note; $('raceNote').textContent = r.note || '';
+  }
+  raceSel.addEventListener('change', syncRaceUI);
+  $('cType').addEventListener('change', syncRaceUI);
+  document.querySelectorAll('input[name=goal]').forEach((el) => el.addEventListener('change', () => { $('goalWrap').hidden = document.querySelector('input[name=goal]:checked').value !== 'time'; }));
+  $('where').addEventListener('change', () => { $('gpsWrap').hidden = $('where').value === 'treadmill'; });
+  document.querySelectorAll('input[name=health]').forEach((el) => el.addEventListener('change', () => { $('clearedWrap').hidden = !document.querySelectorAll('input[name=health]:checked').length; }));
+
+  function setExample() {
+    raceSel.value = 'pyramids'; syncRaceUI(); $('dist').value = '21.1';
+    $('start').value = today(); $('cDate').value = E.addDays(today(), 42);
+    $('age').value = 28; $('sex').value = 'm'; $('weight').value = 72;
+    $('runs').value = 3; $('weekly').value = 20; $('longest').value = 10; $('rKm').value = '5'; setHMS('rTime', '', 28, '00'); $('injury').value = 'none';
+    document.querySelector('input[name=goal][value=finish]').checked = true; $('goalWrap').hidden = true; setHMS('goalTime', 2, '05', '00');
+    document.querySelectorAll('input[name=day]').forEach((el) => { el.checked = ['6', '1', '3', '5'].includes(el.value); });
+    $('where').value = 'outdoor'; $('gps').value = '1'; $('gpsWrap').hidden = false;
+    document.querySelectorAll('input[name=kit]').forEach((el) => { el.checked = false; });
+    document.querySelectorAll('input[name=health]').forEach((el) => { el.checked = false; });
+    $('painNow').checked = false; $('cleared').checked = false; $('clearedWrap').hidden = true;
+  }
+
+  function readInput() {
+    const r = currentRace();
+    const dist = r.type === 'run' ? +$('dist').value : null;
+    const health = {}; document.querySelectorAll('input[name=health]:checked').forEach((el) => { health[el.value] = true; });
+    return {
+      raceId: r.id, raceName: r.name, raceType: r.type,
+      raceDate: (r.dateByDistance && r.dateByDistance[dist]) || r.date,
+      distanceKm: dist, startDate: $('start').value || today(),
+      age: +$('age').value, sex: $('sex').value, weightKg: +$('weight').value || null,
+      runsPerWeek: +$('runs').value, weeklyKm: +$('weekly').value, longestKm: +$('longest').value,
+      recentKm: +$('rKm').value, recentTime: readHMS('rTime'),
+      goal: document.querySelector('input[name=goal]:checked').value, goalTime: readHMS('goalTime'),
+      days: [...document.querySelectorAll('input[name=day]:checked')].map((el) => +el.value),
+      injury: $('injury').value, pain: $('painNow').checked ? 'now' : 'none',
+      health, doctorCleared: $('cleared').checked,
+      env: { where: $('where').value, gps: $('where').value === 'treadmill' ? true : $('gps').value === '1', kit: [...document.querySelectorAll('input[name=kit]:checked')].map((el) => el.value) },
+    };
+  }
+
+  // ---- state: weeks already lived through, the live plan, the input that made it
+  let frozen = [];   // [{week, feedback:{messages}}]
+  let plan = null;
+  let input = null;
+  let paused = null; // {messages}
+
+  function validate(inp) {
+    const errs = [];
+    if (!inp.raceDate) errs.push('اختار تاريخ السباق.');
+    if (inp.days.length < 3 || inp.days.length > 6) errs.push('اختار من 3 لـ 6 أيام في الأسبوع.');
+    if (inp.raceDate && inp.startDate > inp.raceDate) errs.push('تاريخ البداية بعد السباق.');
+    return errs;
+  }
+
+  function run(fresh) {
+    const inp = readInput();
+    const errs = validate(inp);
+    if (errs.length) { $('result').innerHTML = `<div class="verdict blocked"><span class="tag">ناقص حاجة</span><ul>${errs.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></div>`; return; }
+    if (fresh) { frozen = []; paused = null; }
+    input = inp; plan = E.generate(input);
+    render();
+  }
+
+  $('q').addEventListener('submit', (e) => { e.preventDefault(); run(true); });
+  $('reset').addEventListener('click', () => { setExample(); run(true); });
+
+  // ---- rendering
+  const KIND_LABEL = { easy: 'سهل', long: 'طويل', quality: 'صعب', strength: 'قوة', race: 'السباق', rest: 'راحة' };
+  function dayRow(d, open) {
+    if (!d.workout) return d.role === 'off' ? '' : `<li class="rest-row"><span>${esc(d.dayName)} <span class="num">${nice(d.date)}</span></span><span><i class="kind rest"></i>راحة</span></li>`;
+    const w = d.workout;
+    const extra = w.extra ? `<div class="extra"><b>${esc(w.extra.title)}</b>${w.extra.steps.map((s) => `<p>${esc(s)}</p>`).join('')}</div>` : '';
+    return `<li><details${open ? ' open' : ''}><summary>
+        <span class="d-when"><b>${esc(d.dayName)}</b>${nice(d.date)}</span>
+        <span class="d-title"><i class="kind ${w.kind}" title="${KIND_LABEL[w.kind] || ''}"></i>${esc(w.title)}${w.extra ? ' + قوة' : ''}</span>
+        <span class="d-km">${w.km ? `<span class="num">${w.km}</span> كم` : ''}</span>
+      </summary><div class="steps">${w.steps.map((s) => `<p>${esc(s)}</p>`).join('')}${extra}</div></details></li>`;
+  }
+
+  function weekCard(wk, num, opts) {
+    const days = wk.days.filter((d) => d.role !== 'off');
+    const range = days.length ? `${nice(days[0].date)} – ${nice(days[days.length - 1].date)}` : '';
+    const kmTxt = wk.km ? `<span class="num">${wk.km}</span> كم جري` : '';
+    const rows = [];
+    for (let k = 0; k < days.length; k++) {
+      const d = days[k];
+      if (d.workout && d.workout.kind === 'rest' && d.role === 'rest-sick') {
+        let j = k; while (j + 1 < days.length && days[j + 1].role === 'rest-sick') j++;
+        rows.push(`<li class="rest-row"><span>${esc(d.dayName)}${j > k ? ' – ' + esc(days[j].dayName) : ''}</span><span><i class="kind rest"></i><b>راحة لحد ما تخف</b> (${nice(d.date)}${j > k ? ' – ' + nice(days[j].date) : ''}): متجريش، نام كويس واشرب مية كتير.</span></li>`);
+        k = j; continue;
+      }
+      rows.push(dayRow(d, opts.open));
+    }
+    let body = `<ul class="days">${rows.join('')}</ul>`;
+    if (opts.feedback) body += `<div class="feedback">${opts.feedback.map((m) => `<p>${esc(m)}</p>`).join('')}</div>`;
+    if (opts.checkin) body += checkinForm(wk);
+    return `<article class="week${opts.frozen ? ' frozen' : ''}" id="wk-${num}">
+      <header><h3>الأسبوع ${num}<span class="phase">${esc(opts.frozen ? 'خلص' : wk.phaseName)}</span></h3><span class="meta">${range}${kmTxt ? ' · ' + kmTxt : ''}</span></header>
+      ${body}</article>`;
+  }
+
+  function checkinForm(wk) {
+    const planned = wk.days.filter((d) => d.workout && d.workout.kind !== 'rest' && d.workout.kind !== 'race').length;
+    const hasLong = wk.days.some((d) => d.workout && d.workout.kind === 'long');
+    return `<form class="checkin" id="ci" novalidate>
+      <h4>سجّل الأسبوع ده <span class="hint">(جرّب: عيّان، وجع، فوّت تمارين)</span></h4>
+      <div class="grid3">
+        <label class="f">عملت كام تمرين من ${planned}؟<input type="number" id="ciDone" min="0" max="${planned}" value="${planned}" inputmode="numeric"></label>
+        ${hasLong ? '<label class="check"><input type="checkbox" id="ciLong" checked><span>عملت الجري الطويل</span></label>' : ''}
+        <label class="f">الأسبوع كان
+          <select id="ciFeel"><option value="ok">عادي</option><option value="easy">سهل</option><option value="hard">تقيل</option></select></label>
+        <label class="f">وجع؟
+          <select id="ciPain"><option value="none">مفيش</option><option value="mild">وجع خفيف بيروح بعد الإحماء</option><option value="sharp">وجع بيزيد أو بيغيّر طريقة جريي</option></select></label>
+        <label class="f">عيّان؟
+          <select id="ciSick"><option value="none">لأ</option><option value="head">برد خفيف: رشح أو زور بس</option><option value="chest">حرارة، أو كحة من الصدر، أو تكسير</option></select></label>
+        <label class="f" id="ciDaysWrap" hidden>بقالك كام يوم عيّان؟<input type="number" id="ciDays" min="1" max="21" value="3" inputmode="numeric"></label>
+        <div class="f-group">وقت 5 كم جديد <small class="hint">اختياري</small>${hmsHTML('ciTime', false)}</div>
+      </div>
+      <div class="actions"><button class="btn primary" type="submit">سجّل وظبّط الخطة</button></div>
+    </form>`;
+  }
+
+  function render() {
+    const out = [];
+    const p = plan;
+    const verdictTitle = { ok: 'خطتك جاهزة', risky: 'ينفع، بس بحذر', blocked: 'مش هنعمل الخطة دي' };
+    const verdictTag = { ok: 'الخطة', risky: 'تنبيه', blocked: 'وقفة' };
+    if (paused) {
+      out.push(`<div class="paused"><span class="tag">الخطة واقفة</span><h2>اكشف الأول</h2>${paused.messages.map((m) => `<p>${esc(m)}</p>`).join('')}
+        <div class="actions"><button class="btn primary" type="button" id="resume">الدكتور سمحلي أرجع</button></div></div>`);
+    } else {
+      const msgs = [...p.messages];
+      if (p.goalVerdict) msgs.unshift(p.goalVerdict.text);
+      out.push(`<div class="verdict ${p.status}"><span class="tag">${verdictTag[p.status]}</span><h2>${verdictTitle[p.status]}</h2>
+        ${msgs.map((m) => `<p>${esc(m)}</p>`).join('')}
+        ${p.alternatives && p.alternatives.length ? `<div class="actions">${p.alternatives.map((a, i) => a.kind === 'distance' ? `<button class="btn ghost" type="button" data-alt="${a.distanceKm}">${esc(a.text)}</button>` : `<p class="hint">${esc(a.text)}</p>`).join('')}</div>` : ''}
+      </div>`);
+    }
+
+    if (!paused && p.status !== 'blocked') {
+      const total = frozen.length + p.weeks.length;
+      const raceName = p.input.raceType === 'hyrox' ? p.input.raceName : `${p.input.raceName} · ${E.DIST_NAME[p.input.distanceKm]}`;
+      out.push(`<div class="facts">
+        <div class="fact wide"><b>السباق</b><span>${esc(raceName)}</span></div>
+        <div class="fact"><b>المستوى</b><span>${esc(p.levelName)}</span></div>
+        <div class="fact"><b>مدة الخطة</b><span><span class="num">${total}</span> أسابيع</span></div>
+        ${p.peakLong ? `<div class="fact"><b>أطول جري في الخطة</b><span><span class="num">${p.peakLong}</span> كم</span></div>` : ''}
+        ${p.paces && p.paces.predicted ? `<div class="fact"><b>وقتك المتوقع النهارده</b><span class="num">${p.paces.predicted}</span></div>` : ''}
+      </div>`);
+      const cells = [];
+      for (let i = 0; i < total; i++) cells.push(`<i class="${i < frozen.length ? 'done' : i === frozen.length ? 'now' : ''}"></i>`);
+      out.push(`<div><div class="strip" aria-hidden="true">${cells.join('')}<span class="runner"></span></div>
+        <div class="strip-label"><span>النهارده</span><span>يوم السباق: ${nice(p.input.raceDate)}</span></div></div>`);
+      if (p.paces) {
+        const tm = p.input.env.where === 'treadmill';
+        const sp = (x) => x.split('–').map((t) => { const [m, s] = t.split(':').map(Number); return (3600 / (m * 60 + s)).toFixed(1); }).reverse().join('–');
+        const rows = [['سهل وطويل', p.paces.easy, 'تقدر تتكلم جمل كاملة'], ['تيمبو', p.paces.tempo, 'صعب بس متحكم فيه'], ['إنترفال', p.paces.interval, 'صعب، الكلام صعب'], [p.input.raceType === 'hyrox' ? 'كيلوهات السباق' : 'سرعة السباق', p.paces.race, p.input.raceType === 'hyrox' ? 'الكيلو بين المحطات' : 'يوم السباق']];
+        out.push(`<div class="tablebox"><table class="paces"><thead><tr><th>النوع</th><th>السرعة /كم</th>${tm ? '<th>على المشاية كم/س</th>' : ''}<th>الإحساس</th></tr></thead><tbody>
+          ${rows.map((r) => `<tr><td>${r[0]}</td><td class="pace">${r[1]}</td>${tm ? `<td class="pace">${sp(r[1])}</td>` : ''}<td>${r[2]}</td></tr>`).join('')}</tbody></table></div>`);
+      }
+      const notes = [p.timeRead, ...p.warnings].filter(Boolean);
+      if (notes.length) out.push(`<ul class="notes">${notes.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>`);
+      out.push(`<div class="legend"><span><i class="kind easy"></i>سهل</span><span><i class="kind long"></i>طويل</span><span><i class="kind quality"></i>صعب</span><span><i class="kind strength"></i>قوة ومحطات</span><span><i class="kind race"></i>السباق</span></div>`);
+      frozen.forEach((f, i) => out.push(weekCard(f.week, i + 1, { frozen: true, feedback: f.feedback })));
+      p.weeks.forEach((wk, i) => out.push(weekCard(wk, frozen.length + i + 1, { open: i === 0, checkin: i === 0 && wk.phase !== 'race' })));
+    } else if (paused && frozen.length) {
+      frozen.forEach((f, i) => out.push(weekCard(f.week, i + 1, { frozen: true, feedback: f.feedback })));
+    }
+    out.push(rulesHTML());
+    $('result').innerHTML = out.join('');
+    bindResult();
+  }
+
+  function bindResult() {
+    document.querySelectorAll('[data-alt]').forEach((b) => b.addEventListener('click', () => { $('dist').value = b.dataset.alt; run(true); }));
+    const ci = $('ci');
+    if (ci) {
+      $('ciSick').addEventListener('change', () => { $('ciDaysWrap').hidden = $('ciSick').value !== 'chest'; });
+      ci.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fb = { done: +$('ciDone').value, longDone: $('ciLong') ? $('ciLong').checked : false, feel: $('ciFeel').value, pain: $('ciPain').value, sick: $('ciSick').value, sickDays: +$('ciDays').value, newTime: readHMS('ciTime') || null };
+        const res = E.checkIn(input, plan, 0, fb);
+        frozen.push({ week: plan.weeks[0], feedback: res.messages });
+        input = res.input;
+        if (res.action === 'paused') { paused = { messages: res.messages }; render(); return; }
+        plan = E.generate(input);
+        render();
+        const next = document.getElementById(`wk-${frozen.length + 1}`);
+        if (next) next.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      });
+    }
+    const resume = $('resume');
+    if (resume) resume.addEventListener('click', () => {
+      paused = null;
+      input = Object.assign({}, input, { pain: 'none', doctorCleared: true, flags: Object.assign({}, input.flags, { continuing: true, easyOnlyUntil: E.addDays(input.startDate, 6), noIncreaseFirstWeek: true }) });
+      plan = E.generate(input); render();
+    });
+  }
+
+  function rulesHTML() {
+    return `<details class="rules"><summary>القواعد اللي المحرّك ماشي بيها</summary><div class="body">
+      <p>دي القواعد اللي بتتراجع مع كوتش أو أخصائي علاج طبيعي قبل الإطلاق. كلها مكتوبة في ملف المحرّك، وأي رقم فيها يتغيّر من مكان واحد.</p>
+      <div><h4>قبل ما يبدأ</h4><ul>
+        <li>8 أسئلة صحة. أي «أيوه» = مفيش خطة غير بعد موافقة دكتور.</li>
+        <li>وجع دلوقتي بيزيد مع الجري = مفيش خطة.</li>
+        <li>السن 18 وطالع.</li>
+        <li>المستوى من الأسئلة: مبتدئ لو أقل من مرتين في الأسبوع أو أقل من 10 كم أو أطول جري أقل من 5 كم. متقدم لو 30 كم وطالع وأطول جري 12 كم وطالع.</li>
+      </ul></div>
+      <div><h4>هل الهدف واقعي؟</h4><ul>
+        <li>أقل جري طويل لازم يوصله قبل السباق: 5 كم ← 4 كم، 10 كم ← 7 كم، نص ماراثون ← 13 كم، ماراثون ← 24 كم.</li>
+        <li>لو هيوصل 80% من الرقم ده: الخطة تتعمل بتحذير. أقل من كده: مفيش خطة، ونقترح مسافة أقصر أو سباق أبعد.</li>
+        <li>ماراثون في أقل من 8 أسابيع لحد أطول جري عنده أقل من 24 كم: مفيش خطة. مبتدئ ونص ماراثون أو أكتر في أقل من 8 أسابيع: مفيش خطة.</li>
+        <li>هدف الوقت: لازم يكون في حدود 1% تحسّن لكل أسبوع (5% بالكتير) من وقته الحالي، وإلا نقترح وقت أقرب للواقع.</li>
+      </ul></div>
+      <div><h4>بناء الأسبوع</h4><ul>
+        <li>المسافة بتزيد 10% في الأسبوع بالكتير، و7% لو السن 50 وطالع أو عنده إصابة قبل كده.</li>
+        <li>الجري الطويل بيزيد 2 كم في الأسبوع بالكتير (1.5 للمبتدئ)، ومش أكتر من 45% من الأسبوع (50% لو 3 أيام، 38% لو 5 أيام وأكتر)، إلا لو هو بيجري كده أصلًا.</li>
+        <li>تمرين صعب واحد في الأسبوع، واتنين للمتقدم اللي بيجري 5 أيام وأقل من 50 سنة، ومش ورا بعض.</li>
+        <li>الجزء الصعب في التمرين حوالي 18% من مسافة الأسبوع.</li>
+        <li>المبتدئ جدًا (أقل من 10 كم أو أطول جري أقل من 4 كم): جري ومشي بالتبادل، ومفيش تمارين صعبة.</li>
+        <li>أسبوع أخف (80%) كل 4 أسابيع في الخطط اللي 7 أسابيع وأكتر.</li>
+        <li>التخفيف: نص الماراثون أسبوع، والماراثون أسبوعين، وأسبوع السباق 45–60% من أعلى أسبوع. اليوم اللي قبل السباق راحة.</li>
+        <li>قوة 20 دقيقة مرتين في الأسبوع بعد الجري السهل، على حسب الأدوات اللي عنده.</li>
+      </ul></div>
+      <div><h4>الإمكانيات</h4><ul>
+        <li>المشاية: السرعة بالكيلو في الساعة وميل 1%، والطلعات بميل 5%.</li>
+        <li>من غير ساعة أو موبايل: التمرين بالدقايق بدل الكيلوهات.</li>
+        <li>التراك: الإنترفال باللفات (400 م).</li>
+        <li>HYROX: أي محطة مش عنده جهازها بتاخد بديل (زق المشاية المقفولة بدل Sled، شنطة ضهر بدل Sandbag، أزايز مية بدل Farmers Carry...).</li>
+      </ul></div>
+      <div><h4>كل أسبوع (التسجيل)</h4><ul>
+        <li>وجع بيزيد أو بيغيّر طريقة الجري: الخطة تقف لحد موافقة دكتور، وترجع أخف 30%.</li>
+        <li>وجع خفيف بيروح بعد الإحماء: مفيش زيادة الأسبوع الجاي.</li>
+        <li>برد فوق الرقبة بس: 3 أيام جري سهل بس. حرارة أو كحة صدر أو تكسير: راحة لحد ما يخف + يومين، وبعدها أسبوع سهل، والجري الطويل 70%.</li>
+        <li>فوّت أكتر من نص التمارين أو الأسبوع كان تقيل: نفس الحجم، مفيش زيادة.</li>
+        <li>أسبوع كامل وسهل: الخطة تكمّل تزيد عادي.</li>
+        <li>لو التسجيل خلّى الهدف صعب، الخطة مبتتلغيش: بتتحول لتحذير ونقترح «تخلّص وبس» أو مسافة أقصر.</li>
+      </ul></div>
+      <p class="hint">السرعات محسوبة بمعادلات جاك دانيلز وجيلبرت المنشورة (VDOT). القواعد دي مبنية على مبادئ تدريب معروفة، ومحتاجة مراجعة متخصص قبل ما تتباع، وهي مش نصيحة طبية.</p>
+    </div></details>`;
+  }
+
+  setExample();
+  run(true);
+})();
+</script>

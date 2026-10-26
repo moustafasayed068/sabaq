@@ -1,0 +1,795 @@
+{
+  "input": {
+    "startDate": "2026-10-27",
+    "age": 28,
+    "sex": "m",
+    "weightKg": 72,
+    "weeklyKm": 20,
+    "longestKm": 10,
+    "runsPerWeek": 3,
+    "recentKm": 5,
+    "recentTime": "28:00",
+    "goal": "finish",
+    "days": [
+      6,
+      1,
+      3,
+      5
+    ],
+    "injury": "none",
+    "pain": "none",
+    "health": {},
+    "env": {
+      "where": "outdoor",
+      "gps": true,
+      "kit": []
+    },
+    "raceId": "pyramids",
+    "raceName": "نص ماراثون الأهرامات",
+    "raceType": "run",
+    "raceDate": "2026-12-12",
+    "distanceKm": 21.1
+  },
+  "feedback": {
+    "done": 4,
+    "feel": "ok",
+    "pain": "mild",
+    "sick": "none",
+    "longDone": true,
+    "newTime": "26:40"
+  },
+  "checkIn": {
+    "action": "continue",
+    "messages": [
+      "وجع خفيف بيروح بعد الإحماء: مش هنزوّد المسافة الأسبوع ده. لو زاد أو بقى بيوجعك وانت ماشي، علّم «وجع بيزيد» في التسجيل الجاي.",
+      "حدّثنا سرعاتك على وقت الـ 5 كم الجديد."
+    ],
+    "input": {
+      "startDate": "2026-11-01",
+      "age": 28,
+      "sex": "m",
+      "weightKg": 72,
+      "weeklyKm": 16,
+      "longestKm": 10,
+      "runsPerWeek": 3,
+      "recentKm": 5,
+      "recentTime": "26:40",
+      "goal": "finish",
+      "days": [
+        6,
+        1,
+        3,
+        5
+      ],
+      "injury": "none",
+      "pain": "none",
+      "health": {},
+      "env": {
+        "where": "outdoor",
+        "gps": true,
+        "kit": []
+      },
+      "raceId": "pyramids",
+      "raceName": "نص ماراثون الأهرامات",
+      "raceType": "run",
+      "raceDate": "2026-12-12",
+      "distanceKm": 21.1,
+      "flags": {
+        "continuing": true,
+        "noIncreaseFirstWeek": true
+      }
+    }
+  },
+  "nextPlan": {
+    "input": {
+      "startDate": "2026-11-01",
+      "age": 28,
+      "sex": "m",
+      "weightKg": 72,
+      "weeklyKm": 16,
+      "longestKm": 10,
+      "runsPerWeek": 3,
+      "recentKm": 5,
+      "recentTime": "26:40",
+      "goal": "finish",
+      "days": [
+        6,
+        1,
+        3,
+        5
+      ],
+      "injury": "none",
+      "pain": "none",
+      "health": {},
+      "env": {
+        "where": "outdoor",
+        "gps": true,
+        "kit": []
+      },
+      "raceId": "pyramids",
+      "raceName": "نص ماراثون الأهرامات",
+      "raceType": "run",
+      "raceDate": "2026-12-12",
+      "distanceKm": 21.1,
+      "flags": {
+        "continuing": true,
+        "noIncreaseFirstWeek": true
+      }
+    },
+    "status": "risky",
+    "messages": [
+      "بعد الأسبوع اللي فات، أطول جري هتوصله حوالي 10 كم قبل السباق. خلي هدفك إنك تخلّص وبس، أو انقل لمسافة أقصر."
+    ],
+    "warnings": [],
+    "weeks": [
+      {
+        "index": 0,
+        "start": "2026-11-01",
+        "phase": "build",
+        "phaseName": "بناء",
+        "targetKm": 16,
+        "km": 22.2,
+        "days": [
+          {
+            "date": "2026-11-01",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-02",
+            "dayName": "الاتنين",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تيمبو",
+              "intensity": 3,
+              "km": 6.2,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "15 دقيقة تيمبو: 2.7 كم بسرعة 5:36 /كم",
+                "تهدئة: 1.5 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-03",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-04",
+            "dayName": "الأربع",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل + تسارعات",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم",
+                "في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          },
+          {
+            "date": "2026-11-05",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-06",
+            "dayName": "الجمعة",
+            "role": "long",
+            "workout": {
+              "kind": "long",
+              "title": "الجري الطويل",
+              "intensity": 2,
+              "km": 10,
+              "steps": [
+                "10 كم بسرعة 6:51 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-07",
+            "dayName": "السبت",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "start": "2026-11-08",
+        "phase": "build",
+        "phaseName": "بناء",
+        "targetKm": 16,
+        "km": 22.7,
+        "days": [
+          {
+            "date": "2026-11-08",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-09",
+            "dayName": "الاتنين",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تيمبو متقطع",
+              "intensity": 3,
+              "km": 6.7,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "2 × (1.6 كم بسرعة 5:36 /كم)، وراحة دقيقة جري خفيف",
+                "تهدئة: 1.5 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-10",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-11",
+            "dayName": "الأربع",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل + تسارعات",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم",
+                "في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          },
+          {
+            "date": "2026-11-12",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-13",
+            "dayName": "الجمعة",
+            "role": "long",
+            "workout": {
+              "kind": "long",
+              "title": "الجري الطويل",
+              "intensity": 2,
+              "km": 10,
+              "steps": [
+                "7 كم بسرعة 6:51 /كم",
+                "آخر 3 كم بسرعة السباق: 3 كم بسرعة 5:49 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-14",
+            "dayName": "السبت",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "start": "2026-11-15",
+        "phase": "build",
+        "phaseName": "بناء",
+        "targetKm": 18,
+        "km": 23.1,
+        "days": [
+          {
+            "date": "2026-11-15",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-16",
+            "dayName": "الاتنين",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تيمبو",
+              "intensity": 3,
+              "km": 7.1,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "20 دقيقة تيمبو: 3.6 كم بسرعة 5:36 /كم",
+                "تهدئة: 1.5 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-17",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-18",
+            "dayName": "الأربع",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل + تسارعات",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم",
+                "في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          },
+          {
+            "date": "2026-11-19",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-20",
+            "dayName": "الجمعة",
+            "role": "long",
+            "workout": {
+              "kind": "long",
+              "title": "الجري الطويل",
+              "intensity": 2,
+              "km": 10,
+              "steps": [
+                "10 كم بسرعة 6:51 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-21",
+            "dayName": "السبت",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 3,
+        "start": "2026-11-22",
+        "phase": "peak",
+        "phaseName": "أعلى أسبوع",
+        "targetKm": 19,
+        "km": 22.7,
+        "days": [
+          {
+            "date": "2026-11-22",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-23",
+            "dayName": "الاتنين",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تيمبو متقطع",
+              "intensity": 3,
+              "km": 6.7,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "2 × (1.6 كم بسرعة 5:36 /كم)، وراحة دقيقة جري خفيف",
+                "تهدئة: 1.5 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-24",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-25",
+            "dayName": "الأربع",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل + تسارعات",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم",
+                "في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          },
+          {
+            "date": "2026-11-26",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-27",
+            "dayName": "الجمعة",
+            "role": "long",
+            "workout": {
+              "kind": "long",
+              "title": "الجري الطويل",
+              "intensity": 2,
+              "km": 10,
+              "steps": [
+                "10 كم بسرعة 6:51 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-11-28",
+            "dayName": "السبت",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 3 × 15",
+                  "لانجز 3 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 3 × 15",
+                  "جسر (Glute bridge) 3 × 15",
+                  "بلانك 3 × 40 ثانية"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "index": 4,
+        "start": "2026-11-29",
+        "phase": "taper",
+        "phaseName": "تخفيف قبل السباق",
+        "targetKm": 15,
+        "km": 18.3,
+        "days": [
+          {
+            "date": "2026-11-29",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-11-30",
+            "dayName": "الاتنين",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تيمبو",
+              "intensity": 3,
+              "km": 5.3,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "10 دقيقة تيمبو: 1.8 كم بسرعة 5:36 /كم",
+                "تهدئة: 1.5 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-12-01",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-12-02",
+            "dayName": "الأربع",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل + تسارعات",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم",
+                "في الآخر: 6 × 20 ثانية أسرع شوية، ومشي دقيقة بينهم"
+              ],
+              "extra": {
+                "title": "قوة 20 دقيقة بعد الجري",
+                "steps": [
+                  "سكوات 2 × 15",
+                  "لانجز 2 × 10 لكل رجل",
+                  "رفع سمانة على رجل واحدة 2 × 15",
+                  "جسر (Glute bridge) 2 × 15",
+                  "بلانك 2 × 40 ثانية"
+                ]
+              }
+            }
+          },
+          {
+            "date": "2026-12-03",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-12-04",
+            "dayName": "الجمعة",
+            "role": "long",
+            "workout": {
+              "kind": "long",
+              "title": "الجري الطويل",
+              "intensity": 2,
+              "km": 7,
+              "steps": [
+                "7 كم بسرعة 6:51 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-12-05",
+            "dayName": "السبت",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          }
+        ]
+      },
+      {
+        "index": 5,
+        "start": "2026-12-06",
+        "phase": "race",
+        "phaseName": "أسبوع السباق",
+        "targetKm": 9,
+        "km": 9,
+        "days": [
+          {
+            "date": "2026-12-06",
+            "dayName": "الأحد",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-12-07",
+            "dayName": "الاتنين",
+            "role": "easy",
+            "workout": {
+              "kind": "easy",
+              "title": "جري سهل",
+              "intensity": 1,
+              "km": 3,
+              "steps": [
+                "3 كم بسرعة 6:43 /كم"
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-12-08",
+            "dayName": "التلات",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-12-09",
+            "dayName": "الأربع",
+            "role": "q1",
+            "workout": {
+              "kind": "quality",
+              "title": "تنشيط قبل السباق",
+              "intensity": 2,
+              "km": 6,
+              "steps": [
+                "إحماء: 2 كم بسرعة 6:43 /كم",
+                "3 × (1 كم بسرعة 5:49 /كم)، وراحة دقيقتين",
+                "تهدئة: 1 كم بسرعة 6:43 /كم",
+                "خفيف ومريح. الهدف إن رجلك تفتكر سرعة السباق، مش إنك تتعب."
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-12-10",
+            "dayName": "الخميس",
+            "role": "rest",
+            "workout": null
+          },
+          {
+            "date": "2026-12-11",
+            "dayName": "الجمعة",
+            "role": "rest",
+            "workout": {
+              "kind": "rest",
+              "title": "راحة",
+              "intensity": 0,
+              "km": 0,
+              "steps": [
+                "راحة كاملة. كُل أكل فيه نشويات كويس، ونام بدري."
+              ],
+              "extra": null
+            }
+          },
+          {
+            "date": "2026-12-12",
+            "dayName": "السبت",
+            "role": "race",
+            "workout": {
+              "kind": "race",
+              "title": "نص ماراثون الأهرامات: نص ماراثون (21.1 كم)",
+              "intensity": 5,
+              "km": 21.1,
+              "steps": [
+                "سرعتك في السباق: 5:49 /كم. أول 2 كم أبطأ 10 ثواني في الكيلو.",
+                "اشرب مية في كل محطة، ولو هتجري أكتر من ساعة خد جل أو تمر كل 40 دقيقة.",
+                "فطار قبل السباق بـ 2–3 ساعات: حوالي 72–144 جرام نشويات (عيش، شوفان، موز)، وأكل اتعودت عليه.",
+                "متجربش أي حاجة جديدة يوم السباق: لا جزمة، ولا لبس، ولا أكل."
+              ],
+              "extra": null
+            }
+          }
+        ]
+      }
+    ],
+    "alternatives": [
+      {
+        "kind": "distance",
+        "distanceKm": 5,
+        "text": "ادخل 5 كم في نفس السباق"
+      },
+      {
+        "kind": "distance",
+        "distanceKm": 10,
+        "text": "ادخل 10 كم في نفس السباق"
+      },
+      {
+        "kind": "later",
+        "weeks": 5,
+        "text": "أو اختار سباق نص ماراثون (21.1 كم) بعد 5 أسبوع على الأقل"
+      }
+    ],
+    "level": "intermediate",
+    "levelName": "متوسط",
+    "timeRead": "فهمنا آخر وقت ليك: 26:40 في 5 كم (5:20 /كم).",
+    "paces": {
+      "easy": "6:26–7:23",
+      "tempo": "5:36",
+      "interval": "5:10",
+      "race": "5:49",
+      "predicted": "2:02:48"
+    },
+    "peakLong": 10,
+    "peakWeekly": 19,
+    "raceDayTips": {
+      "steps": [
+        "سرعتك في السباق: 5:49 /كم. أول 2 كم أبطأ 10 ثواني في الكيلو.",
+        "اشرب مية في كل محطة، ولو هتجري أكتر من ساعة خد جل أو تمر كل 40 دقيقة.",
+        "فطار قبل السباق بـ 2–3 ساعات: حوالي 72–144 جرام نشويات (عيش، شوفان، موز)، وأكل اتعودت عليه.",
+        "متجربش أي حاجة جديدة يوم السباق: لا جزمة، ولا لبس، ولا أكل."
+      ]
+    }
+  }
+}
