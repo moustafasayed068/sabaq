@@ -22,6 +22,7 @@ from apps.athletes.forms import (
 )
 from apps.athletes.models import Consent, HealthScreen, Questionnaire
 from apps.athletes.selectors import questionnaire_for
+from apps.core.export import json_value, row
 from apps.races.models import Race
 from apps.races.services import engine_race
 from engine import Env, HealthAnswers, PlanInput
@@ -33,6 +34,7 @@ __all__ = [
     "Step",
     "build_form",
     "claim_questionnaire",
+    "export_for",
     "has_health_consent",
     "next_step",
     "plan_input",
@@ -214,3 +216,19 @@ def plan_input(q: Questionnaire) -> PlanInput:
         doctor_cleared=health["doctor_cleared"] or None,
         env=Env(where=q.where or "outdoor", gps=bool(q.gps), kit=tuple(q.kit)),  # type: ignore[arg-type]
     )
+
+
+# ---------------------------------------------------------------- the athlete's own data
+
+
+def export_for(user: User) -> dict[str, Any]:
+    """Every answer, consent and health screen of this athlete (decrypted: it is theirs)."""
+    out = []
+    for q in Questionnaire.objects.filter(user=user).select_related("race"):
+        item = row(q, skip=("user",))
+        item["race"] = q.race.name
+        item["consents"] = [row(c, skip=("questionnaire", "user")) for c in q.consents.all()]
+        screen = HealthScreen.objects.filter(questionnaire=q).first()
+        item["health"] = json_value(screen.data) if screen else None
+        out.append(item)
+    return {"questionnaires": out}

@@ -49,3 +49,10 @@ class CodeForm(forms.Form):
         if not code.isdigit():
             raise forms.ValidationError(_("الكود أرقام بس."))
         return code
+
+
+class DeleteAccountForm(forms.Form):
+    confirm = forms.BooleanField(
+        label=_("فاهم إن ده هيمسح حسابي وإجاباتي وخطتي، ومش هينفع أرجّعهم."),
+        error_messages={"required": _("علّم إنك فاهم الأول.")},
+    )
