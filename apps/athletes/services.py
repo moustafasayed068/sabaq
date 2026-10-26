@@ -5,11 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django import forms
 from django.utils.translation import gettext_lazy as _
-from django_stubs_ext import StrOrPromise
 
 from apps.athletes.forms import (
     DaysStepForm,
@@ -33,6 +32,9 @@ __all__ = [
     "questionnaire_for",
     "save_step",
 ]
+
+if TYPE_CHECKING:
+    from django_stubs_ext import StrOrPromise
 
 
 @dataclass(frozen=True)
