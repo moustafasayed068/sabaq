@@ -39,7 +39,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 
 ## M2: Pay and adapt (9 – 15 Nov)
 
-- [ ] `payments`: Order, Payment; Paymob checkout; HMAC-verified idempotent webhook; unlock only from the webhook; refund flow (admin).
+- [x] `payments`: Order, Payment; Paymob checkout; HMAC-verified idempotent webhook; unlock only from the webhook; refund flow (admin). Live once the owner sets the `PAYMOB_*` keys (ADR 0004).
 - [ ] Weekly check-in form; regenerate remaining weeks via the engine; pause flow for sharp pain with "doctor cleared me".
 - [ ] Mark day done / missed / "I feel something".
 - [ ] Admin: athletes list with flags first (pain, sick, paused), payments, races.

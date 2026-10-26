@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "apps.races",
     "apps.athletes",
     "apps.plans",
+    "apps.payments",
 ]
 
 MIDDLEWARE = [
@@ -156,7 +157,18 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 
-# Self only. Fonts and HTMX are served from our own static files; Paymob is added in M2.
+# ---------------------------------------------------------------- payments (Paymob)
+# Keys come only from the environment. With any of them missing, checkout stays closed
+# and the plan page says payment opens soon. UAE: https://uae.paymob.com, KSA: https://ksa.paymob.com
+PAYMOB_BASE_URL = env_str("PAYMOB_BASE_URL", "https://accept.paymob.com").rstrip("/")
+PAYMOB_SECRET_KEY = env_str("PAYMOB_SECRET_KEY", "")
+PAYMOB_PUBLIC_KEY = env_str("PAYMOB_PUBLIC_KEY", "")
+PAYMOB_HMAC_SECRET = env_str("PAYMOB_HMAC_SECRET", "")
+PAYMOB_INTEGRATION_IDS: list[int] = [int(i) for i in env_list("PAYMOB_INTEGRATION_IDS")]
+PAYMOB_TIMEOUT_S = env_int("PAYMOB_TIMEOUT_S", 15)
+
+# Self only. Fonts and HTMX are served from our own static files. The checkout form
+# redirects to Paymob, so form-action allows it (browsers check redirects of form posts).
 CONTENT_SECURITY_POLICY = {
     "DIRECTIVES": {
         "default-src": [SELF],
@@ -165,7 +177,7 @@ CONTENT_SECURITY_POLICY = {
         "img-src": [SELF, "data:"],
         "font-src": [SELF],
         "connect-src": [SELF],
-        "form-action": [SELF],
+        "form-action": [SELF, PAYMOB_BASE_URL],
         "frame-ancestors": [NONE],
         "base-uri": [SELF],
         "object-src": [NONE],

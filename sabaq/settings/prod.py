@@ -29,3 +29,12 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+
+_paymob = [PAYMOB_SECRET_KEY, PAYMOB_PUBLIC_KEY, PAYMOB_HMAC_SECRET, PAYMOB_INTEGRATION_IDS]  # noqa: F405
+if any(_paymob) and not all(_paymob):
+    raise ImproperlyConfigured(
+        "Set all of PAYMOB_SECRET_KEY, PAYMOB_PUBLIC_KEY, PAYMOB_HMAC_SECRET and "
+        "PAYMOB_INTEGRATION_IDS, or none of them (payments closed)."
+    )
+if not PAYMOB_BASE_URL.startswith("https://"):  # noqa: F405
+    raise ImproperlyConfigured("PAYMOB_BASE_URL must use https.")

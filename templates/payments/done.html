@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "الدفع" %}{% endblock %}
+{% block head %}{% if order.status == "created" %}<meta http-equiv="refresh" content="5">{% endif %}{% endblock %}
+{% block content %}
+{% if order.status == "paid" %}
+  <section class="stack">
+    <h1>{% translate "الخطة كلها مفتوحة" %}</h1>
+    <p>{% translate "وصلنا الدفع. كل الأسابيع مفتوحة لحد يوم السباق." %}</p>
+    <a class="btn btn-primary btn-block" href="{% url 'plans:mine' %}">{% translate "افتح خطتي" %}</a>
+  </section>
+{% elif order.status == "created" %}
+  <section class="stack">
+    <h1>{% translate "بنأكد الدفع" %}</h1>
+    <p>{% translate "ده بياخد ثواني. الصفحة هتتحدّث لوحدها." %}</p>
+    <a class="btn btn-ghost btn-block" href="{% url 'payments:done' %}">{% translate "حدّث الصفحة" %}</a>
+  </section>
+{% elif order.status == "refunded" %}
+  <section class="stack">
+    <h1>{% translate "رجّعنالك فلوسك" %}</h1>
+    <p>{% translate "أول أسبوع لسه مفتوح." %}</p>
+    <a class="btn btn-ghost btn-block" href="{% url 'plans:mine' %}">{% translate "خطتي" %}</a>
+  </section>
+{% elif order.status == "mismatch" %}
+  <section class="stack">
+    <h1>{% translate "بنراجع الدفع" %}</h1>
+    <p>{% translate "المبلغ اللي وصلنا مختلف عن سعر الخطة. هنراجعه ونكلمك." %}</p>
+    <a class="btn btn-ghost btn-block" href="{% url 'plans:mine' %}">{% translate "خطتي" %}</a>
+  </section>
+{% else %}
+  <section class="stack">
+    <h1>{% translate "الدفع مكملش" %}</h1>
+    <p>{% translate "مفيش فلوس اتخصمت. لو اتخصمت، كلّمنا وهنحلها." %}</p>
+    <a class="btn btn-race btn-block" href="{% url 'payments:checkout' %}">{% translate "جرّب تاني" %}</a>
+  </section>
+{% endif %}
+{% endblock %}

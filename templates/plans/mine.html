@@ -20,8 +20,10 @@
 {% for m in plan.messages %}{% include "components/notice.html" with text=m %}{% endfor %}
 
 {% if not plan.paid_at %}
-  {% translate "أول أسبوع ببلاش. باقي الخطة بيتفتح بالدفع، وده جاي قريب." as unlock_text %}
-  {% include "components/notice.html" with kind="warn" text=unlock_text %}
+<section class="card stack">
+  <p>{% translate "أول أسبوع ببلاش. ادفع مرة واحدة وافتح الخطة كلها لحد يوم السباق." %}</p>
+  <a class="btn btn-race btn-block" href="{% url 'payments:checkout' %}">{% translate "افتح باقي الخطة" %}</a>
+</section>
 {% endif %}
 
 <section class="stack">
