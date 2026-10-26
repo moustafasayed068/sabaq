@@ -207,8 +207,10 @@ def _build_run(inp: PlanInput, ctx: Ctx, out: Plan, n: int, start: date) -> Plan
     t = TARGET[d_km]
     lvl = ctx.level
     ctx.run_walk = lvl == "beginner" and (inp.weekly_km < 10 or inp.longest_km < 4)
+    # The last week is always race week: very short plans drop the taper first, then build weeks.
     taper = (2 if n >= 8 else 1) if d_km == 42.2 else 1 if d_km == 21.1 and n >= 6 else 0
-    build_weeks = max(1, n - 1 - taper)
+    taper = max(0, min(taper, n - 2))
+    build_weeks = n - 1 - taper
     p = progression_rate(inp)
     long_step = 1.5 if lvl == "beginner" else 2
     days_count = len(inp.days)
@@ -243,6 +245,9 @@ def _build_run(inp: PlanInput, ctx: Ctx, out: Plan, n: int, start: date) -> Plan
         if not cutback:
             peak_weekly = max(peak_weekly, wk)
             peak_long = max(peak_long, lg)
+    if build_weeks == 0:  # race this week: judge it on current fitness
+        peak_weekly = weekly
+        peak_long = min(long, max(weekly * long_share, inp.longest_km))
     for k in range(taper):
         f = (0.8, 0.6)[k] if taper == 2 else 0.8
         lf = (0.75, 0.55)[k] if taper == 2 else 0.7
@@ -428,6 +433,10 @@ def _fill_run_week(
             x.workout = w.rest(["متجريش. نام كويس واشرب مية كتير."])
 
 
+# One race-effort session in race week (a run sharpener or a HYROX simulation).
+_RACE_EFFORT_TITLES = ("تنشيط قبل السباق", "محاكاة السباق")
+
+
 def _fill_race_week(inp: PlanInput, ctx: Ctx, days: list[Day], weekly: float) -> None:
     race_idx = next((k for k, x in enumerate(days) if x.date == inp.race_date), -1)
     hyrox = inp.race_type == "hyrox"
@@ -447,7 +456,7 @@ def _fill_race_week(inp: PlanInput, ctx: Ctx, days: list[Day], weekly: float) ->
             x.role = "rest"
             x.workout = w.rest(["راحة كاملة. كُل أكل فيه نشويات كويس، ونام بدري."], title="راحة")
             continue
-        has_sharpener = any(y.workout and y.workout.title == "تنشيط قبل السباق" for y in days)
+        has_sharpener = any(y.workout and y.workout.title in _RACE_EFFORT_TITLES for y in days)
         x.role = "q1" if 3 <= before <= 4 and not has_sharpener else "easy"
         if hyrox:
             x.workout = (
@@ -524,7 +533,11 @@ def _build_hyrox(inp: PlanInput, ctx: Ctx, out: Plan, n: int, start: date) -> Pl
         )
     days_count = len(inp.days)
     phases = [
-        "cutback" if n >= 7 and i > 0 and (i + 1) % 4 == 0 else "peak" if i == n - 2 else "build"
+        "cutback"
+        if n >= 7 and 0 < i < n - 2 and (i + 1) % 4 == 0
+        else "peak"
+        if i == n - 2
+        else "build"
         for i in range(n - 1)
     ]
     phases.append("race")

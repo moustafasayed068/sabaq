@@ -13,7 +13,7 @@ from engine.paces import fmt_pace, fmt_time, parse_duration, predict_time, vdot_
 from engine.types import CheckInFeedback, CheckInResult, Env, Flags, HealthAnswers, Plan, PlanInput
 
 # Stored with every generated plan. Bump it whenever the output can change.
-ENGINE_VERSION = "1.0.0"
+ENGINE_VERSION = "1.1.0"
 
 __all__ = [
     "DIST_NAME",

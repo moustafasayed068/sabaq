@@ -45,6 +45,7 @@ Target peak long run by level (beginner / intermediate / advanced): 5K 5/7/10, 1
 - Cutback week (80%) every 4th week in plans of 7+ weeks, never in the last build week.
 - Taper: half 1 week (80%) when the plan has 6+ weeks; marathon 2 weeks (80%, 60%) when 8+ weeks. Race week volume: 45% of peak (half and marathon) or 60% (5K/10K). Day before the race: rest. A short race-pace sharpener 3–4 days before (strides for beginners).
 - Partial first week gets volume in proportion to the training days it contains.
+- The last week is always race week. Very short plans drop the taper first, then the build weeks; a race this week is judged on current fitness.
 
 ## Days
 
@@ -65,7 +66,8 @@ Target peak long run by level (beginner / intermediate / advanced): 5K 5/7/10, 1
 
 - Weekly roles: compromised run (1 km run + a station, repeated) on the long-run day, stations + strength on the day furthest from it, km intervals at tempo pace on a third day, easy runs on the rest.
 - Rounds grow from 3 per session up to 7 (5 for beginners); cutback weeks lighter.
-- Race week: one race-effort simulation (3 rounds) 3–4 days before, easy runs, rest the day before.
+- Race week: one race-effort simulation (3 rounds) 3–4 days before (never two), easy runs, rest the day before.
+- Cutback week every 4th week in plans of 7+ weeks, never in the last build week (same rule as running).
 - Missing equipment gets a substitute: SkiErg → rower or band pull-downs; Sled push → pushing a switched-off treadmill or wall pushes + walking lunges; Sled pull → heavy dumbbell rows + walking backwards, or a band/rope; Rowing → SkiErg, kettlebell swings, or burpees + squats; Farmers carry → two bags of water bottles; Sandbag lunges → backpack with books or bottles; Wall balls → dumbbell thrusters or a sandbag throw. A warning lists missing stations.
 - Open division weights shown to the athlete (confirm with the official rulebook): wall ball 6 kg men / 4 kg women, farmers 2×24 / 2×16 kg, sandbag 20 / 10 kg.
 - Longest run under 5 km → `risky`, suggest Doubles or Relay.
