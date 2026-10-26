@@ -4,7 +4,7 @@ from pathlib import Path
 
 from csp.constants import NONE, SELF
 
-from sabaq.env import env_int, env_list, env_str
+from sabaq.env import env_bool, env_int, env_list, env_str
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -20,10 +20,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "csp",
+    "apps.core",
     "apps.accounts",
 ]
 
 MIDDLEWARE = [
+    "apps.core.request_context.RequestIdMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "csp.middleware.CSPMiddleware",
@@ -165,11 +167,22 @@ CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_TASK_DEFAULT_QUEUE = "default"
 CELERY_TIMEZONE = TIME_ZONE
 
-# ---------------------------------------------------------------- logging
+# ---------------------------------------------------------------- logging (JSON + request id)
+# Only true behind our own reverse proxy (Caddy), which appends the client address.
+TRUST_X_FORWARDED_FOR = env_bool("DJANGO_TRUST_X_FORWARDED_FOR", False)
 LOG_LEVEL = env_str("DJANGO_LOG_LEVEL", "INFO")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "filters": {"request_id": {"()": "apps.core.logging.RequestIdFilter"}},
+    "formatters": {"json": {"()": "apps.core.logging.JsonFormatter"}},
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+            "filters": ["request_id"],
+        }
+    },
     "root": {"handlers": ["console"], "level": LOG_LEVEL},
+    "loggers": {"django.db.backends": {"level": "WARNING"}},
 }

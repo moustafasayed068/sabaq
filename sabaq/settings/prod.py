@@ -12,6 +12,7 @@ env_str("POSTGRES_HOST")
 env_str("REDIS_URL")
 
 # TLS ends at Caddy, which sets X-Forwarded-Proto.
+TRUST_X_FORWARDED_FOR = env_bool("DJANGO_TRUST_X_FORWARDED_FOR", True)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT", True)
 SECURE_REDIRECT_EXEMPT = [r"^healthz$"]
