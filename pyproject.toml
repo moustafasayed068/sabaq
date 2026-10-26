@@ -5,7 +5,7 @@ description = "Arabic race training plans for runners in Egypt and the Gulf."
 readme = "README.md"
 requires-python = "==3.12.*"
 dependencies = [
-    "django==5.2.18",
+    "django==6.1.2",
     "psycopg[binary]==3.3.6",
     "redis==8.1.0",
     "celery==5.6.3",
