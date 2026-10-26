@@ -8,6 +8,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 from uuid import UUID
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 
 from apps.athletes.models import Questionnaire
@@ -155,6 +156,7 @@ class DayView:
     km: float
     steps: list[str]
     extra: dict[str, Any] | None
+    status: str = ""  # done / missed / feel, from the athlete's day log
 
 
 @dataclass(frozen=True)
@@ -200,7 +202,13 @@ def weeks_from_engine(result: EnginePlan) -> list[WeekView]:
 
 
 def _day_view(d: PlanDay) -> DayView:
-    return DayView(d.date, d.day_name, d.role, d.kind, d.title, float(d.km), d.steps, d.extra)
+    try:
+        status = d.log.status
+    except ObjectDoesNotExist:
+        status = ""
+    return DayView(
+        d.date, d.day_name, d.role, d.kind, d.title, float(d.km), d.steps, d.extra, status
+    )
 
 
 def weeks_from_plan(plan: Plan) -> list[WeekView]:

@@ -6,6 +6,7 @@
       <span class="day-when"><b>{{ day.day_name }}</b> <span class="caption">{{ day.date|ar_date_short }}</span></span>
       <span class="day-title"><i class="kind kind-{{ day.kind }}" aria-hidden="true"></i>{{ day.title }}{% if day.extra %} {% translate "+ قوة" %}{% endif %}</span>
       {% if day.km %}<span class="day-km">{{ day.km|km }}</span>{% endif %}
+      {% if day.status == "done" %}<span class="tag">{% translate "خلّصته" %}</span>{% elif day.status == "missed" %}<span class="tag">{% translate "فوّته" %}</span>{% elif day.status == "feel" %}<span class="tag">{% translate "حاسس بحاجة" %}</span>{% endif %}
     </summary>
     <div class="day-steps">
       {% for step in day.steps %}<p>{{ step }}</p>{% endfor %}

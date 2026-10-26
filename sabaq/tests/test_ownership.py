@@ -26,6 +26,7 @@ OWNER = {
     "mine",
     "save",
     "day",
+    "log_day",
     "check_in",
     "resume",
     "checkout",

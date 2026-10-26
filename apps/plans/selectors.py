@@ -13,9 +13,9 @@ if TYPE_CHECKING:
 
 
 def active_plan(user: User) -> Plan | None:
-    """The user's current plan with weeks and days in 3 queries."""
+    """The user's current plan with weeks, days and day logs in 3 queries."""
     weeks = PlanWeek.objects.prefetch_related(
-        Prefetch("days", queryset=PlanDay.objects.order_by("date"))
+        Prefetch("days", queryset=PlanDay.objects.select_related("log").order_by("date"))
     )
     return (
         Plan.objects.filter(user=user, is_active=True)

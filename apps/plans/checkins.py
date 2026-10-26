@@ -14,6 +14,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.core.services import AuditAction, record_audit
+from apps.plans.daylogs import feels_something
 from apps.plans.models import CheckIn, Plan, PlanStatus, PlanWeek
 from apps.plans.services import store_weeks, summary_of, week_is_open
 from engine import ENGINE_VERSION, check_in, generate, resume_after_clearance
@@ -83,11 +84,9 @@ def check_in_week(plan: Plan, today: date) -> PlanWeek | None:
     for week in plan.weeks.all():
         if week.phase == "race" or not week_is_open(plan, week.index):
             continue
-        if not (
-            week.start + timedelta(days=OPENS_ON_DAY)
-            <= today
-            <= week.start + timedelta(days=CLOSES_AFTER_DAYS)
-        ):
+        # "حاسس بحاجة" on a day opens the check-in at once, so sharp pain can pause the plan.
+        opens = week.start if feels_something(week) else week.start + timedelta(days=OPENS_ON_DAY)
+        if not opens <= today <= week.start + timedelta(days=CLOSES_AFTER_DAYS):
             continue
         if CheckIn.objects.filter(week=week).exists():
             continue

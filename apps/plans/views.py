@@ -10,8 +10,9 @@ from django.utils import timezone
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from apps.athletes import services as athletes
-from apps.plans import checkins, services
+from apps.plans import checkins, daylogs, services
 from apps.plans.forms import CheckInForm, ResumeForm
+from apps.plans.models import DayStatus
 from apps.plans.selectors import active_plan
 
 QUESTIONNAIRE = "questionnaire_id"
@@ -97,7 +98,11 @@ def check_in(request: HttpRequest) -> HttpResponse:
             return redirect("plans:mine")
         status = 422
     else:
-        form = CheckInForm(planned=planned, has_long=has_long)
+        form = CheckInForm(
+            planned=planned,
+            has_long=has_long,
+            initial={"done": str(min(daylogs.done_in_week(week), planned))},
+        )
         status = 200
     return render(
         request,
@@ -147,6 +152,34 @@ def day(request: HttpRequest, day: date) -> HttpResponse:
     page = None if plan.paused_at else services.day_page(plan, day)
     if page is None:
         return redirect("plans:mine")
+    today = timezone.localdate()
+    loggable = page.day.kind not in ("", "rest") and page.day.date <= today
     return render(
-        request, "plans/day.html", {"plan": plan, "page": page, "today": timezone.localdate()}
+        request,
+        "plans/day.html",
+        {
+            "plan": plan,
+            "page": page,
+            "today": today,
+            "loggable": loggable,
+            "statuses": DayStatus.choices,
+            "check_in_open": checkins.check_in_week(plan, today) is not None,
+        },
     )
+
+
+@require_POST
+@login_required
+def log_day(request: HttpRequest, day: date) -> HttpResponse:
+    plan = active_plan(request.user)  # type: ignore[arg-type]
+    if plan is None:
+        return redirect("races:landing")
+    with contextlib.suppress(daylogs.CannotLogDayError):
+        daylogs.log_day(
+            request.user,  # type: ignore[arg-type]
+            plan,
+            day,
+            request.POST.get("status", ""),
+            timezone.localdate(),
+        )
+    return redirect("plans:day", day=day)

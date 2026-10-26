@@ -18,6 +18,30 @@
 {% else %}
   {% translate "النهارده راحة. نام كويس واشرب مية." as rest_text %}{% include "components/notice.html" with text=rest_text %}
 {% endif %}
+{% if loggable %}
+<section class="card stack" aria-labelledby="log-title">
+  <h2 id="log-title">{% translate "التمرين ده" %}</h2>
+  {% if page.day.status %}<p class="label">{% for value, label in statuses %}{% if value == page.day.status %}{{ label }}{% endif %}{% endfor %}</p>{% endif %}
+  <div class="row">
+    {% for value, label in statuses %}
+    <form method="post" action="{% url 'plans:log_day' page.day.date %}">{% csrf_token %}
+      <button class="btn {% if value == page.day.status %}btn-primary{% else %}btn-ghost{% endif %}" type="submit" name="status" value="{{ value }}"{% if value == page.day.status %} aria-pressed="true"{% endif %}>{{ label }}</button>
+    </form>
+    {% endfor %}
+  </div>
+  {% if page.day.status == "missed" %}<p>{% translate "مفيش مشكلة. سجّله في آخر الأسبوع، وهنظبط اللي جاي." %}</p>{% endif %}
+</section>
+{% if page.day.status == "feel" %}
+<section class="card stack notice-warn" role="status">
+  <h2>{% translate "حاسس بإيه؟" %}</h2>
+  <p>{% translate "وجع خفيف بيروح بعد الإحماء: ينفع تكمّل سهل. علّمه في تسجيل الأسبوع، ومش هنزوّد المسافة." %}</p>
+  <p>{% translate "وجع بيزيد مع الجري أو بيغيّر طريقة جريك: وقّف الجري، واكشف عند دكتور أو أخصائي علاج طبيعي، وسجّل أسبوعك دلوقتي." %}</p>
+  {% if check_in_open %}<a class="btn btn-primary btn-block" href="{% url 'plans:check_in' %}">{% translate "سجّل أسبوعك دلوقتي" %}</a>{% endif %}
+</section>
+{% translate "وجع في صدرك، دوخة شديدة، ضيق نفس مش طبيعي، أو إغماء: وقّف فورًا واطلب الإسعاف (123)." as danger_text %}
+{% include "components/notice.html" with kind="stop" text=danger_text %}
+{% endif %}
+{% endif %}
 <nav class="row day-nav" aria-label="{% translate 'الأيام' %}">
   {% if page.previous %}<a class="btn btn-ghost" href="{% url 'plans:day' page.previous %}">{% translate "اليوم اللي قبله" %}</a>{% endif %}
   <a class="btn btn-ghost" href="{% url 'plans:mine' %}">{% translate "خطتي" %}</a>
