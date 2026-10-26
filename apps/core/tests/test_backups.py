@@ -2,6 +2,7 @@ import io
 import os
 import stat
 from datetime import timedelta
+from types import SimpleNamespace
 
 import pytest
 from cryptography.fernet import Fernet, MultiFernet
@@ -129,9 +130,31 @@ def test_restore_refuses_missing_file(keys):
         call_command("restore_db", "/nope.enc", "--yes")
 
 
-def test_backups_need_postgres(keys):
+def test_backups_need_postgres(monkeypatch):
+    sqlite = SimpleNamespace(DATABASES={"default": {"ENGINE": "django.db.backends.sqlite3"}})
+    monkeypatch.setattr(backups, "settings", sqlite)
     with pytest.raises(backups.BackupError, match="PostgreSQL"):
         backups.Database.from_settings()
+
+
+def test_database_settings_are_read_for_postgres(monkeypatch):
+    pg = SimpleNamespace(
+        DATABASES={
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": "n",
+                "USER": "u",
+                "PASSWORD": "p",
+                "HOST": "h",
+                "PORT": 6543,
+            }
+        }
+    )
+    monkeypatch.setattr(backups, "settings", pg)
+    db = backups.Database.from_settings()
+    assert db.args() == ["-h", "h", "-p", "6543", "-U", "u", "-d", "n"]
+    assert db.args("other")[-1] == "other"
+    assert db.env()["PGPASSWORD"] == "p"
 
 
 def test_missing_tools_are_explained(keys, monkeypatch):
