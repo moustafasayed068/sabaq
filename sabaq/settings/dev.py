@@ -1,10 +1,13 @@
 """Local development. Never used in production."""
 
+import base64
 import os
 
+# A fixed, clearly fake key derived at import time (dev only; never a real secret).
 os.environ.setdefault(
-    "FIELD_ENCRYPTION_KEYS", "ZGV2LW9ubHktaW5zZWN1cmUtZmllbGQta2V5LTMyYnk="
-)  # dev only
+    "FIELD_ENCRYPTION_KEYS",
+    base64.urlsafe_b64encode(b"dev-only-insecure-field-key-0123456789"[:32]).decode(),
+)
 os.environ.setdefault("DJANGO_SECRET_KEY", "dev-only-insecure-key-do-not-use-in-production")
 
 from sabaq.settings.base import *  # noqa: F403

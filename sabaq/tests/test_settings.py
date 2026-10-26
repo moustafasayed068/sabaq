@@ -1,3 +1,4 @@
+import base64
 import importlib
 import subprocess
 import sys
@@ -11,7 +12,7 @@ PROD_ENV = {
     "POSTGRES_HOST": "db",
     "POSTGRES_PASSWORD": "pw",
     "REDIS_URL": "redis://redis:6379/0",
-    "FIELD_ENCRYPTION_KEYS": "dGVzdC1vbmx5LWluc2VjdXJlLWZpZWxkLWtleS0zMmI=",
+    "FIELD_ENCRYPTION_KEYS": base64.urlsafe_b64encode(bytes(32)).decode(),
 }
 
 
