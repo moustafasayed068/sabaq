@@ -1,7 +1,13 @@
 """Test settings: fast, isolated, no network."""
 
+import base64
 import os
 
+# A fixed, clearly fake key derived at import time (test only; never a real secret).
+os.environ.setdefault(
+    "FIELD_ENCRYPTION_KEYS",
+    base64.urlsafe_b64encode(b"test-only-insecure-field-key-0123456789"[:32]).decode(),
+)
 os.environ.setdefault("DJANGO_SECRET_KEY", "test-only-insecure-key")
 
 from sabaq.settings.base import *  # noqa: F403

@@ -114,8 +114,10 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - run: uv sync --no-dev
-      - name: Generate a throwaway secret key
-        run: echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" >> "$GITHUB_ENV"
+      - name: Generate throwaway keys
+        run: |
+          echo "DJANGO_SECRET_KEY=$(python -c 'import secrets; print(secrets.token_urlsafe(50))')" >> "$GITHUB_ENV"
+          echo "FIELD_ENCRYPTION_KEYS=$(python -c 'import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())')" >> "$GITHUB_ENV"
       - run: uv run python manage.py check --deploy --fail-level WARNING
       - run: uv run python manage.py makemigrations --check --dry-run
 

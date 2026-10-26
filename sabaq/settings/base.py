@@ -118,6 +118,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # The admin lives at a non-default path (docs/security.md).
 ADMIN_URL = env_str("DJANGO_ADMIN_URL", "staff-7f3c/")
 
+# ---------------------------------------------------------------- field-level encryption (ADR 0003)
+# Comma-separated Fernet keys, newest first. Generate one with:
+#   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+FIELD_ENCRYPTION_KEYS: list[str] = env_list("FIELD_ENCRYPTION_KEYS")
+
 # ---------------------------------------------------------------- i18n (Arabic first)
 LANGUAGE_CODE = "ar"
 LANGUAGES = [("ar", "العربية")]

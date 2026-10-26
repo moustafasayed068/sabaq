@@ -19,6 +19,7 @@ from apps.core.forms import (
     LatinIntegerField,
 )
 from apps.races.models import SUPPORTED_DISTANCES_KM, Race, RaceKind
+from engine import HEALTH_QUESTIONS
 
 NUMBER = {"invalid": _("اكتب رقم.")}
 CHOICE = _("اختار من الاختيارات اللي قدامك.")
@@ -210,3 +211,62 @@ class DaysStepForm(StepForm):
         if not 3 <= len(days) <= 6:
             raise forms.ValidationError(_("اختار من 3 لـ 6 أيام."))
         return days
+
+
+class ConsentStepForm(StepForm):
+    agree = forms.BooleanField(
+        label=_("موافق، وفاهم إن الخطة مش نصيحة طبية"),
+        error_messages={"required": _("لازم توافق عشان نكمّل.")},
+    )
+
+
+YES_NO = [("no", _("لأ")), ("yes", _("أيوه"))]
+
+
+class HealthStepForm(StepForm):
+    """PAR-Q style screen (engine HEALTH_QUESTIONS) plus injury history and pain now."""
+
+    injury = forms.ChoiceField(
+        label=_("اتصابت قبل كده من الجري أو الرياضة؟"),
+        choices=[
+            ("none", _("لأ")),
+            ("knee", _("أيوه، في الركبة")),
+            ("other", _("أيوه، حاجة تانية")),
+        ],
+        widget=ChipSelect,
+        error_messages={"required": _("اختار واحدة.")},
+    )
+    pain = forms.ChoiceField(
+        label=_("عندك وجع دلوقتي بيزيد لما تجري؟"),
+        choices=[("none", _("لأ")), ("now", _("أيوه"))],
+        widget=ChipSelect,
+        error_messages={"required": _("اختار واحدة.")},
+    )
+    doctor_cleared = forms.BooleanField(
+        label=_("كشفت والدكتور وافق إني أتمرن"),
+        required=False,
+        help_text=_("علّم هنا بس لو جاوبت «أيوه» على سؤال من اللي فوق وكشفت فعلًا."),
+    )
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
+        super().__init__(*args, **kwargs)
+        questions = {
+            q.id: forms.TypedChoiceField(
+                label=q.text,
+                choices=YES_NO,
+                coerce=lambda v: v == "yes",
+                widget=ChipSelect,
+                error_messages={"required": _("جاوب بأيوه أو لأ."), "invalid_choice": CHOICE},
+            )
+            for q in HEALTH_QUESTIONS
+        }
+        self.fields = {**questions, **self.fields}
+
+    def health_data(self) -> dict[str, Any]:
+        data = self.cleaned_data
+        return {
+            "answers": {q.id: bool(data[q.id]) for q in HEALTH_QUESTIONS},
+            "doctor_cleared": bool(data["doctor_cleared"]),
+            "injury": data["injury"],
+            "pain": data["pain"],
+        }

@@ -7,7 +7,9 @@ from django.utils import timezone
 
 from apps.athletes.models import Questionnaire
 from apps.athletes.services import plan_input
-from engine import generate
+from engine import HEALTH_QUESTIONS, generate
+
+HEALTH_IDS = [q.id for q in HEALTH_QUESTIONS]
 
 pytestmark = pytest.mark.django_db
 
@@ -18,6 +20,8 @@ ANSWERS: dict[str, dict[str, object]] = {
     "running": {"runs_per_week": "3", "weekly_km": "20", "longest_km": "10"},
     "time": {"recent_km": "5.0", "recent_time_0": "", "recent_time_1": "28", "recent_time_2": "0", "goal": "finish"},
     "days": {"days": ["6", "1", "3", "5"], "where": "outdoor", "gps": "yes"},
+    "consent": {"agree": "on"},
+    "health": {**dict.fromkeys(HEALTH_IDS, "no"), "injury": "none", "pain": "none"},
 }  # fmt: skip
 
 
@@ -43,7 +47,7 @@ def test_full_questionnaire_produces_the_golden_half_plan(client):
     q = start(client)
     answer_all(client)
     q.refresh_from_db()
-    assert q.completed_steps == ["race", "you", "running", "time", "days"]
+    assert q.completed_steps == ["race", "you", "running", "time", "days", "consent", "health"]
     assert client.get("/questions/review/").status_code == 200
     inp = plan_input(q)
     assert inp.recent_time == "0:28:00"

@@ -43,10 +43,12 @@ def step(request: HttpRequest, step: str) -> HttpResponse:
     q = _current(request)
     if q is None:
         return redirect("races:landing")
+    if step == "health" and not services.has_health_consent(q):
+        return redirect("athletes:step", step="consent")
     today = timezone.localdate()
     form = services.build_form(step, q, today, request.POST if request.method == "POST" else None)
     if request.method == "POST" and form.is_valid():
-        services.save_step(q, step, form.cleaned_data)
+        services.save_step(q, step, form)
         nxt = services.next_step(q)
         return redirect("athletes:step", step=nxt) if nxt else redirect("athletes:review")
     index = [s.slug for s in services.STEPS].index(step)
@@ -60,6 +62,7 @@ def step(request: HttpRequest, step: str) -> HttpResponse:
             "number": index + 1,
             "total": len(services.STEPS),
             "previous": services.STEPS[index - 1].slug if index else None,
+            "consent_text": services.HEALTH_CONSENT_TEXT if step == "consent" else None,
         },
         status=422 if request.method == "POST" else 200,
     )
@@ -73,4 +76,8 @@ def review(request: HttpRequest) -> HttpResponse:
     missing = services.next_step(q)
     if missing:
         return redirect("athletes:step", step=missing)
-    return render(request, "athletes/review.html", {"q": q, "steps": services.STEPS})
+    return render(
+        request,
+        "athletes/review.html",
+        {"q": q, "steps": services.STEPS, "health_needs_doctor": services.needs_doctor(q)},
+    )

@@ -1,3 +1,4 @@
+import base64
 import importlib
 import subprocess
 import sys
@@ -11,6 +12,7 @@ PROD_ENV = {
     "POSTGRES_HOST": "db",
     "POSTGRES_PASSWORD": "pw",
     "REDIS_URL": "redis://redis:6379/0",
+    "FIELD_ENCRYPTION_KEYS": base64.urlsafe_b64encode(bytes(32)).decode(),
 }
 
 
@@ -48,7 +50,9 @@ def test_prod_settings_are_strict(prod):
     assert prod.SESSION_ENGINE == "django.contrib.sessions.backends.cache"
 
 
-@pytest.mark.parametrize("missing", ["DJANGO_SECRET_KEY", "POSTGRES_HOST", "REDIS_URL"])
+@pytest.mark.parametrize(
+    "missing", ["DJANGO_SECRET_KEY", "POSTGRES_HOST", "REDIS_URL", "FIELD_ENCRYPTION_KEYS"]
+)
 def test_prod_settings_refuse_to_start_without_secrets(missing):
     """prod.py must fail fast when a required environment variable is missing."""
     env = {"PATH": "/usr/bin:/bin", **PROD_ENV}

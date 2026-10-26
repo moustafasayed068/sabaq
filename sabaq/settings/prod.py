@@ -1,5 +1,7 @@
 """Production and staging. Strict: every secret comes from the environment."""
 
+from django.core.exceptions import ImproperlyConfigured
+
 from sabaq.env import env_bool, env_int, env_list, env_str
 from sabaq.settings.base import *  # noqa: F403
 
@@ -10,6 +12,8 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 # Production always uses PostgreSQL and Redis; fail fast when they are not configured.
 env_str("POSTGRES_HOST")
 env_str("REDIS_URL")
+if not FIELD_ENCRYPTION_KEYS:  # noqa: F405 - health data must never be stored unencrypted
+    raise ImproperlyConfigured("Set the FIELD_ENCRYPTION_KEYS environment variable.")
 
 # TLS ends at Caddy, which sets X-Forwarded-Proto.
 TRUST_X_FORWARDED_FOR = env_bool("DJANGO_TRUST_X_FORWARDED_FOR", True)

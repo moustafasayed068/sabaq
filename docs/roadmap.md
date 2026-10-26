@@ -30,7 +30,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 - [x] Brand base: tokens as CSS variables (light/dark), fonts self-hosted from `brand/fonts/`, base layout RTL, components (button, chip, card, field, time input with 3 boxes, notice).
 - [x] Landing page with "اختار سباقك".
 - [x] Questionnaire as short steps (no JS required, HTMX enhanced), server-side validation.
-- [ ] Consent screen + health screen; health fields encrypted at the field level; staff access audited.
+- [x] Consent screen + health screen; health fields encrypted at the field level; staff access audited.
 - [ ] Phone login with one-time codes (dev: code printed to logs; production channel decided by the owner), rate limited.
 - [ ] Generate and store the plan (rows + engine input + engine_version); result page (ok / risky / blocked + alternatives).
 - [ ] "My plan" page and day page; week 1 open, later weeks locked.

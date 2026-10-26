@@ -4,12 +4,13 @@
 {% block content %}
 <section class="stack">
   <p class="caption">{{ q.race.name }}</p>
-  <div class="progress" aria-hidden="true"><span class="progress-{{ number }}-{{ total }}"></span></div>
+  <progress class="progress" value="{{ number }}" max="{{ total }}" aria-hidden="true"></progress>
   <p class="label">{% blocktranslate trimmed with n=number|num t=total|num %}خطوة {{ n }} من {{ t }}{% endblocktranslate %}</p>
   <h1>{{ step.title }}</h1>
 </section>
 <form class="card stack" method="post" novalidate hx-boost="true">
   {% csrf_token %}
+  {% if consent_text %}<div class="notice"><p>{{ consent_text }}</p></div>{% endif %}
   {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
   {% for field in form %}{{ field.as_field_group }}{% endfor %}
   <div class="row step-actions">
