@@ -426,6 +426,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-otp"
+version = "1.7.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6a/56/a86b04c09242bc2f8e6a0e3294bb60d4235ab6d4436608482aace4c25c5f/django_otp-1.7.4.tar.gz", hash = "sha256:f3a970be59ca407d90fd278de3253979417364f91e9edcfcd7a9f05235859b27", size = 79413, upload-time = "2026-10-08T23:51:12.148Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c9/d7/1ac404fb204013b5875c3201a234c884b7c985cda0e50d51a2ac8c949b4d/django_otp-1.7.4-py3-none-any.whl", hash = "sha256:2fa56711167db887bf80ebdc35820355e756a3fdc0b9af0e34494b737312bc16", size = 73780, upload-time = "2026-10-08T23:51:11.009Z" },
+]
+
+[[package]]
 name = "django-stubs"
 version = "5.2.9"
 source = { registry = "https://pypi.org/simple" }
@@ -921,6 +933,18 @@ wheels = [
 ]
 
 [[package]]
+name = "qrcode"
+version = "8.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/8f/b2/7fc2931bfae0af02d5f53b174e9cf701adbb35f39d69c2af63d4a39f81a9/qrcode-8.2.tar.gz", hash = "sha256:35c3f2a4172b33136ab9f6b3ef1c00260dd2f66f858f24d88418a015f446506c", size = 43317, upload-time = "2025-05-01T15:44:24.726Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/dd/b8/d2d6d731733f51684bbf76bf34dab3b70a9148e8f2cef2bb544fccec681a/qrcode-8.2-py3-none-any.whl", hash = "sha256:16e64e0716c14960108e85d853062c9e8bba5ca8252c0b4d0231b9df4060ff4f", size = 45986, upload-time = "2025-05-01T15:44:22.781Z" },
+]
+
+[[package]]
 name = "redis"
 version = "8.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -992,8 +1016,10 @@ dependencies = [
     { name = "cryptography" },
     { name = "django" },
     { name = "django-csp" },
+    { name = "django-otp" },
     { name = "gunicorn" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "qrcode" },
     { name = "redis" },
     { name = "sentry-sdk" },
     { name = "whitenoise" },
@@ -1021,8 +1047,10 @@ requires-dist = [
     { name = "cryptography", specifier = "==50.0.2" },
     { name = "django", specifier = "==5.2.18" },
     { name = "django-csp", specifier = "==4.0" },
+    { name = "django-otp", specifier = "==1.7.4" },
     { name = "gunicorn", specifier = "==26.2.0" },
     { name = "psycopg", extras = ["binary"], specifier = "==3.3.6" },
+    { name = "qrcode", specifier = "==8.2" },
     { name = "redis", specifier = "==8.1.0" },
     { name = "sentry-sdk", specifier = "==2.72.0" },
     { name = "whitenoise", specifier = "==6.12.0" },

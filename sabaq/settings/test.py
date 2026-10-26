@@ -28,3 +28,6 @@ CELERY_BROKER_URL = "memory://"
 # Serve static files straight from the app folders; no collectstatic needed.
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True
+
+# Most admin tests sign staff in with force_login; the 2FA tests turn this back on.
+STAFF_REQUIRE_2FA = False

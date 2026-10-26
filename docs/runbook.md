@@ -10,11 +10,24 @@ Short steps for running Sabaq on one VPS with `docker compose`. Keep this page c
 2. `docker compose up -d --build`. The `migrate` service runs first, then `web`, `worker`,
    `backup` and `caddy`.
 3. `docker compose exec web python manage.py check --deploy` must print no issues.
-4. Create the first staff account: `docker compose exec web python manage.py createsuperuser`.
+4. Create the first staff account and its 2FA (the admin needs a password **and** a code):
+   `docker compose exec web python manage.py createsuperuser`, then
+   `docker compose exec web python manage.py staff_otp_setup <phone>`. Scan the QR code with an
+   authenticator app and keep the 10 backup codes in the password manager.
 5. Paymob (when the keys arrive): set the five `PAYMOB_*` values, set the transaction callback
    URL in the Paymob dashboard to `https://<domain>/payments/paymob/callback/`, restart `web`,
    and run one sandbox payment end to end (plan unlocks, admin shows the order as paid).
 6. Error tracking (optional): set `SENTRY_DSN`, restart `web` and `worker`.
+
+## Staff accounts
+
+- Roles are groups, synced after every migrate (`python manage.py sync_roles` by hand):
+  `support`, `coach_reviewer`, `finance`, `health_viewer`, `race_editor`. The owner is a
+  superuser. Give each person the smallest role that fits; every change is audited.
+- Each staff member runs `staff_otp_setup` once. Lost phone: run it again (old codes stop).
+- Optional: limit the admin to known networks with `DJANGO_ADMIN_ALLOWED_NETWORKS`
+  (others get 404). Staff are signed out after `STAFF_IDLE_TIMEOUT_S` (30 minutes).
+- Leaving staff: untick "staff status" and "active" on their account.
 
 ## Backups
 
