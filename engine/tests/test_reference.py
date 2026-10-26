@@ -1,6 +1,7 @@
 """reference/engine-js/test.js, ported one section at a time."""
 
 import json
+from datetime import timedelta
 
 from engine import (
     CheckInFeedback,
@@ -12,6 +13,7 @@ from engine import (
     generate,
     parse_duration,
     predict_time,
+    resume_after_clearance,
     vdot_from,
 )
 
@@ -157,3 +159,19 @@ def test_12_times_as_people_type_them(make_input):
     p = generate(make_input("pyramids", 21.1, recent_time="3:00"))
     assert p.paces is None
     assert any("مش منطقي" in w for w in p.warnings)
+
+
+def test_9b_doctor_clearance_resumes_easy_with_no_increase(make_input):
+    p = generate(make_input("pyramids", 21.1))
+    paused = check_in(p.input, p, 0, CheckInFeedback(done=3, feel="ok", pain="sharp")).input
+    later = paused.start_date + timedelta(days=10)
+    resumed = resume_after_clearance(paused, later)
+    assert (resumed.pain, resumed.doctor_cleared, resumed.start_date) == ("none", True, later)
+    assert resumed.flags.no_increase_first_week
+    assert resumed.flags.easy_only_until == later + timedelta(days=6)
+    assert resumed.weekly_km == paused.weekly_km  # restarts at 70% of what was done
+    p2 = generate(resumed)
+    assert p2.status != "blocked"
+    assert not any(d.workout and d.workout.kind == "quality" for d in p2.weeks[0].days)
+    # Never restarts before the date the pause would have restarted.
+    assert resume_after_clearance(paused, p.input.start_date).start_date == paused.start_date

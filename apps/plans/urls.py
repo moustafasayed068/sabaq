@@ -26,4 +26,6 @@ urlpatterns = [
     path("plan/result/", views.result, name="result"),
     path("plan/save/", views.save, name="save"),
     path("plan/day/<isodate:day>/", views.day, name="day"),
+    path("plan/check-in/", views.check_in, name="check_in"),
+    path("plan/resume/", views.resume, name="resume"),
 ]

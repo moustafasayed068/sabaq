@@ -1,18 +1,21 @@
 """Result page (anonymous preview), saving the plan, and the athlete's plan page."""
 
-from datetime import date
+import contextlib
+from datetime import date, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from apps.athletes import services as athletes
-from apps.plans import services
+from apps.plans import checkins, services
+from apps.plans.forms import CheckInForm, ResumeForm
 from apps.plans.selectors import active_plan
 
 QUESTIONNAIRE = "questionnaire_id"
+RECENT_CHECK_IN = timedelta(days=2)
 
 
 def _questionnaire(request: HttpRequest) -> athletes.Questionnaire | None:
@@ -57,6 +60,8 @@ def mine(request: HttpRequest) -> HttpResponse:
         return redirect("races:landing")
     today = timezone.localdate()
     weeks = services.weeks_from_plan(plan)
+    latest = checkins.latest_check_in(plan)
+    recent = latest is not None and latest.created_at >= timezone.now() - RECENT_CHECK_IN
     return render(
         request,
         "plans/mine.html",
@@ -64,8 +69,72 @@ def mine(request: HttpRequest) -> HttpResponse:
             "plan": plan,
             "weeks": weeks,
             "today": today,
-            "today_day": services.today_view(weeks, today),
+            "today_day": None if plan.paused_at else services.today_view(weeks, today),
+            "check_in_week": checkins.check_in_week(plan, today),
+            "check_in_messages": latest.data["messages"] if latest and recent else [],
+            "resume_form": ResumeForm() if plan.paused_at else None,
         },
+    )
+
+
+@require_http_methods(["GET", "POST"])
+@login_required
+def check_in(request: HttpRequest) -> HttpResponse:
+    plan = active_plan(request.user)  # type: ignore[arg-type]
+    if plan is None:
+        return redirect("races:landing")
+    today = timezone.localdate()
+    week = checkins.check_in_week(plan, today)
+    if week is None:
+        return redirect("plans:mine")
+    planned, has_long = checkins.planned_sessions(week), checkins.has_long_run(week)
+    if request.method == "POST":
+        form = CheckInForm(request.POST, planned=planned, has_long=has_long)
+        if form.is_valid():
+            # A double submit loses the race for the week; the first one already counted.
+            with contextlib.suppress(checkins.CannotCheckInError):
+                checkins.submit_check_in(request.user, plan, week, form.feedback(), today)  # type: ignore[arg-type]
+            return redirect("plans:mine")
+        status = 422
+    else:
+        form = CheckInForm(planned=planned, has_long=has_long)
+        status = 200
+    return render(
+        request,
+        "plans/check_in.html",
+        {"plan": plan, "week": week, "form": form},
+        status=status,
+    )
+
+
+@require_POST
+@login_required
+def resume(request: HttpRequest) -> HttpResponse:
+    plan = active_plan(request.user)  # type: ignore[arg-type]
+    if plan is None or plan.paused_at is None:
+        return redirect("plans:mine")
+    form = ResumeForm(request.POST)
+    error: list[str] = []
+    if form.is_valid():
+        try:
+            checkins.resume(request.user, plan, timezone.localdate())  # type: ignore[arg-type]
+        except checkins.CannotCheckInError as exc:
+            error = exc.messages
+        else:
+            return redirect("plans:mine")
+    latest = checkins.latest_check_in(plan)
+    return render(
+        request,
+        "plans/mine.html",
+        {
+            "plan": plan,
+            "weeks": services.weeks_from_plan(plan),
+            "today": timezone.localdate(),
+            "check_in_messages": latest.data["messages"] if latest else [],
+            "resume_form": form,
+            "resume_error": error,
+        },
+        status=422,
     )
 
 
@@ -75,7 +144,7 @@ def day(request: HttpRequest, day: date) -> HttpResponse:
     plan = active_plan(request.user)  # type: ignore[arg-type]
     if plan is None:
         return redirect("races:landing")
-    page = services.day_page(plan, day)
+    page = None if plan.paused_at else services.day_page(plan, day)
     if page is None:
         return redirect("plans:mine")
     return render(

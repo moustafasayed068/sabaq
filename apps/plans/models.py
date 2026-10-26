@@ -40,6 +40,8 @@ class Plan(BaseModel):
     is_active = models.BooleanField(default=True)
     # Set only by a verified payment webhook (M2). Until then only week 1 is open.
     paid_at = models.DateTimeField(null=True, blank=True)
+    # Set by a check-in with sharp pain; cleared when the athlete says a doctor cleared them.
+    paused_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering: ClassVar[list[str]] = ["-created_at"]
@@ -95,3 +97,27 @@ class PlanDay(BaseModel):
     @property
     def has_workout(self) -> bool:
         return bool(self.kind)
+
+
+class CheckInAction(models.TextChoices):
+    CONTINUE = "continue"
+    SICK = "sick"
+    PAUSED = "paused"
+
+
+class CheckIn(BaseModel):
+    """One weekly check-in. Pain and sickness answers, the engine's action and its messages are
+    health data, so they are encrypted; `flagged` (pain, sickness or a pause) is the only plain
+    signal, so staff can list athletes who need a look first."""
+
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name="check_ins")
+    week = models.OneToOneField(PlanWeek, on_delete=models.CASCADE, related_name="check_in")
+    # {"feedback": CheckInFeedback fields, "action": ..., "messages": [...]}
+    data = EncryptedJSONField()
+    flagged = models.BooleanField(default=False, db_index=True)
+
+    class Meta:
+        ordering: ClassVar[list[str]] = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"Check-in {self.pk}"
