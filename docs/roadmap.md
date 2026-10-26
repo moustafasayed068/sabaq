@@ -34,7 +34,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 - [x] Phone login with one-time codes (dev: code printed to logs; production channel decided by the owner), rate limited.
 - [x] Generate and store the plan (rows + engine input + engine_version); result page (ok / risky / blocked + alternatives).
 - [x] "My plan" page and day page; week 1 open, later weeks locked.
-- [ ] Ownership tests for every endpoint (athlete A cannot see athlete B).
+- [x] Ownership tests for every endpoint (athlete A cannot see athlete B).
 - [ ] Deploy to staging; invite 10 free beta runners (Gouna, Sharm, HYROX Cairo).
 
 ## M2: Pay and adapt (9 – 15 Nov)
