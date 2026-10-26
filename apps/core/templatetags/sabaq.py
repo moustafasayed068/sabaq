@@ -5,7 +5,7 @@ from django import template
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
 
-from apps.core.formatting import date_ar, days_left_ar, km_ar
+from apps.core.formatting import date_ar, days_left_ar, days_until, km_ar
 
 register = template.Library()
 
@@ -17,7 +17,8 @@ def ar_date(value: date) -> str:
 
 @register.filter
 def ar_date_short(value: date) -> str:
-    return date_ar(value, weekday=True, year=False)
+    """25 أكتوبر (the day name is shown next to it)."""
+    return date_ar(value, year=False)
 
 
 @register.filter
@@ -57,3 +58,8 @@ def weekdays(values: list[int]) -> str:
     from apps.athletes.models import WEEKDAY_CHOICES  # noqa: PLC0415 - avoid core -> athletes at import
 
     return "، ".join(str(label) for v, label in WEEKDAY_CHOICES if v in values)
+
+
+@register.filter
+def days_until_from(day: date, today: date) -> int:
+    return days_until(today, day)

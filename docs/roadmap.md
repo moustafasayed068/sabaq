@@ -32,7 +32,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 - [x] Questionnaire as short steps (no JS required, HTMX enhanced), server-side validation.
 - [x] Consent screen + health screen; health fields encrypted at the field level; staff access audited.
 - [x] Phone login with one-time codes (dev: code printed to logs; production channel decided by the owner), rate limited.
-- [ ] Generate and store the plan (rows + engine input + engine_version); result page (ok / risky / blocked + alternatives).
+- [x] Generate and store the plan (rows + engine input + engine_version); result page (ok / risky / blocked + alternatives).
 - [ ] "My plan" page and day page; week 1 open, later weeks locked.
 - [ ] Ownership tests for every endpoint (athlete A cannot see athlete B).
 - [ ] Deploy to staging; invite 10 free beta runners (Gouna, Sharm, HYROX Cairo).

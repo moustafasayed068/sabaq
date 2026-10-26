@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "خطتي" %}{% endblock %}
+{% block content %}
+<section class="band stack">
+  <p class="label">{{ plan.race.name }}{% if plan.distance_km %} · {{ plan.distance_km|km }}{% endif %}</p>
+  <p class="display">{{ plan.race_date|days_until_from:today|days_left }}</p>
+  <p>{% translate "يوم السباق" %}: {{ plan.race_date|ar_date }}</p>
+</section>
+{% for m in plan.messages %}{% include "components/notice.html" with text=m %}{% endfor %}
+<section class="stack">
+  {% for week in weeks %}{% include "plans/_week.html" with open_days=forloop.first %}{% endfor %}
+</section>
+{% endblock %}

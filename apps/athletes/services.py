@@ -29,6 +29,7 @@ from engine import Env, HealthAnswers, PlanInput
 __all__ = [
     "HEALTH_CONSENT_TEXT",
     "STEPS",
+    "Questionnaire",
     "Step",
     "build_form",
     "claim_questionnaire",

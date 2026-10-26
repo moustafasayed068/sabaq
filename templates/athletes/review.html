@@ -20,6 +20,5 @@
   </dl>
   <ul class="row edit-links">{% for s in steps %}<li><a href="{% url 'athletes:step' s.slug %}">{% blocktranslate with t=s.title %}عدّل: {{ t }}{% endblocktranslate %}</a></li>{% endfor %}</ul>
 </section>
-{% translate "الخطوة الجاية: تشوف خطتك." as next_text %}
-{% include "components/notice.html" with text=next_text %}
+<p><a class="btn btn-race btn-block" href="{% url 'plans:result' %}">{% translate "شوف خطتك" %}</a></p>
 {% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "خطتك" %}{% endblock %}
+{% block content %}
+{% include "plans/_verdict.html" with status=plan.status block_kind=plan.block_kind goal_verdict=plan.goal_verdict messages=plan.messages %}
+
+{% if plan.status == "blocked" %}
+  {% if plan.alternatives %}
+  <section class="card stack">
+    <h2>{% translate "البدائل" %}</h2>
+    <ul class="stack plain">{% for alt in plan.alternatives %}<li>{{ alt.text }}</li>{% endfor %}</ul>
+    <p><a class="btn btn-ghost" href="{% url 'athletes:step' 'race' %}">{% translate "غيّر المسافة أو السباق" %}</a></p>
+  </section>
+  {% endif %}
+  {% if plan.block_kind == "health" %}
+  <p><a class="btn btn-primary" href="{% url 'athletes:step' 'health' %}">{% translate "الدكتور وافق؟ عدّل إجاباتك" %}</a></p>
+  {% endif %}
+{% else %}
+  <section class="facts">
+    <div class="fact"><p class="caption">{% translate "السباق" %}</p><p class="label">{{ plan.input.race_name }}{% if plan.input.race_type == "run" %} · {{ plan.input.distance_km|km }}{% endif %}</p></div>
+    <div class="fact"><p class="caption">{% translate "المستوى" %}</p><p class="label">{{ plan.level_name }}</p></div>
+    <div class="fact"><p class="caption">{% translate "مدة الخطة" %}</p><p class="label">{% blocktranslate count n=plan.weeks|length %}<span class="num">{{ n }}</span> أسبوع{% plural %}<span class="num">{{ n }}</span> أسابيع{% endblocktranslate %}</p></div>
+    {% if plan.peak_long %}<div class="fact"><p class="caption">{% translate "أطول جري" %}</p><p class="label">{{ plan.peak_long|km }}</p></div>{% endif %}
+    {% if plan.paces.predicted %}<div class="fact"><p class="caption">{% translate "وقتك المتوقع النهارده" %}</p><p class="label">{{ plan.paces.predicted|num }}</p></div>{% endif %}
+  </section>
+
+  {% if plan.paces %}
+  <section class="card">
+    <table class="paces">
+      <thead><tr><th>{% translate "النوع" %}</th><th>{% translate "السرعة" %} /كم</th></tr></thead>
+      <tbody>
+        <tr><td>{% translate "سهل وطويل" %}</td><td>{{ plan.paces.easy|num }}</td></tr>
+        <tr><td>{% translate "تيمبو" %}</td><td>{{ plan.paces.tempo|num }}</td></tr>
+        <tr><td>{% translate "إنترفال" %}</td><td>{{ plan.paces.interval|num }}</td></tr>
+        <tr><td>{% if plan.input.race_type == "hyrox" %}{% translate "كيلوهات السباق" %}{% else %}{% translate "سرعة السباق" %}{% endif %}</td><td>{{ plan.paces.race|num }}</td></tr>
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  {% if plan.time_read or plan.warnings %}
+  <ul class="notes">
+    {% if plan.time_read %}<li>{{ plan.time_read }}</li>{% endif %}
+    {% for w in plan.warnings %}<li>{{ w }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+
+  <section class="stack">
+    <h2>{% translate "أول أسبوع (ببلاش)" %}</h2>
+    {% for week in first_week %}{% include "plans/_week.html" with open_days=True %}{% endfor %}
+  </section>
+
+  <section class="card stack">
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'plans:save' %}">{% csrf_token %}
+        <button class="btn btn-race btn-block" type="submit">{% translate "احفظ خطتك وابدأ" %}</button>
+      </form>
+    {% else %}
+      <p>{% translate "سجّل برقم موبايلك عشان نحفظ خطتك ونظبطها كل أسبوع." %}</p>
+      <a class="btn btn-race btn-block" href="{% url 'accounts:login' %}?next={% url 'plans:result' %}">{% translate "سجّل واحفظ خطتك" %}</a>
+    {% endif %}
+  </section>
+{% endif %}
+{% endblock %}
