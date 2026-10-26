@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% translate "اتمسح" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{% translate "حسابك اتمسح" %}</h1>
+  <p>{% translate "مسحنا بياناتك. لو حبيت ترجع، تقدر تبدأ من الأول في أي وقت." %}</p>
+  <a class="btn btn-primary" href="{% url 'races:landing' %}">{% translate "الصفحة الرئيسية" %}</a>
+</section>
+{% endblock %}

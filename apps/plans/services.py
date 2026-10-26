@@ -13,6 +13,7 @@ from django.db import transaction
 
 from apps.athletes.models import Questionnaire
 from apps.athletes.services import plan_input
+from apps.core.export import row
 from apps.plans.models import Plan, PlanDay, PlanStatus, PlanWeek
 from apps.plans.selectors import active_plan
 from engine import ENGINE_VERSION, generate
@@ -26,6 +27,7 @@ __all__ = [
     "CannotSavePlanError",
     "active_plan",
     "create_plan",
+    "export_for",
     "mark_paid",
     "mark_unpaid",
     "preview",
@@ -141,6 +143,27 @@ def mark_paid(plan_id: UUID | str, when: datetime) -> None:
 def mark_unpaid(user_id: UUID | str, race_id: UUID | str) -> None:
     """After a refund: every plan of this athlete for this race goes back to week 1 only."""
     Plan.objects.filter(user_id=user_id, race_id=race_id).update(paid_at=None)
+
+
+# ---------------------------------------------------------------- the athlete's own data
+
+
+def export_for(user: User) -> dict[str, Any]:
+    """Every plan with its weeks, days, check-ins and day marks (decrypted: it is theirs)."""
+    out = []
+    plans = Plan.objects.filter(user=user).select_related("race").prefetch_related("weeks__days")
+    for plan in plans:
+        item = row(plan, skip=("user", "questionnaire"))
+        item["race"] = plan.race.name
+        item["weeks"] = []
+        for week in plan.weeks.all():
+            w = row(week, skip=("plan",))
+            w["days"] = [row(d, skip=("plan", "week")) for d in week.days.all()]
+            item["weeks"].append(w)
+        item["check_ins"] = [row(c, skip=("plan",)) for c in plan.check_ins.all()]
+        item["day_marks"] = [row(d, skip=("plan",)) for d in plan.day_logs.all()]
+        out.append(item)
+    return {"plans": out}
 
 
 # ---------------------------------------------------------------- display

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "حسابي" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <h1>{% translate "حسابي" %}</h1>
+  <p>{% translate "رقمك" %}: <span class="num">{{ user.phone }}</span></p>
+  <p><a href="{% url 'plans:mine' %}">{% translate "خطتي" %}</a></p>
+</section>
+
+<section class="card stack" aria-labelledby="export-title">
+  <h2 id="export-title">{% translate "نزّل بياناتك" %}</h2>
+  <p>{% translate "ملف فيه كل اللي عندنا عنك: إجاباتك، أسئلة الصحة، خطتك، تسجيل الأسابيع، والمدفوعات." %}</p>
+  {% if export_limited %}
+    {% translate "نزّلت الملف كذا مرة. جرّب تاني بعد ساعة." as limited_text %}
+    {% include "components/notice.html" with kind="warn" text=limited_text %}
+  {% endif %}
+  <form method="post" action="{% url 'accounts:export' %}">{% csrf_token %}
+    {% translate "نزّل بياناتي" as export_label %}
+    {% include "components/button.html" with label=export_label kind="ghost" block=True %}
+  </form>
+</section>
+
+{% if not user.is_staff %}
+<section class="card stack" aria-labelledby="delete-title">
+  <h2 id="delete-title">{% translate "امسح حسابك" %}</h2>
+  <p>{% translate "هنمسح رقمك وإجاباتك وأسئلة الصحة وخطتك وكل تسجيلاتك." %}</p>
+  <p>{% translate "لو دفعت، بنحتفظ بسجل الدفع بس (المبلغ والتاريخ) عشان الضرايب، من غير رقمك." %}</p>
+  <form method="post" action="{% url 'accounts:delete' %}" class="stack" novalidate>{% csrf_token %}
+    {{ delete_form.confirm.as_field_group }}
+    {% translate "امسح حسابي" as delete_label %}
+    {% include "components/button.html" with label=delete_label kind="race" block=True %}
+  </form>
+</section>
+{% endif %}
+{% endblock %}
