@@ -21,6 +21,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.forms",
     "csp",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
     "apps.core",
     "apps.accounts",
     "apps.races",
@@ -39,6 +42,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
+    "apps.core.staff.StaffAccessMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -122,6 +127,11 @@ LOGIN_CODE_SENDER = env_str("LOGIN_CODE_SENDER", "disabled")
 LOGIN_URL = "accounts:login"
 # The admin lives at a non-default path (docs/security.md).
 ADMIN_URL = env_str("DJANGO_ADMIN_URL", "staff-7f3c/")
+# Staff: password + one-time code (django-otp), optional network allowlist, idle sign-out.
+STAFF_REQUIRE_2FA = True
+ADMIN_ALLOWED_NETWORKS: list[str] = env_list("DJANGO_ADMIN_ALLOWED_NETWORKS")  # empty = any
+STAFF_IDLE_TIMEOUT_S = env_int("STAFF_IDLE_TIMEOUT_S", 30 * 60)
+OTP_TOTP_ISSUER = "Sabaq"
 
 # ---------------------------------------------------------------- field-level encryption (ADR 0003)
 # Comma-separated Fernet keys, newest first. Generate one with:
