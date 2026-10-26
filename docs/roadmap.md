@@ -49,7 +49,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 
 - [x] Staff 2FA, admin path + IP limit, roles (support, coach reviewer, finance, owner).
 - [ ] Data export and account deletion for athletes.
-- [ ] Load test the plan and check-in pages (target: p95 < 300 ms at 50 req/s on one VPS).
+- [x] Load test the plan and check-in pages (target: p95 < 300 ms at 50 req/s on one VPS). p95 24 ms here (docs/load-test.md); repeat on the real VPS.
 - [ ] Restore test from backup; incident runbook.
 - [ ] Privacy policy and terms pages (after the lawyer's review).
 
