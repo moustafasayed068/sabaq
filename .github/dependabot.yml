@@ -4,9 +4,24 @@ updates:
     directory: /
     schedule: {interval: weekly}
     open-pull-requests-limit: 5
+    ignore:
+      # Stay on Django 5.2 LTS (CLAUDE.md: "Django 5"); stubs follow Django's version.
+      - dependency-name: "django"
+        versions: [">=6"]
+      - dependency-name: "django-stubs"
+        versions: [">=6"]
+      - dependency-name: "django-stubs-ext"
+        versions: [">=6"]
+      # django-stubs 5.2 supports mypy < 1.20 only.
+      - dependency-name: "mypy"
+        versions: [">=1.20"]
   - package-ecosystem: docker
     directory: /docker
     schedule: {interval: weekly}
+    ignore:
+      # Python 3.12 is the project's version (CLAUDE.md); only patch releases.
+      - dependency-name: "python"
+        versions: [">=3.13"]
   - package-ecosystem: docker-compose
     directory: /
     schedule: {interval: weekly}
