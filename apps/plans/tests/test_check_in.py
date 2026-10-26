@@ -8,7 +8,7 @@ from django.utils import timezone
 from apps.core.models import AuditAction, AuditEvent
 from apps.plans import checkins
 from apps.plans.models import CheckIn, Plan, PlanDay, PlanWeek
-from apps.plans.tests.test_plans import finished, sign_in
+from apps.plans.tests.test_plans import PHONE, finished, sign_in
 from engine.types import CheckInFeedback
 
 pytestmark = pytest.mark.django_db
@@ -29,12 +29,12 @@ def plan(client, monkeypatch) -> Plan:
     return make_plan(client, monkeypatch)
 
 
-def make_plan(client, monkeypatch) -> Plan:
+def make_plan(client, monkeypatch, phone: str = PHONE) -> Plan:
     on(monkeypatch, date(2026, 10, 27))
     q = finished(client)
-    sign_in(client, q)
+    user = sign_in(client, q, phone)
     client.post("/plan/save/")
-    p = Plan.objects.get()
+    p = Plan.objects.get(user=user, is_active=True)
     assert week(p, 0).start == WEEK1_START
     return p
 
