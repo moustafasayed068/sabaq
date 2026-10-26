@@ -19,6 +19,42 @@ class ChipSelectMultiple(forms.CheckboxSelectMultiple):
     template_name = "components/chips.html"
 
 
+_ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹٫,", "01234567890123456789..")
+
+
+def latin_digits(value: Any) -> Any:  # noqa: ANN401
+    """Arabic-Indic digits and decimal commas to Western ones ("٢١٫١" -> "21.1")."""
+    return value.strip().translate(_ARABIC_DIGITS) if isinstance(value, str) else value
+
+
+class NumberInput(forms.TextInput):
+    """A text box with the numeric keypad (type=number misbehaves with RTL and Arabic digits)."""
+
+    def __init__(self, attrs: dict[str, Any] | None = None, *, decimal: bool = False) -> None:
+        base = {
+            "inputmode": "decimal" if decimal else "numeric",
+            "autocomplete": "off",
+            "dir": "ltr",
+        }
+        super().__init__({**base, **(attrs or {})})
+
+
+class LatinIntegerField(forms.IntegerField):
+    widget = NumberInput
+
+    def to_python(self, value: Any) -> int | None:  # noqa: ANN401
+        return super().to_python(latin_digits(value))
+
+
+class LatinDecimalField(forms.DecimalField):
+    def __init__(self, **kwargs: Any) -> None:  # noqa: ANN401
+        kwargs.setdefault("widget", NumberInput(decimal=True))
+        super().__init__(**kwargs)
+
+    def to_python(self, value: Any) -> Any:  # noqa: ANN401
+        return super().to_python(latin_digits(value))
+
+
 class HMSWidget(forms.MultiWidget):
     """Three numeric boxes (hours, minutes, seconds), never one text box with a colon."""
 
@@ -55,9 +91,9 @@ class HMSField(forms.MultiValueField):
     def __init__(self, *, max_hours: int = 9, **kwargs: Any) -> None:  # noqa: ANN401
         number = {"invalid": _("اكتب أرقام بس.")}
         fields = (
-            forms.IntegerField(min_value=0, max_value=max_hours, error_messages=number),
-            forms.IntegerField(min_value=0, max_value=59, error_messages=number),
-            forms.IntegerField(min_value=0, max_value=59, error_messages=number),
+            LatinIntegerField(min_value=0, max_value=max_hours, error_messages=number),
+            LatinIntegerField(min_value=0, max_value=59, error_messages=number),
+            LatinIntegerField(min_value=0, max_value=59, error_messages=number),
         )
         super().__init__(fields=fields, require_all_fields=False, **kwargs)
         for f in self.fields:

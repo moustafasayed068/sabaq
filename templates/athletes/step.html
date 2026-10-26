@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{{ step.title }}{% endblock %}
+{% block content %}
+<section class="stack">
+  <p class="caption">{{ q.race.name }}</p>
+  <div class="progress" aria-hidden="true"><span class="progress-{{ number }}-{{ total }}"></span></div>
+  <p class="label">{% blocktranslate trimmed with n=number|num t=total|num %}خطوة {{ n }} من {{ t }}{% endblocktranslate %}</p>
+  <h1>{{ step.title }}</h1>
+</section>
+<form class="card stack" method="post" novalidate hx-boost="true">
+  {% csrf_token %}
+  {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+  {% for field in form %}{{ field.as_field_group }}{% endfor %}
+  <div class="row step-actions">
+    {% translate "التالي" as next_label %}
+    {% include "components/button.html" with label=next_label %}
+    {% if previous %}<a class="btn btn-ghost" href="{% url 'athletes:step' previous %}">{% translate "رجوع" %}</a>{% endif %}
+  </div>
+</form>
+{% endblock %}

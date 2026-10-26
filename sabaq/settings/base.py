@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.races",
+    "apps.athletes",
 ]
 
 MIDDLEWARE = [

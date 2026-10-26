@@ -39,3 +39,21 @@ def days_left(value: int) -> SafeString:
     if not number:
         return format_html("{}", words)
     return format_html('باقي <span class="num">{}</span> {}', number, words)
+
+
+@register.filter
+def hms(seconds: int | None) -> SafeString:
+    """1:55:00 or 28:00, LTR-isolated."""
+    if seconds is None:
+        return format_html("")
+    h, m, sec = seconds // 3600, seconds % 3600 // 60, seconds % 60
+    text = f"{h}:{m:02d}:{sec:02d}" if h else f"{m}:{sec:02d}"
+    return format_html('<span class="num">{}</span>', text)
+
+
+@register.filter
+def weekdays(values: list[int]) -> str:
+    """JS weekday numbers (0 = Sunday) as Arabic day names in Egyptian week order."""
+    from apps.athletes.models import WEEKDAY_CHOICES  # noqa: PLC0415 - avoid core -> athletes at import
+
+    return "، ".join(str(label) for v, label in WEEKDAY_CHOICES if v in values)

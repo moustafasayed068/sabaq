@@ -11,4 +11,8 @@
     <ul class="chips">{% for d in card.race.distances.all %}<li class="tag">{{ d.distance_km|km }}</li>{% endfor %}</ul>
   {% endif %}
   {% if card.race.note %}<p class="caption">{{ card.race.note }}</p>{% endif %}
+  <form method="post" action="{% url 'athletes:start' card.race.slug %}">
+    {% csrf_token %}
+    <button class="btn btn-primary btn-block" type="submit">{% blocktranslate with name=card.race.name %}ابدأ خطة {{ name }}{% endblocktranslate %}</button>
+  </form>
 </article>
