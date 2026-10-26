@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "خطتك لحد خط النهاية" %}{% endblock %}
+{% block content %}
+<section class="band hero stack">
+  <h1 class="display">{% translate "خطتك لحد خط النهاية" %}</h1>
+  <p>{% translate "اختار السباق اللي انت مسجّل فيه، جاوب على أسئلة قليلة، وخد خطة تدريب بالعربي لحد يوم السباق. جري من 5 كم للماراثون، و HYROX." %}</p>
+  <p><a class="btn btn-race" href="#races">{% translate "اختار سباقك" %}</a></p>
+</section>
+
+<section class="stack" aria-labelledby="how">
+  <h2 id="how">{% translate "بتشتغل إزاي" %}</h2>
+  <ol class="steps">
+    <li><strong>{% translate "اختار سباقك" %}</strong><span>{% translate "والمسافة اللي هتجريها." %}</span></li>
+    <li><strong>{% translate "جاوب على أسئلة قليلة" %}</strong><span>{% translate "بتجري كام مرة، أطول جري، والأيام اللي فاضي فيها." %}</span></li>
+    <li><strong>{% translate "ابدأ أسبوعك الأول ببلاش" %}</strong><span>{% translate "كل أسبوع سجّل اللي عملته، والخطة بتتظبط على حسبك." %}</span></li>
+  </ol>
+</section>
+
+<section class="card stack" aria-labelledby="safe">
+  <h2 id="safe">{% translate "خطة بتسمع جسمك" %}</h2>
+  <p>{% translate "لو تعبت، أو فوّت أيام، أو حسيت بوجع، الخطة بتخفّ. ولو في حاجة تقلق، هنقولك تكشف الأول." %}</p>
+  <p class="caption">{% translate "مفيش ذكاء اصطناعي بيقرر تمرينك: الخطة ماشية بقواعد تدريب وأمان واضحة." %}</p>
+</section>
+
+<section class="stack" aria-labelledby="price">
+  <h2 id="price">{% translate "السعر" %}</h2>
+  <div class="prices">
+    <div class="card"><p class="label">{% translate "أول أسبوع" %}</p><p class="title">{% translate "ببلاش" %}</p></div>
+    <div class="card"><p class="label">{% translate "خطة لحد 4 أسابيع" %}</p><p class="title">{{ price_short|num }} {% translate "جنيه" %}</p></div>
+    <div class="card"><p class="label">{% translate "خطة أطول (8 لـ 16 أسبوع)" %}</p><p class="title">{{ price_long|num }} {% translate "جنيه" %}</p></div>
+  </div>
+  <p class="caption">{% translate "بتدفع مرة واحدة للسباق، بعد أول أسبوع." %}</p>
+</section>
+
+<section id="races" class="stack" aria-labelledby="races-title">
+  <h2 id="races-title">{% translate "اختار سباقك" %}</h2>
+  {% for card in cards %}
+    {% include "races/_race_card.html" %}
+  {% empty %}
+    {% translate "مفيش سباقات جاية دلوقتي. ارجعلنا قريب." as empty_text %}
+    {% include "components/notice.html" with text=empty_text %}
+  {% endfor %}
+</section>
+{% endblock %}

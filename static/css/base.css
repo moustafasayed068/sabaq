@@ -110,3 +110,25 @@ p { margin: 0 0 var(--space-4); }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--coral); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* landing */
+.hero .display { font-size: 40px; line-height: 52px; }
+@media (min-width: 600px) { .hero .display { font-size: 48px; line-height: 60px; } }
+.steps { list-style: none; counter-reset: step; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 40px 1fr; column-gap: var(--space-4); }
+.steps li::before {
+  content: counter(step); grid-row: span 2; width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--faience-soft); color: var(--faience);
+  font-family: var(--font-mono); font-weight: 500;
+}
+.steps li span { color: var(--ink-muted); }
+.prices { display: grid; gap: var(--space-4); }
+@media (min-width: 600px) { .prices { grid-template-columns: repeat(3, 1fr); } }
+.prices .card p { margin: 0; }
+.race-card { display: grid; gap: var(--space-2); }
+.race-card p { margin: 0; }
+.race-countdown { font-weight: 600; display: flex; align-items: center; gap: var(--space-2); }
+.tag {
+  display: inline-block; padding: 2px 12px; border-radius: var(--radius-pill);
+  background: var(--faience-soft); color: var(--ink); font-size: 14px; line-height: 24px; font-weight: 600;
+}
