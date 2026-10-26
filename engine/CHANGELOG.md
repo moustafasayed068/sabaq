@@ -3,6 +3,28 @@
 Every change that can alter a generated plan bumps `ENGINE_VERSION` (engine/__init__.py).
 Plans already stored keep the version they were made with.
 
+## 1.2.0 (2026-10-26)
+
+Owner-approved: keep the planned week close to its target for low-volume runners.
+On 3,700 generated build weeks, weeks more than 15% over target went from 1,360 to 856,
+and no week has fewer runs than the athlete does now.
+
+- Start week: at most 10% above the athlete's current weekly km. The "+4 km" start
+  only stays for run-walk beginners (floor 8 km). A runner at 10 km a week used to
+  start at 15 km and run about 20 km from week 2; now 11 km, then about 14 km.
+- Quality sessions in small weeks get a shorter warm-up and cool-down: warm-up
+  12% of the week (1 to 2 km), cool-down 8% (1 to 1.5 km), rounded to 0.5 km.
+  Unchanged from about 19 km a week up.
+- Easy runs shrink (never under 2 km) to keep the week within 10% of its target.
+  If that is not enough, an easy day becomes rest (the day before the long run
+  first), but never below the runs the athlete does now (and at least 2).
+- Cutback week long run is 80% of the long run that week would have had. Before,
+  it could equal or exceed the build week before it.
+
+Known remainder for the coach review: very small weeks (under ~15 km) with a long
+current longest run can still be 15%+ over target, because the long run never drops
+below the athlete's current longest.
+
 ## 1.1.0 (2026-10-26)
 
 Owner-approved fixes where the reference contradicted docs/engine-rules.md. JS reference,

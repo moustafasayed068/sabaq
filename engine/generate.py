@@ -224,7 +224,8 @@ def _build_run(inp: PlanInput, ctx: Ctx, out: Plan, n: int, start: date) -> Plan
 
     # Simulate weekly volume and long run.
     floor = {"beginner": 8, "intermediate": 15, "advanced": 25}[lvl]
-    weekly = max(inp.weekly_km, min(floor, inp.weekly_km * 1.1 + 4))
+    # Start at most 10% above the athlete's current week; run-walk beginners start at the floor.
+    weekly = max(inp.weekly_km, min(floor, inp.weekly_km * 1.1 + (4 if ctx.run_walk else 0)))
     long = max(3 if ctx.run_walk else 4, inp.longest_km)
     long_cap = 32 if d_km == 42.2 else d_km
     plan: list[WeekSpec] = []
@@ -239,7 +240,8 @@ def _build_run(inp: PlanInput, ctx: Ctx, out: Plan, n: int, start: date) -> Plan
             weekly = min(weekly * p, t.peak_weekly[lvl])
             long = min(long + long_step, t.peak_long[lvl], long_cap)
         wk = weekly * 0.8 if cutback else weekly
-        lg = long * 0.8 if cutback else min(long, max(wk * long_share, inp.longest_km))
+        # A cutback week is 80% of the week it replaces, long run included.
+        lg = min(long, max(weekly * long_share, inp.longest_km)) * (0.8 if cutback else 1)
         phase = "cutback" if cutback else "peak" if i == build_weeks - 1 else "build"
         plan.append(WeekSpec(phase, wk, lg))
         if not cutback:
@@ -356,6 +358,9 @@ def _fill_run_week(
     weekly = spec.weekly * min(1, len(active) / max(1, len(inp.days)))
     # The hard part of a quality session is about 18% of the week.
     budget = max(2.5, weekly * (0.15 if n_quality == 2 else 0.18))
+    # Small weeks get a shorter warm-up and cool-down (2 km and 1.5 km from about 19 km a week).
+    ctx.wu = round_half(max(1, min(2, weekly * 0.12)))
+    ctx.cd = round_half(max(1, min(1.5, weekly * 0.08)))
 
     def tempo_mins() -> int:
         tp = w.pace_for(ctx, "tempo") or w.rough_pace(ctx, "tempo")
@@ -419,6 +424,26 @@ def _fill_run_week(
     share = (
         max(min_easy, min(12, (weekly - long_km - quality_km) / len(easy_days))) if easy_days else 0
     )
+    # Keep the week within 10% of its target: shorter easy runs first (never under 2 km), then,
+    # if still too much, fewer easy runs, but never fewer runs than the athlete does now (min 2).
+    room = weekly * 1.1 - long_km - quality_km
+    if easy_days and share * len(easy_days) > room:
+        runs = len([x for x in active if x.workout or x.role == "easy"])
+        min_runs = min(len(inp.days), max(2, inp.runs_per_week))
+        keep = len(easy_days)
+        while keep > 0 and room / keep < 2 and runs - (len(easy_days) - keep) > min_runs:
+            keep -= 1
+        before_long = days.index(long_day) - 1 if long_day else -2
+        # The day before the long run rests first, then the latest easy days.
+        order = sorted(easy_days, key=lambda x: (days.index(x) != before_long, -days.index(x)))
+        dropped = order[: len(easy_days) - keep]
+        for x in dropped:
+            x.role = "rest"
+            x.workout = w.rest(
+                ["الأسبوع ده أخف عشان جسمك يتعود على الزيادة. ارتاح النهارده."], title="راحة"
+            )
+        easy_days = [x for x in easy_days if x not in dropped]
+        share = min(share, max(2, room / keep)) if keep else 0
     # Strength: on up to 2 easy days that are not the day before the long run.
     long_idx = days.index(long_day) if long_day else -1
     strength_left = 1 if spec.phase in ("taper", "cutback") else 2

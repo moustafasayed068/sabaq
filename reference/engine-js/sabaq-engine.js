@@ -194,17 +194,17 @@
     tempo(ctx, mins) {
       const tp = paceFor(ctx, 'tempo') || roughPace(ctx, 'tempo');
       const km = round1((mins * 60) / tp);
-      return day('quality', 'تيمبو', 3, round1(km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')}`, `${mins} دقيقة تيمبو: ${seg(ctx, km, 'tempo')}`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+      return day('quality', 'تيمبو', 3, round1(km + (ctx.wu + ctx.cd)), [`إحماء: ${seg(ctx, ctx.wu, 'easy')}`, `${mins} دقيقة تيمبو: ${seg(ctx, km, 'tempo')}`, `تهدئة: ${seg(ctx, ctx.cd, 'easy')}`]);
     },
     cruise(ctx, reps, km) {
-      return day('quality', 'تيمبو متقطع', 3, round1(reps * km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')}`, `${reps} × (${seg(ctx, km, 'tempo')})، وراحة دقيقة جري خفيف`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+      return day('quality', 'تيمبو متقطع', 3, round1(reps * km + (ctx.wu + ctx.cd)), [`إحماء: ${seg(ctx, ctx.wu, 'easy')}`, `${reps} × (${seg(ctx, km, 'tempo')})، وراحة دقيقة جري خفيف`, `تهدئة: ${seg(ctx, ctx.cd, 'easy')}`]);
     },
     intervals(ctx, reps, km, restMin) {
-      return day('quality', 'إنترفال', 4, round1(reps * km + 3.5), [`إحماء: ${seg(ctx, 2, 'easy')} + 4 تسارعات قصيرة`, `${reps} × (${seg(ctx, km, 'interval')})، وراحة ${restMin} دقيقة جري خفيف أو مشي`, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+      return day('quality', 'إنترفال', 4, round1(reps * km + (ctx.wu + ctx.cd)), [`إحماء: ${seg(ctx, ctx.wu, 'easy')} + 4 تسارعات قصيرة`, `${reps} × (${seg(ctx, km, 'interval')})، وراحة ${restMin} دقيقة جري خفيف أو مشي`, `تهدئة: ${seg(ctx, ctx.cd, 'easy')}`]);
     },
     hills(ctx, reps) {
       const work = ctx.env.where === 'treadmill' ? `${reps} × 60 ثانية جري على ميل 5% بمجهود صعب، ونزّل الميل وامشي 90 ثانية بينهم` : `${reps} × 60 ثانية طلوع على طلعة أو كوبري بمجهود صعب، وانزل ماشي`;
-      return day('quality', 'طلعات', 3, round1(3.5 + reps * 0.25), [`إحماء: ${seg(ctx, 2, 'easy')}`, work, `تهدئة: ${seg(ctx, 1.5, 'easy')}`]);
+      return day('quality', 'طلعات', 3, round1((ctx.wu + ctx.cd) + reps * 0.25), [`إحماء: ${seg(ctx, ctx.wu, 'easy')}`, work, `تهدئة: ${seg(ctx, ctx.cd, 'easy')}`]);
     },
     sharpener(ctx) {
       if (ctx.runWalk || ctx.level === 'beginner') return W.easy(ctx, 3, { strides: true });
@@ -282,7 +282,7 @@
     }
 
     const level = levelOf(input);
-    const ctx = { env: input.env, level, sex: input.sex, injury: input.injury, weekIdx: 0 };
+    const ctx = { env: input.env, level, sex: input.sex, injury: input.injury, weekIdx: 0, wu: 2, cd: 1.5 };
     out.level = level;
     out.levelName = LEVEL_NAME[level];
 
@@ -373,7 +373,8 @@
 
     // simulate weekly volume and long run
     const floor = { beginner: 8, intermediate: 15, advanced: 25 }[lvl];
-    let weekly = Math.max(input.weeklyKm, Math.min(floor, input.weeklyKm * 1.1 + 4));
+    // start at most 10% above the athlete's current week; very new (run-walk) runners start at the floor
+    let weekly = Math.max(input.weeklyKm, Math.min(floor, input.weeklyKm * 1.1 + (ctx.runWalk ? 4 : 0)));
     let long = Math.max(ctx.runWalk ? 3 : 4, input.longestKm);
     const plan = [];
     let peakWeekly = 0, peakLong = 0;
@@ -385,7 +386,8 @@
       }
       if (i === 0 && input.flags.progressNow) { weekly = Math.min(weekly * p, T.peakWeekly[lvl]); long = Math.min(long + longStep, T.peakLong[lvl], D === 42.2 ? 32 : D); }
       const wk = cutback ? weekly * 0.8 : weekly;
-      const lg = cutback ? long * 0.8 : Math.min(long, Math.max(wk * longShare, input.longestKm));
+      // a cutback week is 80% of the week it replaces, long run included
+      const lg = Math.min(long, Math.max(weekly * longShare, input.longestKm)) * (cutback ? 0.8 : 1);
       plan.push({ phase: cutback ? 'cutback' : i === buildWeeks - 1 ? 'peak' : 'build', weekly: wk, long: lg });
       if (!cutback) { peakWeekly = Math.max(peakWeekly, wk); peakLong = Math.max(peakLong, lg); }
     }
@@ -464,6 +466,9 @@
     const weekly = spec.weekly * Math.min(1, active.length / Math.max(1, input.days.length));
     // the hard part of a quality session is about 18% of the week
     const budget = Math.max(2.5, weekly * (nQuality === 2 ? 0.15 : 0.18));
+    // small weeks get a shorter warm-up and cool-down (2 km and 1.5 km from about 19 km a week)
+    ctx.wu = roundHalf(Math.max(1, Math.min(2, weekly * 0.12)));
+    ctx.cd = roundHalf(Math.max(1, Math.min(1.5, weekly * 0.08)));
     const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
     const tempoMins = () => clamp(Math.round((budget * (paceFor(ctx, 'tempo') || roughPace(ctx, 'tempo'))) / 60 / 5) * 5, 10, 40);
     let qualityKm = 0;
@@ -498,9 +503,25 @@
       const rp = !ctx.runWalk && lvl !== 'beginner' && spec.phase === 'build' && i > 0 && i % 2 === 1 && D >= 10 && !(easyOnly && longDay.date <= easyOnly) ? Math.min(Math.round(longKm * 0.25), 5) : 0;
       longDay.workout = W.long(ctx, longKm, { racePaceKm: rp });
     } else longKm = 0;
-    const easyDays = active.filter((x) => x.role === 'easy');
+    let easyDays = active.filter((x) => x.role === 'easy');
     const minEasy = ctx.runWalk ? 2.5 : 3;
-    const share = easyDays.length ? Math.max(minEasy, Math.min(12, (weekly - longKm - qualityKm) / easyDays.length)) : 0;
+    let share = easyDays.length ? Math.max(minEasy, Math.min(12, (weekly - longKm - qualityKm) / easyDays.length)) : 0;
+    // keep the week within 10% of its target: shorter easy runs first (never under 2 km), then, if still
+    // too much, fewer easy runs, but never fewer runs than the athlete does now (and at least 2)
+    const room = weekly * 1.1 - longKm - qualityKm;
+    if (easyDays.length && share * easyDays.length > room) {
+      const runs = active.filter((x) => x.workout || x.role === 'easy').length;
+      const minRuns = Math.min(input.days.length, Math.max(2, input.runsPerWeek));
+      let keep = easyDays.length;
+      while (keep > 0 && room / keep < 2 && runs - (easyDays.length - keep) > minRuns) keep--;
+      const beforeLong = longDay ? days.indexOf(longDay) - 1 : -2;
+      // the day before the long run rests first, then the latest easy days
+      const order = [...easyDays].sort((a, b) => (days.indexOf(b) === beforeLong) - (days.indexOf(a) === beforeLong) || days.indexOf(b) - days.indexOf(a));
+      const dropped = order.slice(0, easyDays.length - keep);
+      dropped.forEach((x) => { x.role = 'rest'; x.workout = day('rest', 'راحة', 0, 0, ['الأسبوع ده أخف عشان جسمك يتعود على الزيادة. ارتاح النهارده.']); });
+      easyDays = easyDays.filter((x) => !dropped.includes(x));
+      share = keep ? Math.min(share, Math.max(2, room / keep)) : 0;
+    }
     // strength: on up to 2 easy days that are not the day before the long run
     const longIdx = longDay ? days.indexOf(longDay) : -1;
     let strengthLeft = spec.phase === 'taper' || spec.phase === 'cutback' ? 1 : 2;

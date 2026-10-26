@@ -40,9 +40,11 @@ Target peak long run by level (beginner / intermediate / advanced): 5K 5/7/10, 1
 
 - Weeks are aligned to race day: the last week is the 7 days ending on race day. The first week can be partial (starts on the start date).
 - Plans longer than 16 weeks start 16 weeks before the race.
+- The first week starts at most 10% above the athlete's current weekly km (run-walk beginners start at 8 km).
 - Weekly volume grows at most 10% per week (7% if age 50+ or any injury history).
+- The planned week stays within 10% of its target: easy runs get shorter (never under 2 km), then an easy day becomes rest (the day before the long run first), but never fewer runs than the athlete does now (at least 2).
 - Long run grows at most 2 km per week (1.5 for beginners) and is capped at a share of the week: 45% (50% with 3 days, 38% with 5+ days), unless the athlete already runs longer than that.
-- Cutback week (80%) every 4th week in plans of 7+ weeks, never in the last build week.
+- Cutback week (80%, long run included) every 4th week in plans of 7+ weeks, never in the last build week.
 - Taper: half 1 week (80%) when the plan has 6+ weeks; marathon 2 weeks (80%, 60%) when 8+ weeks. Race week volume: 45% of peak (half and marathon) or 60% (5K/10K). Day before the race: rest. A short race-pace sharpener 3–4 days before (strides for beginners).
 - Partial first week gets volume in proportion to the training days it contains.
 - The last week is always race week. Very short plans drop the taper first, then the build weeks; a race this week is judged on current fitness.
@@ -51,7 +53,7 @@ Target peak long run by level (beginner / intermediate / advanced): 5K 5/7/10, 1
 
 - Athlete picks 3 to 6 days. Long run goes on Friday if picked, else Saturday, else the last picked day.
 - Hard sessions: 1 a week; 2 only for advanced, 5+ days, under 50. The first hard day is the picked day furthest from the long run; a second one only with at least one day gap from both.
-- The hard part of a session is about 18% of the week (15% when there are two).
+- The hard part of a session is about 18% of the week (15% when there are two). Warm-up is 12% of the week (1 to 2 km) and cool-down 8% (1 to 1.5 km).
 - Rotations: 5K/10K: hills (non-advanced) / intervals / tempo. Half and marathon: tempo / cruise intervals (1.6 km). Knee injury history: tempo instead of hills.
 - In build weeks (not the first), half and marathon long runs end with up to 25% (max 5 km) at race pace, not for beginners.
 - Strength: 20 minutes after an easy run, twice a week (once in cutback/taper weeks), never the day before the long run. Exercises depend on kit: none (bodyweight), dumbbells, or gym. Knee history swaps lunges for single-leg bridges.
