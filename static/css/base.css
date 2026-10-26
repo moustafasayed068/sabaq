@@ -132,3 +132,14 @@ p { margin: 0 0 var(--space-4); }
   display: inline-block; padding: 2px 12px; border-radius: var(--radius-pill);
   background: var(--faience-soft); color: var(--ink); font-size: 14px; line-height: 24px; font-weight: 600;
 }
+
+/* questionnaire */
+.progress { height: 6px; border-radius: var(--radius-pill); background: var(--line); overflow: hidden; }
+.progress span { display: block; height: 100%; background: var(--faience); border-radius: var(--radius-pill); }
+.progress-1-5 { width: 20%; } .progress-2-5 { width: 40%; } .progress-3-5 { width: 60%; }
+.progress-4-5 { width: 80%; } .progress-5-5 { width: 100%; }
+.step-actions { justify-content: space-between; flex-direction: row-reverse; }
+.answers { display: grid; grid-template-columns: auto 1fr; gap: var(--space-2) var(--space-4); margin: 0; }
+.answers dt { color: var(--ink-muted); font-size: 14px; }
+.answers dd { margin: 0; font-weight: 600; }
+.edit-links { list-style: none; margin: var(--space-4) 0 0; padding: 0; font-size: 14px; }

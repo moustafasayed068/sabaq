@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{% translate "راجع إجاباتك" %}{% endblock %}
+{% block content %}
+<section class="stack">
+  <p class="caption">{{ q.race.name }}</p>
+  <h1>{% translate "راجع إجاباتك" %}</h1>
+</section>
+<section class="card">
+  <dl class="answers">
+    {% if q.distance_km %}<dt>{% translate "المسافة" %}</dt><dd>{{ q.distance_km|km }}</dd>{% endif %}
+    <dt>{% translate "البداية" %}</dt><dd>{{ q.start_date|ar_date }}</dd>
+    <dt>{% translate "السن" %}</dt><dd>{{ q.age|num }}</dd>
+    <dt>{% translate "بتجري" %}</dt><dd>{% blocktranslate trimmed with r=q.runs_per_week|num %}{{ r }} مرات في الأسبوع{% endblocktranslate %} · {{ q.weekly_km|km }}</dd>
+    <dt>{% translate "أطول جري" %}</dt><dd>{{ q.longest_km|km }}</dd>
+    <dt>{% translate "آخر وقت" %}</dt><dd>{% if q.recent_km %}{{ q.recent_time_s|hms }} {% translate "في" %} {{ q.recent_km|km }}{% else %}{% translate "مفيش" %}{% endif %}</dd>
+    <dt>{% translate "الهدف" %}</dt><dd>{{ q.get_goal_display }}{% if q.goal_time_s %} · {{ q.goal_time_s|hms }}{% endif %}</dd>
+    <dt>{% translate "الأيام" %}</dt><dd>{{ q.days|weekdays }}</dd>
+  </dl>
+  <ul class="row edit-links">{% for s in steps %}<li><a href="{% url 'athletes:step' s.slug %}">{% blocktranslate with t=s.title %}عدّل: {{ t }}{% endblocktranslate %}</a></li>{% endfor %}</ul>
+</section>
+{% translate "الخطوة الجاية: أسئلة الصحة، وبعدها تشوف خطتك." as next_text %}
+{% include "components/notice.html" with text=next_text %}
+{% endblock %}
