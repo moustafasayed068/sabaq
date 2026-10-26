@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n sabaq %}
+{% block title %}{{ page.day.title|default:_("راحة") }}{% endblock %}
+{% block content %}
+<section class="stack">
+  <p class="caption">{% blocktranslate with n=page.week_number|num %}الأسبوع {{ n }}{% endblocktranslate %} · {{ page.day.day_name }} {{ page.day.date|ar_date }}{% if page.day.date == today %} · {% translate "النهارده" %}{% endif %}</p>
+  <h1>{% if page.day.kind %}{{ page.day.title }}{% else %}{% translate "راحة" %}{% endif %}</h1>
+  {% if page.day.km %}<p class="pace">{{ page.day.km|km }}</p>{% endif %}
+</section>
+{% if page.day.kind %}
+<section class="card stack{% if page.day.kind == 'race' %} race-day{% endif %}">
+  <ol class="steps-list">{% for step in page.day.steps %}<li>{{ step }}</li>{% endfor %}</ol>
+  {% if page.day.extra %}
+    <h2>{{ page.day.extra.title }}</h2>
+    <ul class="steps-list">{% for step in page.day.extra.steps %}<li>{{ step }}</li>{% endfor %}</ul>
+  {% endif %}
+</section>
+{% else %}
+  {% translate "النهارده راحة. نام كويس واشرب مية." as rest_text %}{% include "components/notice.html" with text=rest_text %}
+{% endif %}
+<nav class="row day-nav" aria-label="{% translate 'الأيام' %}">
+  {% if page.previous %}<a class="btn btn-ghost" href="{% url 'plans:day' page.previous %}">{% translate "اليوم اللي قبله" %}</a>{% endif %}
+  <a class="btn btn-ghost" href="{% url 'plans:mine' %}">{% translate "خطتي" %}</a>
+  {% if page.next %}<a class="btn btn-ghost" href="{% url 'plans:day' page.next %}">{% translate "اليوم اللي بعده" %}</a>{% endif %}
+</nav>
+{% endblock %}
