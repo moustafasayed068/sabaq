@@ -26,6 +26,7 @@
       </a>
       {% block header_actions %}
         {% if user.is_authenticated %}
+          <a class="btn btn-ghost" href="{% url 'accounts:account' %}">{% translate "حسابي" %}</a>
           <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">{% translate "خروج" %}</button></form>
         {% else %}
           <a class="btn btn-ghost" href="{% url 'accounts:login' %}">{% translate "دخول" %}</a>

@@ -17,6 +17,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.core import ratelimit
+from apps.core.export import row
 from apps.core.services import AuditAction, record_audit
 from apps.payments import paymob
 from apps.payments.models import Order, OrderStatus, Payment, Product
@@ -33,6 +34,7 @@ __all__ = [
     "CheckoutError",
     "Price",
     "RefundError",
+    "export_for",
     "handle_callback",
     "is_open",
     "order_for",
@@ -312,3 +314,15 @@ def refund(order: Order, *, actor: User) -> None:
             metadata={"from": old, "to": OrderStatus.REFUNDED, "by": "staff"},
         )
         _lock(order)
+
+
+# ---------------------------------------------------------------- the athlete's own data
+
+
+def export_for(user: User) -> dict[str, Any]:
+    return {
+        "orders": [
+            row(o, skip=("user", "intention_id"))
+            for o in Order.objects.filter(user=user).order_by("created_at")
+        ]
+    }

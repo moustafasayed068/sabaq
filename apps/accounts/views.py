@@ -1,14 +1,17 @@
 """Phone login: ask for the number, then the one-time code."""
 
+import json
+
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods, require_POST
 
-from apps.accounts import services
-from apps.accounts.forms import CodeForm, PhoneForm
+from apps.accounts import privacy, services
+from apps.accounts.forms import CodeForm, DeleteAccountForm, PhoneForm
 from apps.accounts.models import mask_phone
 from apps.athletes.services import claim_questionnaire
 from apps.core.request_context import client_ip
@@ -98,3 +101,44 @@ def logout_view(request: HttpRequest) -> HttpResponse:
         record_audit(AuditAction.LOGOUT, request=request)
     logout(request)
     return redirect("races:landing")
+
+
+# ---------------------------------------------------------------- my account
+
+
+@require_http_methods(["GET"])
+@login_required
+def account(request: HttpRequest) -> HttpResponse:
+    return render(request, "accounts/account.html", {"delete_form": DeleteAccountForm()})
+
+
+@require_POST
+@login_required
+def export(request: HttpRequest) -> HttpResponse:
+    try:
+        data = privacy.export_data(request.user)  # type: ignore[arg-type]
+    except privacy.TooManyExportsError:
+        return render(
+            request,
+            "accounts/account.html",
+            {"delete_form": DeleteAccountForm(), "export_limited": True},
+            status=429,
+        )
+    response = HttpResponse(
+        json.dumps(data, ensure_ascii=False, indent=2), content_type="application/json"
+    )
+    response["Content-Disposition"] = 'attachment; filename="sabaq-my-data.json"'
+    response["Cache-Control"] = "no-store"
+    return response
+
+
+@require_POST
+@login_required
+def delete(request: HttpRequest) -> HttpResponse:
+    form = DeleteAccountForm(request.POST)
+    if not form.is_valid() or request.user.is_staff:
+        return render(request, "accounts/account.html", {"delete_form": form}, status=422)
+    user = request.user
+    logout(request)
+    privacy.delete_account(user)  # type: ignore[arg-type]
+    return render(request, "accounts/deleted.html")
