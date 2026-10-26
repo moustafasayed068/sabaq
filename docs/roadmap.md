@@ -49,7 +49,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 
 - [x] Staff 2FA, admin path + IP limit, roles (support, coach reviewer, finance, owner).
 - [x] Data export and account deletion for athletes.
-- [ ] Load test the plan and check-in pages (target: p95 < 300 ms at 50 req/s on one VPS).
+- [x] Load test the plan and check-in pages (target: p95 < 300 ms at 50 req/s on one VPS). p95 24 ms here (docs/load-test.md); repeat on the real VPS.
 - [x] Restore test from backup; incident runbook. Tested locally (backup, restore into a second database, same counts); monthly test on the server per docs/runbook.md.
 - [ ] Privacy policy and terms pages (after the lawyer's review). Draft pages built from what the app really does, hidden behind the `legal_pages` flag; waiting on the lawyer.
 
