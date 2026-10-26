@@ -30,7 +30,7 @@ def codes(caplog):
     def last() -> str:
         found = re.findall(r"DEV login code for \S+: (\d{6})", caplog.text)
         assert found, "no code logged"
-        return found[-1]
+        return str(found[-1])
 
     return last
 
@@ -189,6 +189,7 @@ def test_a_claimed_questionnaire_is_not_stolen_by_another_login(client, codes):
 
     claim_questionnaire(str(q.pk), q.session_key, other)
     q.refresh_from_db()
+    assert q.user is not None
     assert q.user.phone == PHONE
 
 
