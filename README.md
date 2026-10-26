@@ -24,3 +24,35 @@
 2. افتحه في Claude Code.
 3. ابعتله الرسالة اللي في `FIRST_PROMPT.md`.
 4. ابدأ «حاجات لازم تعملها انت» اللي في أول `docs/roadmap.md` النهارده، لأنها بتاخد وقت (حساب Paymob، الدومين، الكوتش، المحامي).
+
+## Run it (developers)
+
+Needs Python 3.12 and [uv](https://docs.astral.sh/uv/).
+
+```bash
+uv sync                          # install pinned packages (uv.lock, with hashes)
+uv run pre-commit install        # ruff, format and gitleaks on every commit
+uv run python manage.py migrate  # SQLite locally unless POSTGRES_HOST is set
+uv run python manage.py runserver
+uv run pytest                    # all tests with coverage
+```
+
+Everything (web, worker, PostgreSQL, Redis, Caddy with HTTPS):
+
+```bash
+cp .env.example .env   # then replace every value
+docker compose up --build
+# https://localhost/  (Caddy's local certificate). The admin is at DJANGO_ADMIN_URL.
+```
+
+Quality gates (the same ones CI runs on every PR):
+
+```bash
+uv run pre-commit run --all-files
+uv run mypy .
+uv run pytest
+uv run bandit -c pyproject.toml -r apps sabaq
+uv run pip-audit --strict
+DJANGO_SETTINGS_MODULE=sabaq.settings.prod uv run python manage.py check --deploy --fail-level WARNING
+uv run python manage.py makemigrations --check --dry-run
+```
