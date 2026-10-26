@@ -2,6 +2,9 @@
 
 import os
 
+os.environ.setdefault(
+    "FIELD_ENCRYPTION_KEYS", "dGVzdC1vbmx5LWluc2VjdXJlLWZpZWxkLWtleS0zMmI="
+)  # test only
 os.environ.setdefault("DJANGO_SECRET_KEY", "test-only-insecure-key")
 
 from sabaq.settings.base import *  # noqa: F403

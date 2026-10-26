@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext import StrOrPromise
 
+from apps.core.crypto import EncryptedJSONField
 from apps.core.models import BaseModel
 from apps.races.models import Race
 
@@ -87,3 +88,38 @@ class Questionnaire(BaseModel):
 
     def __str__(self) -> str:
         return f"Questionnaire {self.pk} ({self.race.slug})"
+
+
+class Consent(BaseModel):
+    """Explicit consent, stored with the exact text version the athlete agreed to."""
+
+    questionnaire = models.ForeignKey(
+        Questionnaire, on_delete=models.CASCADE, related_name="consents"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE, related_name="+"
+    )
+    kind = models.CharField(max_length=20, default="health")
+    text_version = models.CharField(max_length=40)
+    text_sha256 = models.CharField(max_length=64)
+
+    def __str__(self) -> str:
+        return f"{self.kind} consent {self.text_version}"
+
+
+class HealthScreen(BaseModel):
+    """Health answers, injury history and current pain. Encrypted; staff views are audited."""
+
+    questionnaire = models.OneToOneField(
+        Questionnaire, on_delete=models.CASCADE, related_name="health"
+    )
+    # {"answers": {"heart": bool, ...}, "doctor_cleared": bool, "injury": str, "pain": str}
+    data = EncryptedJSONField()
+
+    class Meta:
+        permissions = (
+            ("view_health_answers", "Can view decrypted health answers (health_viewer role)"),
+        )
+
+    def __str__(self) -> str:
+        return f"Health screen {self.pk}"
