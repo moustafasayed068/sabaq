@@ -43,7 +43,7 @@ Claude Code: work top to bottom, one task per branch/PR, tick `[x]` when merged.
 - [x] Weekly check-in form; regenerate remaining weeks via the engine; pause flow for sharp pain with "doctor cleared me".
 - [x] Mark day done / missed / "I feel something".
 - [x] Admin: athletes list with flags first (pain, sick, paused), payments, races.
-- [ ] Production deploy with backups, error tracking, `check --deploy` clean. **Paid plans on sale.**
+- [ ] Production deploy with backups, error tracking, `check --deploy` clean. **Paid plans on sale.** Code ready (encrypted daily backups, restore command, Sentry, docs/runbook.md); waiting on the server, the Paymob keys and an off-server copy target.
 
 ## M3: Harden (16 – 30 Nov)
 

@@ -138,3 +138,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: docker build -f docker/Dockerfile -t sabaq:ci .
       - run: test "$(docker run --rm sabaq:ci id -u)" != "0"
+      - run: docker build -f docker/Dockerfile --target backup -t sabaq-backup:ci .
+      - run: docker run --rm sabaq-backup:ci pg_dump --version | grep -q "PostgreSQL) 18\."
+      - run: test "$(docker run --rm sabaq-backup:ci id -u)" != "0"

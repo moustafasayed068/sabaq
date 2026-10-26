@@ -38,3 +38,12 @@ if any(_paymob) and not all(_paymob):
     )
 if not PAYMOB_BASE_URL.startswith("https://"):  # noqa: F405
     raise ImproperlyConfigured("PAYMOB_BASE_URL must use https.")
+
+# Error tracking: set SENTRY_DSN to turn it on (PII scrubbed, sabaq/sentry.py).
+from sabaq.sentry import init_sentry  # noqa: E402
+
+init_sentry(
+    env_str("SENTRY_DSN", ""),
+    environment=env_str("SENTRY_ENVIRONMENT", "production"),
+    release=env_str("SENTRY_RELEASE", ""),
+)
