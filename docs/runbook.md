@@ -1,6 +1,7 @@
 # Runbook
 
 Short steps for running Sabaq on one VPS with `docker compose`. Keep this page current.
+Setting up a new Oracle Cloud server first: `docs/deploy-oracle.md`.
 
 ## First deploy
 
