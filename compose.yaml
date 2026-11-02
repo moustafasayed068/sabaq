@@ -57,7 +57,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis:8.4-alpine@sha256:0a2d4efb342a6e25027bd24a24dba8cb63cf881e76f5813932657bfd811040ff
+    image: redis:8.10-alpine@sha256:21090af93f8324db2f0f0f4f38a7c60369d47d917e000c3423d89d2ae2883537
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-data:/data
