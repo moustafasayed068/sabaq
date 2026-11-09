@@ -21,7 +21,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff==0.17.2",
+    "ruff==0.17.4",
     "mypy==1.19.1",
     "django-stubs[compatible-mypy]==5.2.9",
     "celery-types==0.26.0",
